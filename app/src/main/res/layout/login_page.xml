@@ -4,17 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_page"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".LogInPage">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/top_bar"
-        android:layout_width="95dp"
-        android:layout_height="77dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="logo_text"
+        android:src="@drawable/logo_background"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBaseline_toBottomOf="@id/login_container"/>
+        android:adjustViewBounds="true"
+        android:id="@+id/logo_background"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="logo_background"
+        android:src="@drawable/logo_text"
+        app:layout_constraintTop_toTopOf="@id/logo_background"
+        app:layout_constraintBottom_toBottomOf="@id/logo_background"
+        />
 
     <LinearLayout
         android:id="@+id/login_container"
@@ -31,7 +41,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintVertical_bias="0.85"
-        tools:context=".LogInPage">
+        >
 
 
         <TextView

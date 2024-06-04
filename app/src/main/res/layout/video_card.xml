@@ -18,7 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/video_title"
-            android:text="title"
+            android:text="Video title"
+            android:textAppearance="@style/TextAppearance.BoldText"
+            android:textSize="25dp"
             android:layout_margin="10dp"/>
 
         <LinearLayout
@@ -26,21 +28,25 @@
             android:layout_height="wrap_content"
             android:id="@+id/video_stats"
             android:orientation="horizontal"
+
             >
             <TextView
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/video_date"
                 android:text="3 weeks agooooooo"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/video_views"
                 android:text="1 view"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                />
         </LinearLayout>
 
     </LinearLayout>

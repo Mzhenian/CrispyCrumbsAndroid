@@ -9,4 +9,6 @@
     <string name="share">Share</string>
     <string name="like">Like</string>
     <string name="comment">Comment</string>
+    <string name="profile_picture">profile_picture</string>
+    <string name="date">Date</string>
 </resources>

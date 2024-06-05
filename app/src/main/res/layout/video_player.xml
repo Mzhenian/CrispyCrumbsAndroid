@@ -72,24 +72,18 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Comments section -->
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
+        android:id="@+id/comment_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:scrollbars="vertical"
-        android:overScrollMode="never"
         app:layout_constraintTop_toBottomOf="@id/button_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
+        app:layout_constraintBottom_toBottomOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_bar">
+        <include layout="@layout/comment_section" />
+    </LinearLayout>
 
-        <!-- Consider using RecyclerView for better performance -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include layout="@layout/comment_item" />
-            <!-- Repeat comment_item layout as necessary -->
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

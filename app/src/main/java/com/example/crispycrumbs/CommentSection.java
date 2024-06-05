@@ -2,6 +2,7 @@ package com.example.crispycrumbs;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,6 +11,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CommentSection extends Activity {
+
+
     ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
     int[] image = {R.drawable.small_logo};
 
@@ -28,7 +31,7 @@ public class CommentSection extends Activity {
     }
 
     public void setCommentItemArrayList() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             commentItemArrayList.add(new CommentItem(image[0],"guest" + i, "some text", "some date"));
         }
     }

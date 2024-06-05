@@ -20,8 +20,9 @@
             android:id="@+id/video_title"
             android:text="Video title"
             android:textAppearance="@style/TextAppearance.BoldText"
-            android:textSize="25dp"
-            android:layout_margin="10dp"/>
+            android:textSize="25sp"
+            android:layout_margin="10dp"
+            android:textColor="@color/crispy_orange"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,10 +35,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/video_date"
-                android:text="3 weeks agooooooo"
+                android:text="3 weeks ago"
                 android:layout_margin="10dp"
                 android:textAppearance="@style/TextAppearance.BoldText"
-                />
+                android:textColor="@color/crispy_orange"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -46,7 +47,16 @@
                 android:text="1 view"
                 android:layout_margin="10dp"
                 android:textAppearance="@style/TextAppearance.BoldText"
-                />
+                android:textColor="@color/crispy_orange"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/video_likes"
+                android:text="1 like"
+                android:layout_margin="10dp"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/crispy_orange"/>
         </LinearLayout>
 
     </LinearLayout>

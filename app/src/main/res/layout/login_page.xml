@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="logo_text"
+        android:contentDescription="@string/logo_text"
         android:src="@drawable/logo_background"
         app:layout_constraintTop_toTopOf="parent"
         android:adjustViewBounds="true"
@@ -20,7 +20,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="logo_background"
+        android:contentDescription="@string/logo_background"
         android:src="@drawable/logo_text"
         app:layout_constraintTop_toTopOf="@id/logo_background"
         app:layout_constraintBottom_toBottomOf="@id/logo_background"

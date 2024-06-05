@@ -6,4 +6,7 @@
     <string name="new_user">New user? Sign up!</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
+    <string name="share">Share</string>
+    <string name="like">Like</string>
+    <string name="comment">Comment</string>
 </resources>

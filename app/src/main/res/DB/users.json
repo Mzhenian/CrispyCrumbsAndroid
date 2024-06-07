@@ -1,0 +1,101 @@
+{
+  "version": "0.1",
+  "users": [
+    {
+      "userId": "1",
+      "userName": "Israel Israeli",
+      "userImage": "./src/DB/videos/1.png",
+      "videosIds": ["1"],
+      "playlists": [
+        {
+          "playlistId": "1",
+          "playlistName": "Playlist",
+          "videosIds": ["6", "10"]
+        }
+      ],
+      "followers": ["2"],
+      "following": ["6", "1"],
+      "likedOrDislikedVideoIds": ["1", "6"]
+    },
+    {
+      "userId": "2",
+      "userName": "Moshe Cohen",
+      "userImage": "./src/DB/videos/2.png",
+      "videosIds": ["2"],
+      "playlists": [],
+      "followers": ["1"],
+      "following": ["3"],
+      "likedOrDislikedVideoIds": ["2", "6"]
+    },
+    {
+      "userId": "3",
+      "userName": "Meni Mamthera",
+      "userImage": "./src/DB/videos/3.png",
+      "videosIds": ["3"],
+      "playlists": [],
+      "followers": ["2"],
+      "following": ["4"],
+      "likedOrDislikedVideoIds": ["8"]
+    },
+    {
+      "userId": "4",
+      "userName": "Beri tzakala",
+      "userImage": "./src/DB/videos/4.png",
+      "videosIds": ["4"],
+      "playlists": [],
+      "followers": ["3"],
+      "following": ["5"],
+      "likedOrDislikedVideoIds": ["1"]
+    },
+    {
+      "userId": "5",
+      "userName": "Ori Levi",
+      "userImage": "./src/DB/videos/5.jpg",
+      "videosIds": ["5"],
+      "playlists": [],
+      "followers": ["4"],
+      "following": ["6"],
+      "likedOrDislikedVideoIds": ["1","2","10"]
+    },
+    {
+      "userId": "6",
+      "userName": "Tuna",
+      "userImage": "./src/DB/videos/6.png",
+      "videosIds": ["6","10"],
+      "playlists": [],
+      "followers": ["5"],
+      "following": ["7"],
+      "likedOrDislikedVideoIds": []
+    },
+    {
+      "userId": "7",
+      "userName": "Jon Smith",
+      "userImage": "./src/DB/videos/7.jpg",
+      "videosIds": ["7"],
+      "playlists": [],
+      "followers": ["6"],
+      "following": ["8"],
+      "likedOrDislikedVideoIds": []
+    },
+    {
+      "userId": "8",
+      "userName": "Arnold Schwarzenegger",
+      "userImage": "./src/DB/videos/.png",
+      "videosIds": ["8"],
+      "playlists": [],
+      "followers": ["7"],
+      "following": ["9"],
+      "likedOrDislikedVideoIds": ["",""]
+    },
+    {
+      "userId": "9",
+      "userName": "Demitri Martin",
+      "userImage": "./src/DB/videos/9.jpg",
+      "videosIds": ["9"],
+      "playlists": [],
+      "followers": [],
+      "following": ["6"],
+      "likedOrDislikedVideoIds": ["10","8", "6"]
+    }
+  ]
+}

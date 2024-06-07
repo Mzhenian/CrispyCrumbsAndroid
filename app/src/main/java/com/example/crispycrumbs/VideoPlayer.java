@@ -2,7 +2,9 @@ package com.example.crispycrumbs;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,9 @@ public class VideoPlayer extends AppCompatActivity {
     private Button likeButton = findViewById(R.id.like_button);
     private Button shareButton = findViewById(R.id.share_button);
     private Button commentButton = findViewById(R.id.comment_button);
+    private LinearLayout shareMenu = findViewById(R.id.share_menu);
+
+    private boolean menuState = false;
 
 
     ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
@@ -38,13 +43,26 @@ public class VideoPlayer extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleShareMenu();
+            }
+        });
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.video_player), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
 
         });
+    }
+
+    private void toggleShareMenu() {
+        if (!menuState) {
+            shareMenu.setVisibility(View.VISIBLE);
+        } else {
+            shareMenu.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void setCommentItemArrayList() {

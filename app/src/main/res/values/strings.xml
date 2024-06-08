@@ -102,4 +102,7 @@
     </string>
     <string name="logo_text">logo_text</string>
     <string name="logo_background">logo_background</string>
+    <string name="facebook">Facebook</string>
+    <string name="tiktok">TikTok</string>
+    <string name="twiter">Twiter</string>
 </resources>

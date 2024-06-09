@@ -6,4 +6,21 @@
     </style>
 
     <style name="Theme.CrispyCrumbs" parent="Base.Theme.CrispyCrumbs" />
+
+    <!-- LightMode -->
+    <!-- Screen background -->
+    <style name="SCREEN">
+        <item name="android:background">@color/off_white</item>
+    </style>
+    
+    <style name="TEXT">
+        <item name="android:textAppearance">@style/TextAppearance.BoldText</item>
+    </style>
+    
+    <style name="BUTTON">
+        <item name="android:background">@drawable/small_button_style_light</item>
+        <item name="android:textColor">@android:color/holo_orange_light</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

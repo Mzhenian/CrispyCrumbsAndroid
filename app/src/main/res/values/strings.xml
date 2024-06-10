@@ -105,4 +105,26 @@
     <string name="facebook">Facebook</string>
     <string name="tiktok">TikTok</string>
     <string name="twiter">Twiter</string>
+    <string name="title_activity_sign_up">SignUp</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="et_validate_password">validate password</string>
+    <string name="et_mail_address">email address</string>
+    <string name="et_name">name</string>
+    <string name="et_password">et_password</string>
+    <string name="btn_sigh_up">Sigh up!</string>
+    <string name="et_username">username</string>
+    <string name="et_last_mame">last mame</string>
+    <string name="et_phone_number">phone number</string>
+    <string name="et_date_of_birth">birth date</string>
+    <string name="forgot_my_password">forgot my password?</string>
+    <string name="btn_already_have_a_user">already have a user?</string>
+    <string name="add_profile_picture">add profile picture:</string>
 </resources>

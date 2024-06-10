@@ -19,12 +19,12 @@ import java.util.ArrayList;
 
 public class VideoPlayer extends AppCompatActivity {
 
-    private Button likeButton = findViewById(R.id.like_button);
-    private Button shareButton = findViewById(R.id.share_button);
-    private Button commentButton = findViewById(R.id.comment_button);
-    private LinearLayout shareMenu = findViewById(R.id.share_menu);
+    private final Button likeButton = findViewById(R.id.like_button);
+    private final Button shareButton = findViewById(R.id.share_button);
+    private final Button commentButton = findViewById(R.id.comment_button);
+    private final LinearLayout shareMenu = findViewById(R.id.share_menu);
 
-    private boolean menuState = false;
+    private final boolean menuState = false;
 
 
     ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();

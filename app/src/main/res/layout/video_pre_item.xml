@@ -1,23 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/preview_card_container"
+    android:layout_width="330dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginHorizontal="30dp"
+    android:layout_marginVertical="5dp">
 
     <ImageView
         android:id="@+id/video_thumbnail"
+        android:layout_width="330dp"
+        android:layout_height="194.54dp"
+        android:background="@drawable/round_corners_gray"
+        />
+
+    <LinearLayout
+        android:id="@+id/bottom_card_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop" />
-
-    <TextView
-        android:id="@+id/video_title"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.BoldText"
-        android:layout_gravity="left"/>
+        app:layout_constraintTop_toBottomOf="@id/video_thumbnail"
+        android:layout_margin="5dp">
 
-</LinearLayout>
+        <View
+            android:id="@+id/profile_picture"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:background="@drawable/round_corners_gray" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/video_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Video Title"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:gravity="top"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="5dp"
+                style="@style/TEXT" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="10dp">
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User Name"
+                    android:layout_marginEnd="10dp"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    style="@style/TEXT" />
+
+                <TextView
+                    android:id="@+id/views"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Views"
+                    android:layout_marginEnd="10dp"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    style="@style/TEXT" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:layout_marginEnd="10dp"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    style="@style/TEXT" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

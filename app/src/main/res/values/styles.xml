@@ -14,5 +14,7 @@
             <item name="android:padding">8dp</item>
             <item name="android:textSize">14sp</item>
         </style>
+
+    <style name="video_title">Video Title</style>
 </resources>
 

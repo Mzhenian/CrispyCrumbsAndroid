@@ -1,5 +1,7 @@
 package com.example.crispycrumbs;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +13,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
@@ -29,6 +32,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private ActionBarDrawerToggle drawerToggle;
+
+    private static final String THEME_PREF_KEY = "app_theme";
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -58,6 +63,11 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
+        // In your Application class or MainActivity's onCreate
+        SharedPreferences sharedPrefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+        boolean isDarkTheme = sharedPrefs.getBoolean(THEME_PREF_KEY, false);
+        applyTheme(isDarkTheme);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
@@ -76,33 +86,19 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ShareFragment()).commit();
                 } else if (itemId == R.id.nav_about) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
+                } else if (itemId == R.id.nav_login) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
+                } else if (itemId == R.id.theme_setter) {
+                    // Toggle theme preference (see step 3)
+                    boolean newThemeIsDark = toggleThemePreference();
+                    applyTheme(newThemeIsDark);
                 }
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
         });
 
-        // Uncomment and set up the search bar if needed
-        /*
-        EditText searchBar = findViewById(R.id.search_bar);
-        searchBar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Not used in this case
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Filter the video list as the user types
-                adapter.filter(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Not used in this case
-            }
-        });
-        */
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -136,5 +132,19 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean toggleThemePreference() {
+        SharedPreferences sharedPrefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
+        boolean currentThemeIsDark = sharedPrefs.getBoolean(THEME_PREF_KEY, false); // Default to light theme
+        boolean newThemeIsDark = !currentThemeIsDark;
+        sharedPrefs.edit().putBoolean(THEME_PREF_KEY, newThemeIsDark).apply();
+        return newThemeIsDark;
+    }
+
+    private void applyTheme(boolean isDarkTheme) {
+        AppCompatDelegate.setDefaultNightMode(
+                isDarkTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
+        );
     }
 }

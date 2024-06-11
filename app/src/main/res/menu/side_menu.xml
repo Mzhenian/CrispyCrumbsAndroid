@@ -28,6 +28,10 @@
             android:icon="@drawable/baseline_thumb_up_24"
             android:title="@string/login"/>
 
+        <item android:id="@+id/nav_signin"
+            android:icon="@drawable/baseline_thumb_up_24"
+            android:title="Sign in"/>
+
         <item android:id="@+id/nav_logout"
             android:icon="@drawable/baseline_arrow_back_24"
             android:title="@string/logout"/>

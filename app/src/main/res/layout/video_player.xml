@@ -5,7 +5,8 @@
     android:id="@+id/video_player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoPlayer">
+    tools:context=".VideoPlayer"
+    style = "@style/SCREEN">
 
     <!-- Top bar and video card container -->
     <LinearLayout
@@ -95,7 +96,6 @@
 
         <Button
             android:id="@+id/like_button"
-            style="@style/CustomButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -104,11 +104,12 @@
             app:layout_constraintEnd_toStartOf="@id/share_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3" />
+            app:layout_constraintWidth_percent="0.3"
+            style="@style/BUTTON"/>
 
         <Button
             android:id="@+id/share_button"
-            style="@style/CustomButtonStyle"
+            style="@style/BUTTON"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -118,13 +119,14 @@
             app:layout_constraintEnd_toStartOf="@id/comment_button"
             app:layout_constraintStart_toEndOf="@id/like_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3" />
+            app:layout_constraintWidth_percent="0.3"
+            />
 
 
 
         <Button
             android:id="@+id/comment_button"
-            style="@style/CustomButtonStyle"
+            style="@style/BUTTON"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

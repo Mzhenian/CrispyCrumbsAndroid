@@ -2,6 +2,7 @@ package com.example.crispycrumbs;
 
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,17 +25,13 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
 
     private ArrayList<PreviewVideoCard> videoArrayList = new ArrayList<>();
-    private int[] image = {R.drawable.small_logo};
-    private RecyclerView recyclerView;
     private VideoList_Adapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        recyclerView = view.findViewById(R.id.video_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
         loadJSONFromAsset();
         adapter = new VideoList_Adapter(getContext(), videoArrayList);
 

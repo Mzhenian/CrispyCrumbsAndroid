@@ -18,11 +18,16 @@ import java.util.ArrayList;
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<PreviewVideoCard> videoArrayList;
+    // Store the original list
+    private ArrayList<PreviewVideoCard> originalVideoList;
+
+    private ArrayList<PreviewVideoCard> filteredVideoList;
 
     public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList) {
         this.context = context;
-        this.videoArrayList = videoArrayList;
+        this.originalVideoList = videoArrayList;
+        // Initially, show all items
+        this.filteredVideoList = new ArrayList<>(originalVideoList);
     }
 
     @NonNull
@@ -34,7 +39,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PreviewVideoCard videoCard = videoArrayList.get(position);
+        PreviewVideoCard videoCard = filteredVideoList.get(position);
 
         holder.videoTitle.setText(videoCard.getTitle());
         holder.videoUser.setText(videoCard.getUserId());
@@ -47,7 +52,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
     @Override
     public int getItemCount() {
-        return videoArrayList.size();
+        return filteredVideoList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -67,6 +72,17 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
     // Filter method for SearchView
     public void filter(String query) {
-        // Implement your filter logic here
+        filteredVideoList.clear();
+        if (query == null || query.trim().isEmpty()) {
+            filteredVideoList.addAll(originalVideoList); // Show all items if query is empty
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            for (PreviewVideoCard video : originalVideoList) {
+                if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredVideoList.add(video);
+                }
+            }
+        }
+        notifyDataSetChanged(); // Notify adapter of data change
     }
 }

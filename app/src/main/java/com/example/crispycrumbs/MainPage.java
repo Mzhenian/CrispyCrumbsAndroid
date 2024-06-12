@@ -45,8 +45,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.page_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar); // Ignore red line errors

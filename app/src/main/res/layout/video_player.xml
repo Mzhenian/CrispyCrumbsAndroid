@@ -5,7 +5,8 @@
     android:id="@+id/video_player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoPlayer">
+    tools:context=".VideoPlayer"
+    style = "@style/SCREEN">
 
     <!-- Top bar and video card container -->
     <LinearLayout
@@ -16,27 +17,85 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <include layout="@layout/top_bar"/>
-        <include layout="@layout/video_card"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             android:id="@+id/video_card"
-            />
+            android:background="@drawable/round_corners_gray">
+            <VideoView
+                android:layout_width="match_parent"
+                android:layout_height="270dp">
+            </VideoView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/video_title"
+                android:text="Video title"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textSize="25sp"
+                android:layout_margin="10dp"
+                android:textColor="@color/crispy_orange"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/video_stats"
+                android:orientation="horizontal"
+
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/video_date"
+                    android:text="3 weeks ago"
+                    android:layout_margin="10dp"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/crispy_orange"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/video_views"
+                    android:text="1 view"
+                    android:layout_margin="10dp"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/crispy_orange"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/video_likes"
+                    android:text="1 like"
+                    android:layout_margin="10dp"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/crispy_orange"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <!-- Button bar with smaller buttons and more spacing -->
-
-    <!-- Comments section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/button_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        android:layout_margin="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/page_top">
+        app:layout_constraintTop_toBottomOf="@id/page_top"
+        android:background="@drawable/round_corners_gray">
 
         <Button
             android:id="@+id/like_button"
-            style="@style/CustomButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -45,11 +104,12 @@
             app:layout_constraintEnd_toStartOf="@id/share_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3" />
+            app:layout_constraintWidth_percent="0.3"
+            style="@style/BUTTON"/>
 
         <Button
             android:id="@+id/share_button"
-            style="@style/CustomButtonStyle"
+            style="@style/BUTTON"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -59,40 +119,14 @@
             app:layout_constraintEnd_toStartOf="@id/comment_button"
             app:layout_constraintStart_toEndOf="@id/like_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3">
+            app:layout_constraintWidth_percent="0.3"
+            />
 
-        </Button>
 
-        <LinearLayout
-            android:layout_width="90dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/share_menu"
-            app:layout_constraintTop_toBottomOf="@+id/share_button"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:visibility="invisible">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/facebook"
-                 android:textAppearance="@style/TextAppearance.BoldText"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tiktok"
-                android:textAppearance="@style/TextAppearance.BoldText"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/twiter"
-                android:textAppearance="@style/TextAppearance.BoldText"/>
-        </LinearLayout>
 
         <Button
             android:id="@+id/comment_button"
-            style="@style/CustomButtonStyle"
+            style="@style/BUTTON"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -106,10 +140,13 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Comments section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/button_bar">
+        app:layout_constraintTop_toBottomOf="@id/button_bar"
+        android:background="@drawable/round_corners_gray"
+        android:layout_margin="5dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/comment_section"
@@ -118,11 +155,10 @@
             android:layout_marginStart="1dp"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="1dp"
-            android:layout_marginBottom="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -5,7 +5,8 @@
     android:id="@+id/login_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LogInPage">
+    tools:context=".LoginFragment"
+    style="@style/SCREEN">
 
     <ImageView
         android:layout_width="match_parent"

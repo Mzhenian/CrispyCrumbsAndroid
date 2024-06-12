@@ -21,3 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "CrispyCrumbs"
 include(":app")
+include(":template_sidebar")
+include(":template_sidebar")
+<<<<<<< HEAD
+=======
+include(":template_sidebar")
+>>>>>>> origin/MainPageBranch

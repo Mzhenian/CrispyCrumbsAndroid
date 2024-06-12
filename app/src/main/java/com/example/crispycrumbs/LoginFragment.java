@@ -1,35 +1,28 @@
 package com.example.crispycrumbs;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
 
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+public class LoginFragment extends Fragment {
 
-public class LogInPage extends Activity {
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //EdgeToEdge.enable(this);
-        setContentView(R.layout.login_page);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login_page), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        Button login_button = findViewById(R.id.login_button);
-        EditText user_name = findViewById(R.id.username_input);
-        EditText password = findViewById(R.id.password_input);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        Button login_button = view.findViewById(R.id.login_button);
+        EditText user_name = view.findViewById(R.id.username_input);
+        EditText password = view.findViewById(R.id.password_input);
 
         // Add a TextWatcher to the password EditText
         password.addTextChangedListener(new TextWatcher() {
@@ -56,11 +49,14 @@ public class LogInPage extends Activity {
             if (isPasswordValid(password.getText().toString())) {
                 // Proceed with login
                 // For example:
-                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), "Login Successful", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Password does not meet the criteria", Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), "Password does not meet the criteria", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Inflate the layout for this fragment
+        return view;
     }
 
     private boolean isPasswordValid(String password) {
@@ -79,6 +75,6 @@ public class LogInPage extends Activity {
         }
         return hasLetter && hasDigit;
     }
+
+
 }
-
-

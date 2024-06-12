@@ -1,0 +1,158 @@
+{
+  "version": "0.1",
+  "videos": [
+    {
+      "videoId": "1",
+      "videoFile": "./src/DB/videos/1השניצל שיעשה היסטוריה_ השפים טועמים את המנה הכי ישראלית שיש.mp4",
+      "thumbnail": "./src/DB/videos/1השניצל שיעשה היסטוריה_ השפים טועמים את המנה הכי ישראלית שיש.jpg",
+      "title": "השניצל שיעשה היסטוריה_ השפים טועמים את המנה הכי ישראלית שיש",
+      "description": "השניצל שיעשה היסטוריה_ השפים טועמים את המנה הכי ישראלית שיש",
+      "userId": "1",
+      "views": "10000",
+      "likes": "1000",
+      "dislikes": "100",
+      "tags": ["review"],
+      "uploadDate": "23.1.2023",
+      "comments": [
+        {
+          "commentId": "1",
+          "userId": "2",
+          "comment": "awesome!",
+          "Date": "21.2.2024"
+        },
+        {
+          "commentId": "2",
+          "userId": "3",
+          "comment": "unbelivable!",
+          "Date": "25.2.2024"
+        }
+      ]
+    },
+    {
+      "videoId": "2",
+      "videoFile": "./src/DB/videos/2כאן סקרנים _ איך נולד השניצל הישראלי.mp4",
+      "thumbnail": "./src/DB/videos/2כאן סקרנים _ איך נולד השניצל הישראלי.jpg",
+      "title": "כאן סקרנים _ איך נולד השניצל הישראלי",
+      "description": "כאן סקרנים _ איך נולד השניצל הישראלי",
+      "userId": "2",
+      "views": "20000",
+      "likes": "2000",
+      "dislikes": "200",
+      "tags": ["Ediocasional"],
+      "uploadDate": "23.2.2023",
+      "comments": []
+    },
+    {
+      "videoId": "3",
+      "videoFile": "./src/DB/videos/3טירוף השניצל בחלה _ איפה הכי טעים, מה המחירים ומי המנצח ב_מדד הקריספיות.mp4",
+      "thumbnail": "./src/DB/videos/3טירוף השניצל בחלה _ איפה הכי טעים, מה המחירים ומי המנצח ב_מדד הקריספיות.jpg",
+      "title": "טירוף השניצל בחלה _ איפה הכי טעים, מה המחירים ומי המנצח ב_מדד הקריספיות",
+      "description": "טירוף השניצל בחלה _ איפה הכי טעים, מה המחירים ומי המנצח ב_מדד הקריספיות",
+      "userId": "3",
+      "views": "30000",
+      "likes": "3000",
+      "dislikes": "300",
+      "tags": ["Review"],
+      "uploadDate": "23.3.2023",
+      "comments": []
+    },
+    {
+      "videoId": "4",
+      "videoFile": "./src/DB/videos/4שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5.mp4",
+      "thumbnail": "./src/DB/videos/4שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5.jpg",
+      "title": "שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5",
+      "description": "שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5",
+      "userId": "4",
+      "views": "40000",
+      "likes": "4000",
+      "dislikes": "400",
+      "tags": ["Recipe"],
+      "uploadDate": "23.4.2023",
+      "comments": []
+    },
+    {
+      "videoId": "5",
+      "videoFile": "./src/DB/videos/5Schnitzel.mp4",
+      "thumbnail": "./src/DB/videos/5Schnitzel.jpg",
+      "title": "Schnitzel",
+      "description": "Schnitzel",
+      "userId": "5",
+      "views": "50000",
+      "likes": "5000",
+      "dislikes": "500",
+      "tags": ["Animation"],
+      "uploadDate": "23.5.2023",
+      "comments": []
+    },
+    {
+      "videoId": "6",
+      "videoFile": "./src/DB/videos/6שניצל זה טעים. (אנימציה).mp4",
+      "thumbnail": "./src/DB/videos/6שניצל זה טעים. (אנימציה).jpg",
+      "title": "שניצל זה טעים. (אנימציה)",
+      "description": "שניצל זה טעים. (אנימציה)",
+      "userId": "",
+      "views": "60000",
+      "likes": "6000",
+      "dislikes": "600",
+      "tags": ["Music"],
+      "uploadDate": "23.6.2023",
+      "comments": []
+    },
+    {
+      "videoId": "7",
+      "videoFile": "./src/DB/videos/.7פרק 1- שניצל מושלםmp4",
+      "thumbnail": "./src/DB/videos/.7פרק 1- שניצל מושלםjpg",
+      "title": "",
+      "description": "פרק 1- שניצל מושלם",
+      "userId": "7פרק 1- שניצל מושלם",
+      "views": "70000",
+      "likes": "7000",
+      "dislikes": "700",
+      "tags": ["Recipe"],
+      "uploadDate": "23.7.2023",
+      "comments": []
+    },
+    {
+      "videoId": "8",
+      "videoFile": "./src/DB/videos/.8טיפ השבוע - איך לטגן שניצל מושלםmp4",
+      "thumbnail": "./src/DB/videos/.8טיפ השבוע - איך לטגן שניצל מושלםjpg",
+      "title": "טיפ השבוע - איך לטגן שניצל מושלם",
+      "description": "טיפ השבוע - איך לטגן שניצל מושלם",
+      "userId": "8",
+      "views": "80000",
+      "likes": "8000",
+      "dislikes": "800",
+      "tags": ["Recipe"],
+      "uploadDate": "23.8.2023",
+      "comments": []
+    },
+    {
+      "videoId": "9",
+      "videoFile": "./src/DB/videos/9שניצל.mp4",
+      "thumbnail": "./src/DB/videos/9שניצל.jpg",
+      "title": "שניצל",
+      "description": "שניצל",
+      "userId": "9",
+      "views": "90000",
+      "likes": "9000",
+      "dislikes": "900",
+      "tags": ["Animetion"],
+      "uploadDate": "23.9.2023",
+      "comments": []
+    },
+    {
+      "videoId": "10",
+      "videoFile": "./src/DB/videos/10Tuna-Shnitzels.mp4",
+      "thumbnail": "./src/DB/videos/10Tuna-Shnitzels.jpg",
+      "title": "0_Tuna-Shnitzels",
+      "description": "Shnitzels by Tuna",
+      "userId": "10",
+      "views": "100000",
+      "likes": "10000",
+      "dislikes": "1000",
+      "tags": ["Music"],
+      "uploadDate": "22.8.2015",
+      "comments": []
+    }
+  ]
+}

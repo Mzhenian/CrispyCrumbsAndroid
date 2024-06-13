@@ -8,7 +8,13 @@ public class VideoCardItem {
     private TextView videoDate;
     private TextView videoViews;
     private TextView videoLikes;
-    public VideoCardItem() {
+    private  int likescount = 0;
+
+    public VideoCardItem(TextView title, TextView videoDate, TextView videoViews, TextView videoLikes) {
+        this.title = title;
+        this.videoDate = videoDate;
+        this.videoViews = videoViews;
+        this.videoLikes = videoLikes;
     }
 
     public TextView getTitle() {
@@ -33,5 +39,13 @@ public class VideoCardItem {
 
     public void setVideoLikes(TextView videoLikes) {
         this.videoLikes = videoLikes;
+    }
+
+    public int getLikesCount() {
+        return likescount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likescount = likesCount;
     }
 }

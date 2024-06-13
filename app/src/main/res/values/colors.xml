@@ -5,4 +5,8 @@
     <color name="off_white">#F8F3EB</color>
     <color name="background_gray">#EAE4D8</color>
     <color name="crispy_orange">#E09231</color>
+    <color name="ofek_black">#101010</color>
+
+    <color name="black_div">#1E1D1A</color>
+
 </resources>

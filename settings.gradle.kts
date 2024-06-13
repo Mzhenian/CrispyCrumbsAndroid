@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CrispyCrumbs"
 include(":app")
- 
+include(":template_sidebar")

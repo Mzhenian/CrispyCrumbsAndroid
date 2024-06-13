@@ -1,6 +1,7 @@
 package com.example.crispycrumbs;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.PreviewVideoCard;
@@ -22,6 +24,11 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     private ArrayList<PreviewVideoCard> originalVideoList;
 
     private ArrayList<PreviewVideoCard> filteredVideoList;
+
+
+
+
+
 
     public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList) {
         this.context = context;
@@ -48,6 +55,26 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
         // Load thumbnail using a resource ID
         holder.videoThumbnail.setImageResource(videoCard.getThumbnailResId());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("videoTitle", videoCard.getTitle());
+                bundle.putString("videoDescription", videoCard.getUploadDate());
+                bundle.putString("videoPath", videoCard.getVideoFile());
+
+                VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
+                videoPlayerFragment.setArguments(bundle);
+
+                ((AppCompatActivity) context).getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, videoPlayerFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
     }
 
     @Override

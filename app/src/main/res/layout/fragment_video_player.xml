@@ -5,7 +5,7 @@
     android:id="@+id/video_player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoPlayer"
+    tools:context=".VideoPlayerFragment"
     style = "@style/SCREEN">
 
     <!-- Top bar and video card container -->
@@ -29,7 +29,8 @@
             android:background="@drawable/round_corners_gray">
             <VideoView
                 android:layout_width="match_parent"
-                android:layout_height="270dp">
+                android:layout_height="270dp"
+                android:id="@+id/video_view">
             </VideoView>
 
             <TextView

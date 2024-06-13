@@ -55,6 +55,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
         // Inflate the layout for this fragment
         return view;
     }
@@ -70,11 +71,6 @@ public class HomeFragment extends Fragment {
 
             Gson gson = new Gson();
             VideoList videos = gson.fromJson(json, VideoList.class);
-            Log.d("videos2", "loadJSONFromAsset: " + videos);
-
-            Log.d("videos3", "loadJSONFromAsset: " + videos.getVideos().get(0).getThumbnailResId());
-            Log.d("videos4", "loadJSONFromAsset: " + videos.getVideos().get(1).getThumbnailResId());
-            Log.d("videos5", "loadJSONFromAsset: " + videos.getVideos().get(2).getThumbnailResId());
 
             if (videos != null && videos.getVideos() != null) {
                 for (PreviewVideoCard video : videos.getVideos()) {

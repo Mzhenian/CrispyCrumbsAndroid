@@ -88,6 +88,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
                 } else if (itemId == R.id.nav_login) {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
+                } else if (itemId == R.id.nav_logout) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VideoPlayerFragment()).commit();
                 } else if (itemId == R.id.theme_setter) {
                     // Toggle theme preference (see step 3)
                     boolean newThemeIsDark = toggleThemePreference();

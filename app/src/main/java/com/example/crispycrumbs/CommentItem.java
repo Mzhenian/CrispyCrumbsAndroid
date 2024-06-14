@@ -1,31 +1,35 @@
 package com.example.crispycrumbs;
 
 public class CommentItem {
-    int image;
-    String username;
-    String content;
-    String Date;
+    private int avatarResId;
+    private String userId;
+    private String comment;
+    private String date;
 
-    public CommentItem(int image, String username, String content, String date) {
-        this.image = image;
-        this.username = username;
-        this.content = content;
-        Date = date;
+    public CommentItem(int avatarResId, String userId, String comment, String date) {
+        this.avatarResId = avatarResId;
+        this.userId = userId;
+        this.comment = comment;
+        this.date = date;
     }
 
-    public int getImage() {
-        return image;
+    public int getAvatarResId() {
+        return avatarResId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getContent() {
-        return content;
+    public String getComment() {
+        return comment;
     }
 
     public String getDate() {
-        return Date;
+        return date;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

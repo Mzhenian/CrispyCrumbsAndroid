@@ -116,4 +116,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="about">About</string>
     <string name="sign_up">Sign up</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="general_settings">General Settings</string>
+    <string name="enter_username">Enter username</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="app_version">App Version</string>
+    <string name="_1_0_0">1.0.0</string>
+    <string name="display_settings">Display Settings</string>
 </resources>

@@ -26,7 +26,8 @@
         app:layout_constraintTop_toTopOf="@id/logo_background"
         app:layout_constraintBottom_toBottomOf="@id/logo_background"
         android:id="@+id/logo_text"
-        />
+        android:scaleType="centerCrop"
+       style="@style/LOGOTEXT" />
 
     <LinearLayout
         android:id="@+id/login_container"

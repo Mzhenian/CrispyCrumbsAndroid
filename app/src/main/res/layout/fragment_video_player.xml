@@ -95,7 +95,7 @@
         app:layout_constraintTop_toBottomOf="@id/page_top"
         android:background="@drawable/round_corners_gray">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/like_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,11 +106,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.3"
-            style="@style/BUTTON"/>
+            style="@style/BUTTON"
+            android:theme="@style/BUTTON"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/share_button"
             style="@style/BUTTON"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -125,7 +127,7 @@
 
 
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/comment_button"
             style="@style/BUTTON"
             android:layout_width="wrap_content"

@@ -4,15 +4,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsFragment">
+    android:padding="16dp"
+    tools:context=".SettingsFragment"
+    android:theme="@style/SCREEN">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- General Settings Section -->
     <TextView
+        android:id="@+id/general_settings_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"
-        android:textColor="@color/crispy_orange"/>
+        android:text="@string/general_settings"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/crispy_orange"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:id="@+id/general_settings_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/general_settings_title"
+        android:padding="8dp"
+        android:elevation="2dp"
+        android:theme="@style/CONTAINER">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/enable_notifications"
+            android:checked="true"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+            android:theme="@style/TEXT"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Username"
+                android:textSize="16sp"
+                android:theme="@style/TEXT"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="2"
+                android:hint="@string/enter_username"
+                android:minHeight="48dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Display Settings Section -->
+    <TextView
+        android:id="@+id/display_settings_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/display_settings"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/crispy_orange"
+        android:layout_below="@id/general_settings_container"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:id="@+id/display_settings_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/display_settings_title"
+        android:padding="8dp"
+        android:elevation="2dp"
+        android:theme="@style/CONTAINER">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/dark_mode"
+            tools:ignore="UseSwitchCompatOrMaterialXml"
+            android:theme="@style/TEXT"/>
+    </LinearLayout>
+
+    <!-- About Section -->
+    <TextView
+        android:id="@+id/about_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/crispy_orange"
+        android:layout_below="@id/display_settings_container"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
+
+    <LinearLayout
+        android:id="@+id/about_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/about_title"
+        android:padding="8dp"
+        android:elevation="2dp"
+        android:theme="@style/CONTAINER">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_version"
+            android:textSize="16sp"
+            android:paddingTop="16dp"
+            android:theme="@style/TEXT"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/_1_0_0"
+            android:textSize="16sp"
+            android:paddingBottom="16dp"
+            android:theme="@style/TEXT"/>
+    </LinearLayout>
 
 </RelativeLayout>

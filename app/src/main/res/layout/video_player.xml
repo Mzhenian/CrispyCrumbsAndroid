@@ -5,7 +5,7 @@
     android:id="@+id/video_player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoPlayer"
+    tools:context=".ui.VideoPlayer"
     style = "@style/SCREEN">
 
     <!-- Top bar and video card container -->

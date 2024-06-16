@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AboutFragment">
+    tools:context=".AboutFragment"
+    style="@style/SCREEN">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
@@ -13,6 +14,7 @@
         android:text="About Us Fragment"
         android:textSize="30sp"
         android:layout_centerInParent="true"
-        android:textColor="@color/crispy_orange"/>
+        android:textColor="@color/crispy_orange"
+        style="@style/TEXT"/>
 
 </RelativeLayout>

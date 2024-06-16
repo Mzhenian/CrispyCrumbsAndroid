@@ -1,32 +1,48 @@
+<!-- themes_light.xml -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CrispyCrumbs" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+
+    <!-- Base application theme for light mode. -->
+    <style name="Base.Theme.CrispyCrumbs.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here -->
+        <item name="colorPrimary">@color/crispy_orange_light</item>
+        <item name="colorPrimaryDark">@color/crispy_orange_light</item>
+        <item name="colorAccent">@color/crispy_orange_light</item>
+        <item name="android:colorBackground">@color/off_white</item>
+        <item name="android:textColor">@color/black_light</item>
+        <item name="android:windowBackground">@color/off_white</item>
     </style>
 
+    <style name="Theme.CrispyCrumbs.Light" parent="Base.Theme.CrispyCrumbs.Light">
+        <!-- Add specific customizations for your app -->
+    </style>
 
-    <!-- DarkMode -->
-    <!-- Screen background -->
+    <!-- Define other styles for light mode here -->
+
     <style name="SCREEN">
-        <item name="android:background">@color/black_div</item>
+        <item name="android:background">@color/black_dark</item>
+        <item name="android:textColor">@color/white_dark</item>
     </style>
 
-    <!-- DarkMode -->
     <style name="TEXT">
         <item name="android:textAppearance">@style/TextAppearance.BoldText</item>
-        <item name="android:textColor">@color/off_white</item>
     </style>
 
-    <!-- DarkMode -->
     <style name="BUTTON">
-        <item name="android:background">@drawable/small_button_style_light</item>
-        <item name="android:textColor">@android:color/holo_orange_light</item>
+        <item name="android:background">@drawable/small_button_style_dark</item>
+        <item name="android:textColor">@android:color/holo_orange_dark</item>
         <item name="android:padding">8dp</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="SEARCHBAR">
-        <item name="android:background">@color/black_div</item>
+        <item name="android:background">@color/black_dark</item>
+    </style>
+
+    <style name="LOGOTEXT">
+        <item name="android:tint">@color/black_dark</item>
+    </style>
+
+    <style name="CONTAINER">
+        <item name="android:background"> @color/gray_dark</item>
     </style>
 </resources>

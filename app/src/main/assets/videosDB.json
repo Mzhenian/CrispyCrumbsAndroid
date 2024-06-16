@@ -64,7 +64,7 @@
     },
     {
       "videoId": "4",
-      "videoFile": "raw/4",
+      "videoFile": "raw/v4",
       "thumbnail": "drawable/v4",
       "title": "שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5",
       "description": "שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5",
@@ -78,7 +78,7 @@
     },
     {
       "videoId": "5",
-      "videoFile": "raw/5",
+      "videoFile": "raw/v5",
       "thumbnail": "drawable/v5",
       "title": "Schnitzel",
       "description": "Schnitzel",
@@ -94,7 +94,7 @@
     },
     {
       "videoId": "6",
-      "videoFile": "raw/6",
+      "videoFile": "raw/v6",
       "thumbnail": "drawable/v6",
       "title": "שניצל זה טעים. (אנימציה)",
       "description": "שניצל זה טעים. (אנימציה)",
@@ -110,7 +110,7 @@
     },
     {
       "videoId": "7",
-      "videoFile": "raw/7",
+      "videoFile": "raw/v7",
       "thumbnail": "drawable/v7",
       "title": "",
       "description": "פרק 1- שניצל מושלם",
@@ -126,7 +126,7 @@
     },
     {
       "videoId": "8",
-      "videoFile": "raw/8",
+      "videoFile": "raw/v8",
       "thumbnail": "drawable/v8",
       "title": "טיפ השבוע - איך לטגן שניצל מושלם",
       "description": "טיפ השבוע - איך לטגן שניצל מושלם",
@@ -142,7 +142,7 @@
     },
     {
       "videoId": "9",
-      "videoFile": "raw/9",
+      "videoFile": "raw/v9",
       "thumbnail": "drawable/v9",
       "title": "שניצל",
       "description": "שניצל",
@@ -158,7 +158,7 @@
     },
     {
       "videoId": "10",
-      "videoFile": "raw/10",
+      "videoFile": "raw/v10",
       "thumbnail": "drawable/v10",
       "title": "0_Tuna-Shnitzels",
       "description": "Shnitzels by Tuna",

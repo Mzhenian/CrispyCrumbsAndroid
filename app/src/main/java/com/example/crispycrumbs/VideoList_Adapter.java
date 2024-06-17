@@ -50,13 +50,12 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
         // Handle click events on items
         holder.itemView.setOnClickListener(v -> {
-            // Pass data to VideoPlayerFragment using Bundle
+            // Pass data to VideoPlayerFragment using BundleF
             Bundle bundle = new Bundle();
             bundle.putString("videoId", videoCard.getVideoId());
             bundle.putString("videoTitle", videoCard.getTitle());
             bundle.putString("videoDescription", videoCard.getUploadDate());
             bundle.putString("videoPath", videoCard.getVideoFile());
-            //bundle.putParcelableArrayList("comments", videoCard.getComments());
 
             VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
             videoPlayerFragment.setArguments(bundle);

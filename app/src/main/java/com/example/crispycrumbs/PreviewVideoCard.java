@@ -1,17 +1,24 @@
 package com.example.crispycrumbs.data;
 
+import java.util.ArrayList;
+
 public class PreviewVideoCard {
+    private String videoId;
     private String title;
     private String thumbnail;
     private String videoFile;
     private String userId;
     private int views;
     private String uploadDate;
+    private ArrayList<CommentItem> comments;
 
     // Assuming that you will set the resource ID later in the code
     private transient int thumbnailResId;
 
     // Getters and setters for all fields
+    public String getVideoId() { return videoId; }
+    public void setVideoId(String videoId) { this.videoId = videoId; }
+
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
@@ -32,4 +39,8 @@ public class PreviewVideoCard {
 
     public int getThumbnailResId() { return thumbnailResId; }
     public void setThumbnailResId(int thumbnailResId) { this.thumbnailResId = thumbnailResId; }
+
+    public ArrayList<CommentItem> getComments() {
+        return comments;
+    }
 }

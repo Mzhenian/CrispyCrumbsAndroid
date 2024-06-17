@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.CrispyCrumbs" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
 
@@ -10,13 +10,13 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
-
-    <style name="CustomButtonStyle">
+    <style name="custom_button" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/small_button_style_light</item>
         <item name="android:textColor">@android:color/holo_orange_light</item>
         <item name="android:padding">8dp</item>
         <item name="android:textSize">14sp</item>
     </style>
+
 
     <style name="video_title">Video Title</style>
 </resources>

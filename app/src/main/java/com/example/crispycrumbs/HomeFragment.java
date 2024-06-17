@@ -1,15 +1,18 @@
 package com.example.crispycrumbs.ui;
 
 import android.os.Bundle;
+<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/ui/HomeFragment.java
 
+=======
+>>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/HomeFragment.java
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/ui/HomeFragment.java
 
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
@@ -19,30 +22,41 @@ import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+=======
+>>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/HomeFragment.java
 import java.util.ArrayList;
-
 
 public class HomeFragment extends Fragment {
 
-    private ArrayList<PreviewVideoCard> videoArrayList = new ArrayList<>();
+    // Adapter for the RecyclerView
     private VideoList_Adapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
-        loadJSONFromAsset();
-        adapter = new VideoList_Adapter(getContext(), videoArrayList);
 
+        // Find the RecyclerView in the layout
+        RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
+
+        // Initialize the adapter with the context and video list
+        DataManager dataManager = DataManager.getInstance();
+        ArrayList<PreviewVideoCard> videoList = dataManager.getVideoList();
+        adapter = new VideoList_Adapter(getContext(), videoList);
+
+        // Set the adapter and layout manager for the RecyclerView
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Find the SearchView in the layout
         SearchView searchBar = view.findViewById(R.id.search_bar);
+
+        // Set a listener for query text changes in the SearchView
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Perform the final search
+                // Perform the final search when the user submits the query
                 adapter.filter(query);
                 return false;
             }
@@ -55,42 +69,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Inflate the layout for this fragment
-        return view;
+        return view; // Return the created view
     }
-
-    private void loadJSONFromAsset() {
-        try {
-            InputStream is = getContext().getAssets().open("videosDB.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            String json = new String(buffer, StandardCharsets.UTF_8);
-
-            Gson gson = new Gson();
-            VideoList videos = gson.fromJson(json, VideoList.class);
-            Log.d("videos2", "loadJSONFromAsset: " + videos);
-
-            Log.d("videos3", "loadJSONFromAsset: " + videos.getVideos().get(0).getThumbnailResId());
-            Log.d("videos4", "loadJSONFromAsset: " + videos.getVideos().get(1).getThumbnailResId());
-            Log.d("videos5", "loadJSONFromAsset: " + videos.getVideos().get(2).getThumbnailResId());
-
-            if (videos != null && videos.getVideos() != null) {
-                for (PreviewVideoCard video : videos.getVideos()) {
-                    int thumbnailResId = getResources().getIdentifier(
-                            video.getThumbnail(), "drawable", getContext().getPackageName());
-                    video.setThumbnailResId(thumbnailResId);
-                }
-
-                videoArrayList.addAll(videos.getVideos());
-                adapter.notifyDataSetChanged();
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-
 }

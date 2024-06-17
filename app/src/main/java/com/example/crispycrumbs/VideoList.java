@@ -2,6 +2,7 @@ package com.example.crispycrumbs.Lists;
 
 import com.example.crispycrumbs.data.PreviewVideoCard;
 
+import java.util.Collection;
 import java.util.List;
 
 public class VideoList {

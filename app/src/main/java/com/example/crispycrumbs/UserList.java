@@ -1,11 +1,15 @@
-package com.example.crispycrumbs.Lists;
+package com.example.crispycrumbs;
 
-import com.example.crispycrumbs.data.UserItem;
+import android.content.Context;
+import android.content.res.AssetManager;
+
+import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +18,8 @@ public class UserList extends ArrayList<UserItem> {
     private static UserList instance = null;
 
     private UserList() {
-        String json = readUsersDB();
+
+        String json = readUsersDB(MainPage.getAppContext());
         List<UserItem> users = parseUsers(json);
         this.addAll(users);
         nextUserId = maxUserId() + 1; //todo move to the permanent users storage
@@ -30,25 +35,39 @@ public class UserList extends ArrayList<UserItem> {
         return instance;
     }
 
-    private String readUsersDB() {
-        String json = null;
-        try {
-            InputStream is = this.getClass().getClassLoader().getResourceAsStream("usersDB.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
+    private String readUsersDB(Context context) {
+        String jsonString;
+        AssetManager assetManager = context.getAssets();
+        try (InputStream inputStream = assetManager.open("usersDB.json");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+
+            jsonString = jsonBuilder.toString();
+            return jsonString;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return json;
+        return null;
     }
 
-    private List<UserItem> parseUsers(String json) {
+
+
+    private List<UserItem> parseUsers(String jsonString) {
+        //todo remove second
+//        Gson gson = new Gson();
+//        Type userListType = new TypeToken<ArrayList<UserItem>>() {}.getType();
+//        ArrayList<UserItem> users = gson.fromJson(jsonString, userListType);
+//        this.addAll(users);
+
         Gson gson = new Gson();
         Type userListType = new TypeToken<ArrayList<UserItem>>(){}.getType();
-        return gson.fromJson(json, userListType);
+        return gson.fromJson(jsonString, userListType);
     }
 
     int nextUserId; //todo move to the permanent users storage

@@ -13,7 +13,10 @@
         android:layout_width="330dp"
         android:layout_height="194.54dp"
         android:background="@drawable/round_corners_gray"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/bottom_card_container"

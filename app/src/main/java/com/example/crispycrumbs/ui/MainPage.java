@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+//import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,21 +17,49 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.crispycrumbs.LoggedInUser;
+//import com.example.crispycrumbs.model.DataManager;
+//import com.example.crispycrumbs.R;
+//import com.example.crispycrumbs.ui.ShareFragment;
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.ui.AboutFragment;
-import com.example.crispycrumbs.ui.HomeFragment;
-import com.example.crispycrumbs.ui.LoginFragment;
-import com.example.crispycrumbs.ui.SettingsFragment;
-import com.example.crispycrumbs.ui.ShareFragment;
+import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.model.UserLogic;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    private static final String THEME_PREF_KEY = "app_theme"; // Preference key for theme
 
-    // Handle options item selection, particularly the navigation drawer toggle
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle drawerToggle;
+    private static final String THEME_PREF_KEY = "app_theme";
+    private static MainPage instance = null;
+    private static Context appContext = null;
+    private static DataManager dataManager = null; //DataManager.getInstance();
+    private static UserLogic userLogic = null; // UserLogic.getInstance();
+
+    public static DataManager getDataManager() {
+        return dataManager;
+    }
+
+    public static UserLogic getUserLogic() {
+        return userLogic;
+    }
+
+
+    public static MainPage getInstance() {
+        if (instance == null) {
+            instance = new MainPage();
+        }
+        return instance;
+    }
+
+    public static Context getAppContext() {
+        if (appContext == null) {
+            appContext = getInstance().getApplicationContext();
+        }
+        return appContext;
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item)) {
@@ -39,25 +68,19 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         return super.onOptionsItemSelected(item);
     }
 
-<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/ui/MainPage.java
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-=======
     // Activity creation and initialization
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        EdgeToEdge.enable(this); // Enable edge-to-edge display
->>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/MainPage.java
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.page_main); // Set the content view to the main page layout
+        setContentView(R.layout.page_main);
+        instance = this;
+        appContext = getApplicationContext();
 
         Toolbar toolbar = findViewById(R.id.toolbar); // Find the toolbar
         setSupportActionBar(toolbar); // Set the toolbar as the app bar
 
         drawerLayout = findViewById(R.id.drawer_layout); // Find the drawer layout
         NavigationView navigationView = findViewById(R.id.nav_Bar); // Find the navigation view
-
         navigationView.setNavigationItemSelectedListener(this); // Set navigation item selection listener
 
         // Set up the navigation drawer toggle
@@ -70,8 +93,13 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         boolean isDarkTheme = sharedPrefs.getBoolean(THEME_PREF_KEY, false);
         applyTheme(isDarkTheme);
 
-        DataManager dataManager = DataManager.getInstance();
+        userLogic = UserLogic.getInstance();
+        dataManager = DataManager.getInstance();
         dataManager.loadVideosFromJson(this);
+        dataManager.loadUsersFromJson(this);
+
+
+
 
         // Load the default fragment if no saved instance state exists
         if (savedInstanceState == null) {
@@ -83,31 +111,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
-<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/ui/MainPage.java
-                if (itemId == R.id.nav_home) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-                } else if (itemId == R.id.nav_settings) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
-                } else if (itemId == R.id.nav_share) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ShareFragment()).commit();
-                } else if (itemId == R.id.nav_about) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
-                } else if (itemId == R.id.nav_login) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
-                } else if (itemId == R.id.nav_signup) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).commit();
-                }else if (itemId == R.id.nav_logout) {
-                    LoggedInUser.LogOut();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
-
-                } else if (itemId == R.id.theme_setter) {
-                    // Toggle theme preference (see step 3)
-                    boolean newThemeIsDark = toggleThemePreference();
-                    applyTheme(newThemeIsDark);
-                }
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-=======
             // Switch between fragments based on selected item
             if (itemId == R.id.nav_home) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
@@ -120,24 +123,27 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             } else if (itemId == R.id.nav_login) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
             } else if (itemId == R.id.nav_logout) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VideoPlayerFragment()).commit();
+                LoggedInUser.LogOut();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
             } else if (itemId == R.id.theme_setter) {
                 // Toggle theme preference
                 boolean newThemeIsDark = toggleThemePreference();
                 applyTheme(newThemeIsDark);
->>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/MainPage.java
             }
             drawerLayout.closeDrawer(GravityCompat.START); // Close the drawer after selection
             return true;
         });
 
-        // Adjust padding for edge-to-edge display
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
 
     }
 

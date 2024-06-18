@@ -1,10 +1,7 @@
-package com.example.crispycrumbs;
-
-import android.widget.Toast;
+package com.example.crispycrumbs.model;
 
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.HomeFragment;
 import com.example.crispycrumbs.ui.MainPage;
 
 import java.text.ParseException;
@@ -12,7 +9,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class UserLogic {
-    UserList userList = UserList.getInstance();
+    private static UserLogic instance;
+
+    public static synchronized UserLogic getInstance() {
+        if (instance == null) {
+            instance = new UserLogic();
+        }
+        return instance;
+    }
 
     public static boolean isPasswordValid(String password) {
         if (password.length() < 8) {
@@ -84,6 +88,8 @@ public class UserLogic {
         //if there are no errors
         return null;
     }
+
+
     public static UserItem ValidateLogin(String username, String password) {
         if (username == null || username.isEmpty()) {
             return null;
@@ -92,12 +98,16 @@ public class UserLogic {
             return null;
         }
 
-        for (UserItem user : UserList.getInstance()) {
-            if (user.getUsername().equals(username) && user.checkPassword(password)) {
+        for (UserItem user : MainPage.getDataManager().getUserList()) {
+            if (user == null) {
+                continue;
+            }
+            if (user.getUserName().equals(username) && user.checkPassword(password)) {
                 return user;
             }
         }
         return null;
+
 
     }
 }

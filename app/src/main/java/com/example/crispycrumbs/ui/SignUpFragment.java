@@ -16,7 +16,7 @@
 //import android.widget.Toast;
 //
 //import com.example.crispycrumbs.R;
-//import com.example.crispycrumbs.UserLogic;
+//import com.example.crispycrumbs.model.UserLogic;
 //import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 //
 //import java.text.ParseException;
@@ -97,14 +97,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.crispycrumbs.LoggedInUser;
+import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SignUpFragment extends Fragment {
@@ -138,7 +137,9 @@ public class SignUpFragment extends Fragment {
             passwordEditText.setEnabled(false);
             String returnedError = UserLogic.ValidateSignUp(binding.etEmailAddress.getText().toString(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etConfirmPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etPhoneNumber.getText().toString(), binding.etDateOfBirth.toString());
             if (returnedError == null) {
-                UserItem newUser = new UserItem(binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, "default");
+                DataManager dataManager = DataManager.getInstance();
+                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, "default");
+                dataManager.addUser(newUser);
                 LoggedInUser.SetLoggedInUser(newUser);
                 loadingProgressBar.setVisibility(View.GONE);
                 Toast.makeText(view.getContext(), "Sign Up Successful, welcome " + newUser.getDisplayedName(), Toast.LENGTH_SHORT).show();

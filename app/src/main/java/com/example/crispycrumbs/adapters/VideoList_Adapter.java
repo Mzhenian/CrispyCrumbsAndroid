@@ -12,12 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/adapters/VideoList_Adapter.java
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
-=======
->>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/VideoList_Adapter.java
 import java.util.ArrayList;
 
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {

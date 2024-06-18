@@ -1,4 +1,4 @@
-package com.example.crispycrumbs;
+package com.example.crispycrumbs.model;
 
 import android.content.Context;
 import android.view.View;
@@ -12,8 +12,8 @@ public class CustomMediaController extends MediaController {
         super(context);
     }
 
-    @Override
-    public void setAnchorView(View view) {
+//    @Override
+    public void setAnchorView(View view, int bottomMargin) {
         super.setAnchorView(view);
 
         // Customize the position and size of the MediaController
@@ -22,7 +22,7 @@ public class CustomMediaController extends MediaController {
                 ViewGroup.LayoutParams.WRAP_CONTENT
         );
         // Set margins (left, top, right, bottom) to adjust the position
-        params.setMargins(0, 0, 0, 500); // Adjust bottom margin as needed
+        params.setMargins(0, 0, 0, bottomMargin);// - getHeight()); //todo pin bottom margin to video bottom
         this.setLayoutParams(params);
     }
 }

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.CrispyCrumbs"
         tools:targetApi="31">
 
-        <activity android:name=".VideoPlayer"
+        <activity android:name=".ui.VideoPlayerFragment"
             android:exported="true">
 
             <intent-filter tools:ignore="AppLinkUrlError">
@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name=".MainPage"
+            android:name=".ui.MainPage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

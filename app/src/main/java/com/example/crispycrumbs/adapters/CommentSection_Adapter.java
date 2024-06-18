@@ -1,9 +1,5 @@
-<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/adapters/CommentSection_Adapter.java
 package com.example.crispycrumbs.adapters;
-=======
-package com.example.crispycrumbs;
 
->>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/CommentSection_Adapter.java
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

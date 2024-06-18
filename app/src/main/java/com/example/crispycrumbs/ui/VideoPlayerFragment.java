@@ -1,4 +1,4 @@
-package com.example.crispycrumbs;
+package com.example.crispycrumbs.ui;
 
 import android.app.AlertDialog;
 import android.net.Uri;
@@ -17,6 +17,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.example.crispycrumbs.data.CommentItem;
+import com.example.crispycrumbs.adapters.CommentSection_Adapter;
+import com.example.crispycrumbs.model.CustomMediaController;
+import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.R;
 
 import java.util.ArrayList;
 
@@ -105,14 +111,22 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             descriptionTextView.setText(videoDescription);
 
             // Load and play the video using the videoFile
+
+//            String videoPath = "file:///android_asset/" + videoFile;
             int videoResId = getResources().getIdentifier(videoFile, "raw", getContext().getPackageName());
             String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
+
             videoView.setVideoURI(Uri.parse(videoPath));
 
-            // Initialize MediaController
-            mediaController = new CustomMediaController(getContext());
-            mediaController.setAnchorView(videoView);
-            videoView.setMediaController(mediaController);
+//            //todo testme, if the controller is from the bottom video edge downwords, subtract the height of the controller too
+//            //get the controller position
+//            int controllerBottom = view.getHeight() - view.findViewById(R.id.video_view).getHeight();
+//
+//
+//            // Initialize MediaController
+//            mediaController = new CustomMediaController(getContext());
+//            mediaController.setAnchorView(videoView, controllerBottom);
+//            videoView.setMediaController(mediaController);
 
             videoView.start();
 

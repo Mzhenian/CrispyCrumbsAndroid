@@ -1,10 +1,6 @@
 package com.example.crispycrumbs.ui;
 
 import android.os.Bundle;
-<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/ui/HomeFragment.java
-
-=======
->>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/HomeFragment.java
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,18 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-<<<<<<< HEAD:app/src/main/java/com/example/crispycrumbs/ui/HomeFragment.java
-
+import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.Lists.VideoList;
 import com.example.crispycrumbs.adapters.VideoList_Adapter;
-import com.google.gson.Gson;
 
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-=======
->>>>>>> refs/remotes/origin/main:app/src/main/java/com/example/crispycrumbs/HomeFragment.java
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {

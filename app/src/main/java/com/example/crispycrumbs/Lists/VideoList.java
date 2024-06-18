@@ -2,10 +2,10 @@ package com.example.crispycrumbs.Lists;
 
 import com.example.crispycrumbs.data.PreviewVideoCard;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
-public class VideoList {
+public class VideoList  {
     private List<PreviewVideoCard> videos;
 
     public List<PreviewVideoCard> getVideos() {

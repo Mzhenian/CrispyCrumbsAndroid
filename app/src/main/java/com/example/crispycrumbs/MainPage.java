@@ -3,6 +3,7 @@ package com.example.crispycrumbs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
@@ -43,6 +45,11 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
         Toolbar toolbar = findViewById(R.id.toolbar); // Find the toolbar
         setSupportActionBar(toolbar); // Set the toolbar as the app bar
+
+        // Disable the default title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(""); // Set an empty string
+        }
 
         drawerLayout = findViewById(R.id.drawer_layout); // Find the drawer layout
         NavigationView navigationView = findViewById(R.id.nav_Bar); // Find the navigation view
@@ -79,8 +86,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
             } else if (itemId == R.id.nav_profile) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
-            } else if (itemId == R.id.nav_about) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
             } else if (itemId == R.id.nav_login) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
             } else if (itemId == R.id.nav_logout) {
@@ -94,8 +99,15 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             return true;
         });
 
-        // Adjust padding for edge-to-edge display
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
+        // Adjust padding for edge-to-edge display for the drawer layout
+        ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        // Adjust padding for edge-to-edge display for the navigation view
+        ViewCompat.setOnApplyWindowInsetsListener(navigationView, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -124,8 +136,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
         } else if (itemId == R.id.nav_profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
-        } else if (itemId == R.id.nav_about) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
         }
         drawerLayout.closeDrawer(GravityCompat.START); // Close the drawer after selection
         return true;

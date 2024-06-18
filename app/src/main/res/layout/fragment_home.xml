@@ -4,22 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="HomeFragment"
-    style="@style/SCREEN">
+    tools:context=".HomeFragment"
+    style="@style/SCREEN"
+    >
 
-    <androidx.appcompat.widget.SearchView
+    <SearchView
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:id="@+id/search_bar"
         android:background="@color/background_gray"
-        android:hint="@string/search_hint"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/search_hint"
         style="@style/SEARCHBAR"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/video_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/SCREEN"
-        />
-
+        style="@style/SCREEN"/>
 </LinearLayout>

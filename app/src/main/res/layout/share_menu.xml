@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/share_menu_background">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share Video"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/crispy_orange"
+        android:layout_gravity="center"
+        android:fontFamily="sans-serif"
+        android:textStyle="bold"
+        />
+
+    <Button
+        android:id="@+id/share_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share via Gmail"
+        android:drawableLeft="@drawable/gmail_icon"
+        android:textAppearance="@style/TextAppearance.BoldText"
+        android:textColor="@color/black_div"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        />
+
+    <Button
+        android:id="@+id/share_facebook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share on Facebook"
+        android:drawableLeft="@drawable/facebook_icon"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.BoldText"
+        android:textColor="@color/black_div"/>
+
+    <Button
+        android:id="@+id/share_twitter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share on X"
+        android:drawableLeft="@drawable/x_icon"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.BoldText"
+        android:textColor="@color/black_div"/>
+
+    <Button
+        android:id="@+id/share_whatsapp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share on WhatsApp"
+        android:drawableLeft="@drawable/whatsapp_icon"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.BoldText"
+        android:textColor="@color/black_div"/>
+</LinearLayout>

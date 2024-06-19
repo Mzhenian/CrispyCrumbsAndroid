@@ -5,9 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import static androidx.databinding.DataBindingUtil.setContentView;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.crispycrumbs.data.LoggedInUser;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -28,6 +35,8 @@ import com.example.crispycrumbs.LoggedInUser;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 
 import java.io.File;
@@ -74,36 +83,17 @@ public class SignUpFragment extends Fragment {
             signUpButton.setEnabled(false);
             usernameEditText.setEnabled(false);
             passwordEditText.setEnabled(false);
-
-            String returnedError = UserLogic.ValidateSignUp(
-                    binding.etEmailAddress.getText().toString(),
-                    binding.etUsername.getText().toString(),
-                    binding.etPassword.getText().toString(),
-                    binding.etConfirmPassword.getText().toString(),
-                    binding.etDisplayName.getText().toString(),
-                    binding.etPhoneNumber.getText().toString(),
-                    binding.etDateOfBirth.toString()
-            );
-
+            String returnedError = UserLogic.ValidateSignUp(binding.etEmailAddress.getText().toString(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etConfirmPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etPhoneNumber.getText().toString(), binding.etDateOfBirth.toString());
             if (returnedError == null) {
-                UserItem newUser = new UserItem(
-                        binding.etUsername.getText().toString(),
-                        binding.etPassword.getText().toString(),
-                        binding.etDisplayName.getText().toString(),
-                        binding.etEmailAddress.getText().toString(),
-                        binding.etPhoneNumber.getText().toString(),
-                        new Date(),
-                        null,
-                        currentPhotoPath != null ? currentPhotoPath : "default"
-                );
+                DataManager dataManager = DataManager.getInstance();
+                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, null);
+                dataManager.addUser(newUser);
                 LoggedInUser.SetLoggedInUser(newUser);
                 loadingProgressBar.setVisibility(View.GONE);
                 Toast.makeText(view.getContext(), "Sign Up Successful, welcome " + newUser.getDisplayedName(), Toast.LENGTH_SHORT).show();
 
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                HomeFragment homeFragment = new HomeFragment();
-                transaction.replace(R.id.container, homeFragment);
-                transaction.commit();
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+
             } else {
                 TextView errorDisplay = binding.errorDisplay;
                 errorDisplay.setText(returnedError);
@@ -112,6 +102,7 @@ public class SignUpFragment extends Fragment {
                 signUpButton.setEnabled(true);
                 usernameEditText.setEnabled(true);
                 passwordEditText.setEnabled(true);
+
             }
         });
 
@@ -150,7 +141,7 @@ public class SignUpFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             binding.btnAddProfileImg.setImageURI(photoURI);
         }
-    }
+}
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

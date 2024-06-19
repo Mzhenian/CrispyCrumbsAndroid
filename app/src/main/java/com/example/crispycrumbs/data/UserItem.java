@@ -1,5 +1,11 @@
 package com.example.crispycrumbs.data;
 
+import android.graphics.drawable.Drawable;
+
+import android.media.Image;
+
+import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.ui.MainPage;
 import com.example.crispycrumbs.Lists.UserList;
 
 import java.util.Date;
@@ -7,55 +13,50 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UserItem {
-    private final Integer userId;
-    private String username;
+    private String userId;
+    private String userName;
     private String email;
     private String password;
     private String displayedName;
     private String phoneNumber;
     private Date dateOfBirth;
     private String country;
-    private String profilePicPath; // path to the profile picture
-    private final Set<UserItem> followers = new HashSet<>();
-    private final Set<UserItem> following = new HashSet<>();
-    private final Set<Integer> UploadedVideoIds = new HashSet<>();
-    private final Set<Integer> likedVideoIds = new HashSet<>();
-    private final Set<Integer> dislikedVideoIds = new HashSet<>();
+    private String profilePicURI; // path to the profile picture
+    private Set<String> videosIds = new HashSet<>();
+    private final Set<String> followerIds = new HashSet<>();
+    private final Set<String> followingIds = new HashSet<>();
+    private final Set<String> likedVideoIds = new HashSet<>();
+    private final Set<String> dislikedVideoIds = new HashSet<>();
 
-
-    public UserItem(String username, String password, String displayedName) {
-        this.userId = UserList.getInstance().takeNextUserId();
-        this.username = username;
-        this.password = password;
-        this.displayedName = displayedName;
-        UserList.getInstance().add(this);
-    }
-    public UserItem(String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicPath) {
-        this.userId = UserList.getInstance().takeNextUserId();
-        this.username = username;
+    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicURI) {
+        this.userName = userName;
         this.password = password;
         this.displayedName = displayedName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.country = country;
-        this.profilePicPath = profilePicPath;
-        UserList.getInstance().add(this);
+        this.profilePicURI = profilePicURI;
+
+        String lastUserId = MainPage.getDataManager().lastUserId();
+        this.userId = UserLogic.nextId(lastUserId);
+    }
+    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
+        this(userName, password, displayedName, email, phoneNumber, dateOfBirth, country, MainPage.getInstance().getResources().getResourceEntryName(profilePicResId));
     }
 
-    public Integer getUserId() {
+    public Image getProfilePicture;
+
+    public String getUserId() {
         return userId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getUserName() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getEmail() {
@@ -64,10 +65,6 @@ public class UserItem {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Boolean checkPassword(String password) {
-        return this.password.equals(password);
     }
 
     public void setPassword(String password) {
@@ -106,65 +103,66 @@ public class UserItem {
         this.country = country;
     }
 
-    public String getProfilePicPath() {
-        return profilePicPath;
+    public String getProfilePicURI() {
+        return profilePicURI;
     }
 
-    public void setProfilePicPath(String profilePicPath) {
-        this.profilePicPath = profilePicPath;
+    public void setProfilePicURI(String profilePicURI) {
+        this.profilePicURI = profilePicURI;
     }
 
-    public Boolean isFollowed(UserItem user) {
-        return followers.contains(user);
+    public Boolean getIsFollowed(UserItem user) {
+        return followerIds.contains(user.getUserId());
     }
 
-    public Boolean isFollowing(UserItem user) {
-        return following.contains(user);
+    public Boolean getIsFollowing(UserItem user) {
+        return followingIds.contains(user.getUserId());
     }
-    public void follow(UserItem user) {
-        following.add(user);
-        user.followers.add(this);
-    }
-
-    public void unfollow(UserItem user) {
-        following.remove(user);
-        user.followers.remove(this);
+    //adds a new
+    public void addFallow(UserItem user) {
+        followingIds.add(user.getUserId());
+        user.followerIds.add(this.getUserId());
     }
 
-    public void uploadVideo(Integer videoId) {
-        UploadedVideoIds.add(videoId);
+    public void delFollow(UserItem user) {
+        followingIds.remove(user.getUserId());
+        user.followerIds.remove(this.getUserId());
     }
 
-    public void likeVideo(Integer videoId) {
+    public void setUploadedVideo(String videoId) {
+        videosIds.add(videoId);
+    }
+
+    public void SetLikeVideo(String videoId) {
         likedVideoIds.add(videoId);
     }
 
-    public void dislikeVideo(Integer videoId) {
+    public void setDislikeVideo(String videoId) {
         dislikedVideoIds.add(videoId);
     }
 
-    public void removeLike(Integer videoId) {
+    public void delLike(String videoId) {
         likedVideoIds.remove(videoId);
     }
 
-    public void removeDislike(Integer videoId) {
+    public void delDislike(String videoId) {
         dislikedVideoIds.remove(videoId);
     }
 
-    public void removeUploadedVideo(Integer videoId) {
-        UploadedVideoIds.remove(videoId);
+    public void delUploadedVideo(String videoId) {
+        videosIds.remove(videoId);
     }
 
     public Integer getfollowersCount() {
-        return followers.size();
+        return followerIds.size();
     }
 
     public Integer getFollowingCount() {
-        return following.size();
+        return followingIds.size();
     }
 
     public Integer getUploadedVideosCount() {
-        return UploadedVideoIds.size();
+        return videosIds.size();
     }
     @Override
     public boolean equals(Object o) {
@@ -172,5 +170,15 @@ public class UserItem {
         if (o == null || getClass() != o.getClass()) return false;
         UserItem userItem = (UserItem) o;
         return userId.equals(userItem.userId);
+    }
+    public Boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
+
+    public String[] getFollowerIds() {
+        return followerIds.toArray(new String[0]);
+    }
+    public String[] getFollowingIds() {
+        return followingIds.toArray(new String[0]);
     }
 }

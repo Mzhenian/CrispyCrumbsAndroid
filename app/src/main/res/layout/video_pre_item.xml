@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@id/video_thumbnail_container"
         android:layout_margin="5dp">
 
-        <View
+        <ImageView
             android:id="@+id/profile_picture"
             android:layout_width="29dp"
             android:layout_height="29dp"

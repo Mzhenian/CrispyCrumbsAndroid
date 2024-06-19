@@ -5,8 +5,8 @@
     android:id="@+id/video_player"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoPlayerFragment"
-    style="@style/SCREEN"
+    tools:context=".ui.VideoPlayerFragment"
+    style = "@style/SCREEN"
     android:fitsSystemWindows="true">
 
     <!-- Top bar and video card container -->
@@ -23,7 +23,6 @@
             android:orientation="vertical"
             android:id="@+id/video_card"
             android:background="@drawable/round_corners_gray">
-
             <VideoView
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
@@ -175,5 +174,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

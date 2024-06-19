@@ -27,6 +27,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
             <ImageView
                 android:id="@+id/LogoSignUp"
                 android:layout_width="match_parent"
@@ -35,15 +36,18 @@
 
             <EditText
                 android:id="@+id/etEmailAddress"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/et_mail_address"
                 android:inputType="textEmailAddress"
+
                 android:paddingVertical="@dimen/activity_vertical_margin" />
 
             <EditText
                 android:id="@+id/etUsername"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#1AFFFFFF"
@@ -54,6 +58,7 @@
 
             <EditText
                 android:id="@+id/etPassword"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -63,6 +68,7 @@
 
             <EditText
                 android:id="@+id/et_confirm_password"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#1AFFFFFF"
@@ -73,6 +79,7 @@
 
             <EditText
                 android:id="@+id/etDisplayName"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -83,6 +90,7 @@
 
             <EditText
                 android:id="@+id/etPhoneNumber"
+                android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#1AFFFFFF"

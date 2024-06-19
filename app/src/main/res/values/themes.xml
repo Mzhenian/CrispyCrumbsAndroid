@@ -52,5 +52,6 @@
 
     <style name="CONTAINER">
         <item name="android:background"> @color/off_white</item>
+        <item name="android:textColor">@color/black_light</item>
     </style>
 </resources>

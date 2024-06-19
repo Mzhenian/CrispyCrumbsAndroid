@@ -143,7 +143,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                     unlikeButton.setColorFilter(getResources().getColor(R.color.black_div));
                 }
             } else {
-                Toast.makeText(getContext(), "Please log in to comment.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Please log in to add and see comments.", Toast.LENGTH_LONG).show();
             }
 
             // Update user info for the video

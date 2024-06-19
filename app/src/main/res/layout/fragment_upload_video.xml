@@ -5,7 +5,8 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.UploadVideoFragment">
+    tools:context=".ui.UploadVideoFragment"
+    style="@style/CONTAINER">
 
 
     <LinearLayout
@@ -18,7 +19,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/CONTAINER">
 
 
         <TextView
@@ -73,7 +75,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/layer_1"
                 tools:layout_conversion_absoluteHeight="147dp"
-                tools:layout_conversion_absoluteWidth="210dp" />
+                tools:layout_conversion_absoluteWidth="210dp"
+                />
 
             <Button
                 android:id="@+id/btnChooseVideo"
@@ -86,7 +89,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/uploadImageHolder"
                 tools:layout_conversion_absoluteHeight="0dp"
-                tools:layout_conversion_absoluteWidth="392dp" />
+                tools:layout_conversion_absoluteWidth="392dp"
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -181,26 +185,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            style="@style/CONTAINER">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnUpload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/diff_round_corners_orange"
                 android:text="Button"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
-            <Button
+                android:textStyle="bold"
+                style="@style/BUTTON"/>
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCancel"
                 android:layout_margin="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/small_button_style_light"
-                android:text="Button" />
+                android:text="Button"
+                style="@style/BUTTON"/>
         </LinearLayout>
 
 

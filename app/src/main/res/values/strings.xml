@@ -30,7 +30,7 @@
     <string name="et_mail_address">email address</string>
     <string name="et_name">* displayed name</string>
     <string name="et_password">* password</string>
-    <string name="btn_sigh_up">Sigh up!</string>
+    <string name="btn_sign_up">Sign up!</string>
     <string name="et_username">* username</string>
     <string name="et_last_mame">last mame</string>
     <string name="et_phone_number">phone number</string>

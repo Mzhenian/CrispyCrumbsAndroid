@@ -76,7 +76,7 @@ public class SignUpFragment extends Fragment {
             String returnedError = UserLogic.ValidateSignUp(binding.etEmailAddress.getText().toString(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etConfirmPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etPhoneNumber.getText().toString(), binding.etDateOfBirth.toString());
             if (returnedError == null) {
                 DataManager dataManager = DataManager.getInstance();
-                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, null);
+                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, currentPhotoPath);
                 dataManager.addUser(newUser);
                 LoggedInUser.SetLoggedInUser(newUser);
                 loadingProgressBar.setVisibility(View.GONE);
@@ -131,7 +131,7 @@ public class SignUpFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             binding.btnAddProfileImg.setImageURI(photoURI);
         }
-}
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

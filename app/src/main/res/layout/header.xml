@@ -10,7 +10,7 @@
     android:gravity="bottom"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     style="@style/SCREEN"
-    tools:context=".VideoPlayerFragment">
+   >
 
     <!-- Profile Picture -->
     <com.google.android.material.imageview.ShapeableImageView

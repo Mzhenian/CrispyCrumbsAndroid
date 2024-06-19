@@ -10,9 +10,12 @@ import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,6 +49,7 @@ public class DataManager {
     public ArrayList<UserItem> getUserList() {
         return UserList;
     }
+
     public UserItem getUserById(String userId) {
         for (UserItem user : UserList) {
             if (user.getUserId().equals(userId)) {
@@ -78,8 +82,6 @@ public class DataManager {
         }
     }
 
-
-
     public void loadVideosFromJson(Context context) {
         if (!videoList.isEmpty()) {
             return; // Prevent reloading if already loaded
@@ -97,8 +99,6 @@ public class DataManager {
             if (videoListWrapper != null && videoListWrapper.getVideos() != null) {
                 for (PreviewVideoCard video : videoListWrapper.getVideos()) {
                     int thumbnailResId = context.getResources().getIdentifier(video.getThumbnail(), "drawable", context.getPackageName());
-//                    int thumbnailResId = context.getResources().getIdentifier(
-//                            video.getThumbnail(), "drawable", context.getPackageName());
                     video.setThumbnailResId(thumbnailResId);
                     videoList.add(video);
 
@@ -109,27 +109,6 @@ public class DataManager {
             e.printStackTrace();
         }
     }
-//    //sets each users followers and following from their ids
-//    private void setFollowsFromIds(ArrayList<UserItem> UserList) {
-//        for (UserItem user : UserList) {
-//            for (Integer followerId : user.getFollowerIds()) {
-//                for (UserItem follower : UserList) {
-//                    if (follower.getUserId().equals(followerId)) {
-//                        user.followers.add(follower);
-//                    }
-//                }
-//            }
-//            for (Integer followingId : user.getFollowingIds()) {
-//                for (UserItem following : UserList) {
-//                    if (following.getUserId().equals(followingId)) {
-//                        user.following.add(following);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
 
     public void loadUsersFromJson(Context context) {
         try {
@@ -141,15 +120,10 @@ public class DataManager {
             String json = new String(buffer, StandardCharsets.UTF_8);
 
             Gson gson = new Gson();
-            UserList userListWrapper = gson.fromJson(json, UserList.class);
-            if (userListWrapper != null && userListWrapper.getUsers() != null) {
-                for (UserItem user : userListWrapper.getUsers()) {
-                    //todo
-//                    int profilePicResId = context.getResources().getIdentifier(user.getProfilePicResId(), "drawable", context.getPackageName());
-//                    user.setProfilePicURI(profilePicResId);
-
-                    this.UserList.add(user);
-                }
+            Type userListType = new TypeToken<ArrayList<UserItem>>(){}.getType();
+            ArrayList<UserItem> users = gson.fromJson(json, userListType);
+            if (users != null) {
+                this.UserList.addAll(users);
             }
         } catch (JsonSyntaxException e) {
             Log.e("DataManager", "JsonSyntaxException: Failed to parse JSON", e);
@@ -158,26 +132,24 @@ public class DataManager {
         }
     }
 
-
-    //private int maxUserId() {
-    //        StringBuilder lastId = new StringBuilder("0");
-    //        for (UserItem user : UserList) {
-    //            if ((user.getUserId().compareTo(String.valueOf(lastId)) > 0) ||  {
-    //                lastId = user.getUserId();
-    //            }
-    //        }
-    //        return lastId;
-    //    }
-
+    public void saveUsersToJson(Context context) {
+        Gson gson = new Gson();
+        String json = gson.toJson(UserList);
+        try {
+            FileOutputStream fos = context.openFileOutput("usersDB.json", Context.MODE_PRIVATE);
+            fos.write(json.getBytes(StandardCharsets.UTF_8));
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicPath) {
-        // Create a new UserItem instance with the provided details
         UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicPath);
         return newUser;
     }
 
     public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
-        // Create a new UserItem instance with the provided details
         UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
         return newUser;
     }
@@ -195,6 +167,4 @@ public class DataManager {
         }
         return last;
     }
-
-private String TAG;
 }

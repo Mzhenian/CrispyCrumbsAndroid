@@ -181,4 +181,30 @@ public class UserItem {
     public String[] getFollowingIds() {
         return followingIds.toArray(new String[0]);
     }
+
+    public void likeVideo(String videoId) {
+        likedVideoIds.add(videoId);
+        dislikedVideoIds.remove(videoId);
+    }
+
+    public void dislikeVideo(String videoId) {
+        dislikedVideoIds.add(videoId);
+        likedVideoIds.remove(videoId);
+    }
+
+    public void removeLike(String videoId) {
+        likedVideoIds.remove(videoId);
+    }
+
+    public void removeDislike(String videoId) {
+        dislikedVideoIds.remove(videoId);
+    }
+
+    public boolean hasLiked(String videoId) {
+        return likedVideoIds.contains(videoId);
+    }
+
+    public boolean hasDisliked(String videoId) {
+        return dislikedVideoIds.contains(videoId);
+    }
 }

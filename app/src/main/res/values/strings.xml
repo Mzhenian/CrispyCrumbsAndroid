@@ -73,4 +73,8 @@
     <string name="app_version">App Version</string>
     <string name="_1_0_0">1.0.0</string>
     <string name="display_settings">Display Settings</string>
+    <string name="profile">Profile</string>
+    <string name="upload_video">Upload Video</string>
+    <string name="guest">Guest</string>
+    <string name="default_email">daefultemail@mail.com</string>
 </resources>

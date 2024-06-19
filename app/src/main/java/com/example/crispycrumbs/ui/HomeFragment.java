@@ -65,6 +65,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Call updateNavigationMenu after user logs in
+        MainPage mainPage = (MainPage) getActivity();
+        if (mainPage != null) {
+            mainPage.updateNavigationMenu();
+            mainPage.updateNavHeader();
+        }
+
         return view; // Return the created view
     }
 

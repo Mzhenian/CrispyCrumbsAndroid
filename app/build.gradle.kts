@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
+
+    id("com.android.application") version "8.4.1"
 }
 
 android {

@@ -64,30 +64,36 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         shareButton.setOnClickListener(v -> showShareMenu());
 
         likeButton.setOnClickListener(v -> {
-            if (!isLiked) {
-                likeButton.setColorFilter(getResources().getColor(R.color.black_div));
-                if (isUnliked) {
+            UserItem currentUser = LoggedInUser.getUser();
+            if (currentUser != null) {
+                if (!currentUser.hasLiked(videoId)) {
+                    likeButton.setColorFilter(getResources().getColor(R.color.black_div));
                     unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
+                    currentUser.likeVideo(videoId);
+                    isLiked = true;
                     isUnliked = false;
+                } else {
+                    likeButton.setColorFilter(getResources().getColor(R.color.off_white));
+                    currentUser.removeLike(videoId);
+                    isLiked = false;
                 }
-                isLiked = true;
-            } else {
-                likeButton.setColorFilter(getResources().getColor(R.color.off_white));
-                isLiked = false;
             }
         });
 
         unlikeButton.setOnClickListener(v -> {
-            if (!isUnliked) {
-                unlikeButton.setColorFilter(getResources().getColor(R.color.black_div));
-                if (isLiked) {
+            UserItem currentUser = LoggedInUser.getUser();
+            if (currentUser != null) {
+                if (!currentUser.hasDisliked(videoId)) {
+                    unlikeButton.setColorFilter(getResources().getColor(R.color.black_div));
                     likeButton.setColorFilter(getResources().getColor(R.color.off_white));
+                    currentUser.dislikeVideo(videoId);
                     isLiked = false;
+                    isUnliked = true;
+                } else {
+                    unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
+                    currentUser.removeDislike(videoId);
+                    isUnliked = false;
                 }
-                isUnliked = true;
-            } else {
-                unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
-                isUnliked = false;
             }
         });
 
@@ -130,6 +136,12 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 adapter = new CommentSection_Adapter(getContext(), commentItemArrayList, this, currentUserId);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                if (currentUser.hasLiked(videoId)) {
+                    likeButton.setColorFilter(getResources().getColor(R.color.black_div));
+                } else if (currentUser.hasDisliked(videoId)) {
+                    unlikeButton.setColorFilter(getResources().getColor(R.color.black_div));
+                }
             } else {
                 Toast.makeText(getContext(), "Please log in to comment.", Toast.LENGTH_SHORT).show();
             }

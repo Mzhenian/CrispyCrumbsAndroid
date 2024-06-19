@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:text="Your Name"
+        android:text="guest"
         android:textColor="@color/ofek_black"
         android:textSize="24sp"
         android:textStyle="bold"/>

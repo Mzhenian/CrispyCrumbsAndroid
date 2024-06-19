@@ -28,7 +28,7 @@
             android:icon="@drawable/baseline_thumb_up_24"
             android:title="@string/login"/>
 
-        <item android:id="@+id/nav_signin"
+        <item android:id="@+id/nav_signup"
             android:icon="@drawable/baseline_thumb_up_24"
             android:title="@string/sign_up"/>
 

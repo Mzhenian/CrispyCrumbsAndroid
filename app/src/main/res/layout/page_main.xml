@@ -8,11 +8,12 @@
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
-    tools:context=".MainPage">
+    tools:context=".ui.MainPage">
 <LinearLayout
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   android:orientation="vertical">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -40,6 +41,8 @@
 
 
     <com.google.android.material.navigation.NavigationView
+        android:fitsSystemWindows="true"
+        android:paddingTop="56dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:headerLayout="@layout/header"

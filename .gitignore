@@ -1,3 +1,14 @@
+#Exclude from production
+WIP*.*
+EXTRA*.*
+PILOT*.*
+PROTO*.*
+template*.*
+
+#IDE
+.idea/
+.vscode/
+
 *.iml
 .gradle
 /local.properties
@@ -13,4 +24,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-.gitignore
+/app/build

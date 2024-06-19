@@ -1,13 +1,17 @@
 package com.example.crispycrumbs.ui;
 
 import android.os.Bundle;
-import androidx.appcompat.widget.SearchView;
+import android.util.Log;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.SearchView;
+
+
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
@@ -41,6 +45,9 @@ public class HomeFragment extends Fragment {
         // Find the SearchView in the layout
         SearchView searchBar = view.findViewById(R.id.search_bar);
 
+        // Customize the search icon in the SearchView
+        customizeSearchViewIcon(searchBar);
+
         // Set a listener for query text changes in the SearchView
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -59,5 +66,20 @@ public class HomeFragment extends Fragment {
         });
 
         return view; // Return the created view
+    }
+
+    private void customizeSearchViewIcon(SearchView searchView) {
+        try {
+            // Find the ImageView for the search icon
+            int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
+            ImageView searchIcon = searchView.findViewById(searchIconId);
+            if (searchIcon != null) {
+                searchIcon.setImageResource(R.drawable.search_icon); // Replace with your custom icon
+            } else {
+                Log.e("HomeFragment", "Search icon ImageView not found");
+            }
+        } catch (Exception e) {
+            Log.e("HomeFragment", "Error customizing search icon", e);
+        }
     }
 }

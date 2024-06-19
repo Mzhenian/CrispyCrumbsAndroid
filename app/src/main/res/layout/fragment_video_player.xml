@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.VideoPlayerFragment"
-    style = "@style/SCREEN">
+    style = "@style/SCREEN"
+    android:fitsSystemWindows="true">
 
     <!-- Top bar and video card container -->
     <LinearLayout
@@ -16,22 +17,16 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-        <include layout="@layout/top_bar"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             android:id="@+id/video_card"
             android:background="@drawable/round_corners_gray">
             <VideoView
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
-                android:id="@+id/video_view">
-            </VideoView>
+                android:id="@+id/video_view"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -47,9 +42,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/video_stats"
-                android:orientation="horizontal"
+                android:orientation="horizontal">
 
-                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -95,37 +89,52 @@
         app:layout_constraintTop_toBottomOf="@id/page_top"
         android:background="@drawable/round_corners_gray">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/like_button"
+        <LinearLayout
+            android:id="@+id/like_unlike_buttons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:padding="8dp"
-            android:text="@string/like"
-            app:layout_constraintEnd_toStartOf="@id/share_button"
+            android:orientation="horizontal"
+            android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3"
-            style="@style/BUTTON"
-            android:theme="@style/BUTTON"/>
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageButton
+                android:id="@+id/unlike_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="15dp"
+                android:src="@drawable/baseline_thumb_down_24"
+                style="@style/DISLIKE_BUTTON"
+                app:tint="@color/off_white" />
+
+            <ImageButton
+                android:id="@+id/like_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="15dp"
+                android:src="@drawable/baseline_thumb_up_24"
+                style="@style/LIKE_BUTTON"
+                app:tint="@color/off_white" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/share_button"
             style="@style/BUTTON"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:padding="8dp"
             android:text="@string/share"
+            android:textColor="@color/off_white"
             app:layout_constraintEnd_toStartOf="@id/comment_button"
-            app:layout_constraintStart_toEndOf="@id/like_button"
+            app:layout_constraintStart_toEndOf="@id/like_unlike_buttons"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3"
-            />
-
-
+            app:layout_constraintWidth_percent="0.3" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/comment_button"
@@ -135,33 +144,35 @@
             android:layout_marginStart="16dp"
             android:padding="8dp"
             android:text="@string/comment"
+            android:textColor="@color/off_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/share_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.3" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!-- Comments section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/button_bar"
-        android:background="@drawable/round_corners_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/SCREEN"
         android:layout_margin="5dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/comment_section"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
+            android:layout_height="0dp"
             android:layout_marginStart="1dp"
             android:layout_marginTop="1dp"
             android:layout_marginEnd="1dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="1dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

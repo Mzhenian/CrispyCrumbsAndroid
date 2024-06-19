@@ -90,7 +90,7 @@
             android:minHeight="48dp"
             android:paddingStart="10dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

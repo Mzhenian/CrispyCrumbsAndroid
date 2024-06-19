@@ -1,93 +1,12 @@
-//package com.example.crispycrumbs.ui;
-//
-//import static androidx.databinding.DataBindingUtil.setContentView;
-//
-//import android.os.Bundle;
-//
-//import androidx.fragment.app.Fragment;
-//import androidx.fragment.app.FragmentTransaction;
-//
-//import android.view.LayoutInflater;
-//import android.view.View;
-//import android.view.ViewGroup;
-//import android.widget.Button;
-//import android.widget.EditText;
-//import android.widget.ProgressBar;
-//import android.widget.Toast;
-//
-//import com.example.crispycrumbs.R;
-//import com.example.crispycrumbs.model.UserLogic;
-//import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
-//
-//import java.text.ParseException;
-//import java.text.SimpleDateFormat;
-//import java.util.Date;
-//
-//public class SignUpFragment extends Fragment {
-//    private FragmentSignUpBinding binding;
-//    private static final int PICK_IMAGE = 1;
-//
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//
-//        binding =  FragmentSignUpBinding.inflate(inflater, container, false);
-//        View view = binding.getRoot();
-//
-//        final EditText usernameEditText = binding.etUsername;
-//        final EditText passwordEditText = binding.etPassword;
-//        final Button signUpButton = binding.btnSighUp;
-//        final ProgressBar loadingProgressBar = binding.signUpProgressBar;
-//
-//        binding.btnToSignIn.setOnClickListener(v -> {
-//            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-//            LoginFragment loginFragment = new LoginFragment();
-//            transaction.replace(R.id.container, loginFragment);
-//            transaction.commit();
-//        });
-//
-//
-//
-//
-//        binding.btnSighUp.setOnClickListener(v -> {
-//            loadingProgressBar.setVisibility(View.VISIBLE);
-//            signUpButton.setEnabled(false);
-//            usernameEditText.setEnabled(false);
-//            passwordEditText.setEnabled(false);
-//            UserLogic.ValidateSignUp(binding.etEmailAddress.getText().toString(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etConfirmPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etPhoneNumber.getText().toString(), binding.etDateOfBirth.toString()) {
-//                @Override
-//                public void onSuccess() {
-//                    loadingProgressBar.setVisibility(View.GONE);
-//                    signUpButton.setEnabled(true);
-//                    usernameEditText.setEnabled(true);
-//                    passwordEditText.setEnabled(true);
-//                    Toast.makeText(view.getContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                @Override
-//                public void onError(String error) {
-//                    loadingProgressBar.setVisibility(View.GONE);
-//                    signUpButton.setEnabled(true);
-//                    usernameEditText.setEnabled(true);
-//                    passwordEditText.setEnabled(true);
-//                    Toast.makeText(view.getContext(), error, Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        });
-//        return view;
-//    }
-//}
-
 package com.example.crispycrumbs.ui;
 
-import static androidx.databinding.DataBindingUtil.setContentView;
-
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,25 +16,35 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.model.UserLogic;
-import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.UserLogic;
+import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
+import com.example.crispycrumbs.model.DataManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class SignUpFragment extends Fragment {
     private FragmentSignUpBinding binding;
-    private static final int PICK_IMAGE = 1;
-
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_CAMERA_PERMISSION = 2;
+    private String currentPhotoPath;
+    private Uri photoURI;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        binding =  FragmentSignUpBinding.inflate(inflater, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentSignUpBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         final EditText usernameEditText = binding.etUsername;
@@ -124,7 +53,19 @@ public class SignUpFragment extends Fragment {
         final ProgressBar loadingProgressBar = binding.signUpProgressBar;
 
         binding.btnToSignIn.setOnClickListener(v -> {
-            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
+            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+            LoginFragment loginFragment = new LoginFragment();
+            transaction.replace(R.id.container, loginFragment);
+            transaction.commit();
+        });
+
+        binding.btnAddProfileImg.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+            } else {
+                dispatchTakePictureIntent();
+            }
         });
 
         binding.btnSighUp.setOnClickListener(v -> {
@@ -154,6 +95,53 @@ public class SignUpFragment extends Fragment {
 
             }
         });
+
         return view;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Handle error
+            }
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(getContext(), "com.example.crispycrumbs.fileprovider", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
+            binding.btnAddProfileImg.setImageURI(photoURI);
+        }
+}
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                dispatchTakePictureIntent();
+            } else {
+                // Permission denied
+            }
+        }
     }
 }

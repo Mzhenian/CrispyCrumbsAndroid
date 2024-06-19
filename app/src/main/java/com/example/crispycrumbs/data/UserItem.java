@@ -6,6 +6,7 @@ import android.media.Image;
 
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.ui.MainPage;
+import com.example.crispycrumbs.Lists.UserList;
 
 import java.util.Date;
 import java.util.HashSet;

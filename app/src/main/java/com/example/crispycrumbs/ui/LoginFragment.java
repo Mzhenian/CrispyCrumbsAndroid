@@ -17,26 +17,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.crispycrumbs.data.LoggedInUser;
+
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.model.UserLogic;
 
 public class LoginFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-
-        // Find the login button in the layout
         Button login_button = view.findViewById(R.id.login_button);
-
-        // Find the username and password input fields in the layout
         EditText user_name = view.findViewById(R.id.username_input);
         EditText password = view.findViewById(R.id.password_input);
 
-        // Add a TextWatcher to the password EditText to validate the password as the user types
+        // Add a TextWatcher to the password EditText
         password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -45,8 +41,8 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Check if the password meets the criteria while the user is typing
-                if (!isPasswordValid(s.toString())) {
+                // Check if the password meets the criteria
+                if (!UserLogic.isPasswordValid(s.toString())) {
                     password.setError("Password must be at least 8 characters long and contain a mix of letters and digits.");
                 }
             }
@@ -74,8 +70,8 @@ public class LoginFragment extends Fragment {
     }
 });
 
-
-
         return view;
     }
+
+
 }

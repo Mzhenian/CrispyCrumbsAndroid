@@ -28,8 +28,7 @@
     </style>
 
     <style name="BUTTON">
-        <item name="android:background">@drawable/small_button_style_dark</item>
-        <item name="android:textColor">@android:color/holo_orange_dark</item>
+        <item name="android:background">@drawable/diff_round_corners_orange</item>
         <item name="android:padding">8dp</item>
         <item name="android:textSize">14sp</item>
     </style>

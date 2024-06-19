@@ -97,13 +97,11 @@
                 android:ems="10"
                 android:hint="@string/et_phone_number"
                 android:inputType="phone"
-
                 android:paddingVertical="@dimen/activity_vertical_margin" />
 
             <EditText
                 android:id="@+id/etDateOfBirth"
                 android:layout_width="match_parent"
-                android:imeOptions="actionNext"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/et_date_of_birth"
@@ -121,14 +119,18 @@
                     android:text="@string/add_profile_picture"
                     android:textSize="16sp" />
 
-                <ImageButton
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/btnAddProfileImg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:layout_gravity="center"
                     android:background="#00FFFFFF"
                     android:contentDescription="@string/add_profile_picture"
-                    app:srcCompat="@drawable/btn_profile_img_foreground" />
+                    android:focusable="true"
+                    app:srcCompat="@drawable/btn_profile_img_foreground"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"
+                    android:scaleType="centerCrop"
+                    android:clickable="true"/>
 
                 <ProgressBar
                     android:id="@+id/signUpProgressBar"
@@ -174,7 +176,4 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 </FrameLayout>

@@ -17,7 +17,12 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-
     <style name="video_title">Video Title</style>
+
+    <!-- Define a circular shape appearance -->
+    <style name="ShapeAppearance.Circular" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
 

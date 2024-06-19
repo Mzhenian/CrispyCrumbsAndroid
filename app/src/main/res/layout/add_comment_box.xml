@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/round_corners_gray">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add a Comment"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/crispy_orange"
+        android:layout_gravity="center"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/comment_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Comment"
+        android:padding="10dp"
+        android:background="@drawable/round_corners_white"
+        android:layout_marginTop="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="20dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/positive_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            style="@style/BUTTON"
+            android:textColor="@color/white"
+            android:layout_marginEnd="10dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/negative_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            style="@style/BUTTON"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+</LinearLayout>

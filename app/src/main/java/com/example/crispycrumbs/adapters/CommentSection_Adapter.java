@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,10 +47,16 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
     @Override
     public void onBindViewHolder(@NonNull CommentSection_Adapter.MyViewHolder holder, int position) {
         // Bind the data to the views for each comment item
-        holder.userName.setText(commentItemArrayList.get(position).getUserId());
-        holder.content.setText(commentItemArrayList.get(position).getComment());
-        holder.date.setText(commentItemArrayList.get(position).getDate());
-        holder.imageView.setImageResource(commentItemArrayList.get(position).getAvatarResId());
+        CommentItem item = commentItemArrayList.get(position);
+        if (item != null) {
+            holder.userName.setText(item.getUserId());
+            holder.content.setText(item.getComment());
+            holder.date.setText(item.getDate());
+            holder.imageView.setImageResource(item.getAvatarResId());
+
+            holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(position));
+            holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(holder.getAdapterPosition()));
+        }
     }
 
     @Override
@@ -58,25 +65,17 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
         return commentItemArrayList.size();
     }
 
-    public void editComment(int position, CommentItem updatedItem) {
-        commentItemArrayList.set(position, updatedItem);
-        notifyItemChanged(position);
-    }
-
-    public void deleteComment(int position) {
+    public void removeComment(int position) {
         commentItemArrayList.remove(position);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount()); // Notify the range change
     }
 
-    public ArrayList<CommentItem> getComments() {
-        return commentItemArrayList;
-    }
-
-    // ViewHolder class to hold the views for each comment item
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         TextView userName, content, date;
+        Button editButton, deleteButton;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,6 +84,8 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             userName = itemView.findViewById(R.id.comment_user);
             content = itemView.findViewById(R.id.comment_text);
             date = itemView.findViewById(R.id.comment_date);
+            editButton = itemView.findViewById(R.id.edit_button);
+            deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
 }

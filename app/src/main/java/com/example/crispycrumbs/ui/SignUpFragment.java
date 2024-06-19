@@ -1,19 +1,12 @@
 package com.example.crispycrumbs.ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import static androidx.databinding.DataBindingUtil.setContentView;
-
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +16,18 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.crispycrumbs.data.LoggedInUser;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.crispycrumbs.HomeFragment;
-import com.example.crispycrumbs.LoggedInUser;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.UserLogic;
+import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
+import com.example.crispycrumbs.model.DataManager;
 
 import java.io.File;
 import java.io.IOException;

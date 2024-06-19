@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.HomeFragment;
+
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.UserItem;

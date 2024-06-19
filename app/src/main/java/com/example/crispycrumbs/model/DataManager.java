@@ -63,11 +63,27 @@ public class DataManager {
         if (!commentsMap.containsKey(videoId)) {
             commentsMap.put(videoId, new ArrayList<>());
         }
-        commentsMap.get(videoId).add(comment);
+        // Avoid adding duplicate comments
+        if (!commentsMap.get(videoId).contains(comment)) {
+            commentsMap.get(videoId).add(comment);
+        }
+    }
+
+    public void removeCommentFromVideo(String videoId, int position) {
+        if (commentsMap.containsKey(videoId)) {
+            ArrayList<CommentItem> comments = commentsMap.get(videoId);
+            if (comments != null && position >= 0 && position < comments.size()) {
+                comments.remove(position);
+            }
+        }
     }
 
 
+
     public void loadVideosFromJson(Context context) {
+        if (!videoList.isEmpty()) {
+            return; // Prevent reloading if already loaded
+        }
         try {
             InputStream is = context.getAssets().open("videosDB.json");
             int size = is.available();
@@ -81,6 +97,8 @@ public class DataManager {
             if (videoListWrapper != null && videoListWrapper.getVideos() != null) {
                 for (PreviewVideoCard video : videoListWrapper.getVideos()) {
                     int thumbnailResId = context.getResources().getIdentifier(video.getThumbnail(), "drawable", context.getPackageName());
+//                    int thumbnailResId = context.getResources().getIdentifier(
+//                            video.getThumbnail(), "drawable", context.getPackageName());
                     video.setThumbnailResId(thumbnailResId);
                     videoList.add(video);
 

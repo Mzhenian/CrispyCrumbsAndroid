@@ -26,7 +26,7 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
-import com.example.crispycrumbs.LoggedInUser;
+
 import com.example.crispycrumbs.R;
 
 

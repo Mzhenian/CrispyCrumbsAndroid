@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -33,7 +34,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private CustomMediaController mediaController;
     private VideoView videoView;
     private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
-    private int[] image = {R.drawable.small_logo};
     private int currentPosition = 0;
     private String videoId;
 
@@ -123,7 +123,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
             if (savedInstanceState != null) {
                 currentPosition = savedInstanceState.getInt(KEY_POSITION, 0);
-                commentItemArrayList = (ArrayList<CommentItem>) savedInstanceState.getSerializable(KEY_COMMENTS);
+                commentItemArrayList = savedInstanceState.getParcelableArrayList(KEY_COMMENTS);
                 videoView.seekTo(currentPosition);
             }
 
@@ -144,6 +144,20 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 }
             } else {
                 Toast.makeText(getContext(), "Please log in to comment.", Toast.LENGTH_SHORT).show();
+            }
+
+            // Update user info for the video
+            ImageView profilePicture = view.findViewById(R.id.profile_picture);
+            TextView userNameTextView = view.findViewById(R.id.user_name);
+
+            UserItem uploader = dataManager.getUserById(videoId);
+            if (uploader != null) {
+                Uri profilePicUri = Uri.parse(uploader.getProfilePicURI());
+                profilePicture.setImageURI(profilePicUri);
+                userNameTextView.setText(uploader.getUserName());
+            } else {
+                profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
+                userNameTextView.setText("Unknown");
             }
         }
 
@@ -257,7 +271,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_POSITION, currentPosition);
-        outState.putSerializable(KEY_COMMENTS, commentItemArrayList);
+        outState.putParcelableArrayList(KEY_COMMENTS, commentItemArrayList);
     }
 
     // Implement interface methods for edit and delete actions
@@ -273,7 +287,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         adapter.removeComment(position);
 
         // Update DataManager
-       // DataManager dataManager = DataManager.getInstance();
+        // DataManager dataManager = DataManager.getInstance();
         //dataManager.removeCommentFromVideo(videoId, position);
     }
 

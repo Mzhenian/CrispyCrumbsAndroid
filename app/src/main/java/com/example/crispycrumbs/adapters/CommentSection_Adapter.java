@@ -1,6 +1,7 @@
 package com.example.crispycrumbs.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.CommentItem;
+import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.DataManager;
 
 import java.util.ArrayList;
 
@@ -47,12 +50,18 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CommentItem item = commentItemArrayList.get(position);
         if (item != null) {
-            holder.userName.setText(item.getUserName());
+            UserItem user = DataManager.getInstance().getUserById(item.getUserId());
+            if (user != null) {
+                Uri profilePicUri = Uri.parse(user.getProfilePicURI());
+                holder.profilePicture.setImageURI(profilePicUri);
+                holder.userName.setText(user.getUserName());
+            } else {
+                holder.profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
+                holder.userName.setText("Unknown");
+            }
             holder.content.setText(item.getComment());
             holder.date.setText(item.getDate());
-            holder.imageView.setImageResource(item.getAvatarResId());
 
-            // Check if the current user is the owner of the comment
             if (item.getUserId().equals(currentUserId)) {
                 holder.editButton.setVisibility(View.VISIBLE);
                 holder.deleteButton.setVisibility(View.VISIBLE);
@@ -78,13 +87,13 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
+        ImageView profilePicture;
         TextView userName, content, date;
         AppCompatButton editButton, deleteButton;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.profile_picture);
+            profilePicture = itemView.findViewById(R.id.profile_picture);
             userName = itemView.findViewById(R.id.comment_user);
             content = itemView.findViewById(R.id.comment_text);
             date = itemView.findViewById(R.id.comment_date);

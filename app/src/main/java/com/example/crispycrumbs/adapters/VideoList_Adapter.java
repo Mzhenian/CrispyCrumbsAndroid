@@ -1,6 +1,7 @@
 package com.example.crispycrumbs.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
@@ -52,8 +54,17 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
         // Load thumbnail using a resource ID
         holder.videoThumbnail.setImageResource(videoCard.getThumbnailResId());
-//todo
-//        holder.profile_picture.setImageResource(DataManager.getInstance().getUserById(videoCard.getUserId()).getProfilePictureResId());
+
+        // Fetch user information
+        UserItem user = DataManager.getInstance().getUserById(videoCard.getUserId());
+        if (user != null) {
+            Uri profilePicUri = Uri.parse(user.getProfilePicURI());
+            holder.profile_picture.setImageURI(profilePicUri);
+            holder.videoUser.setText(user.getUserName());
+        } else {
+            holder.profile_picture.setImageResource(R.drawable.baseline_account_circle_24);
+            holder.videoUser.setText("Unknown");
+        }
 
         // Handle click events on items
         holder.itemView.setOnClickListener(v -> {

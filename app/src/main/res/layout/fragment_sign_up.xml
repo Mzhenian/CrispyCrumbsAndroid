@@ -118,6 +118,7 @@
                     android:layout_gravity="center"
                     android:background="#00FFFFFF"
                     android:contentDescription="@string/add_profile_picture"
+                    android:focusable="true"
                     app:srcCompat="@drawable/btn_profile_img_foreground"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"
                     android:scaleType="centerCrop"

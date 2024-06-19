@@ -79,6 +79,11 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         Toolbar toolbar = findViewById(R.id.toolbar); // Find the toolbar
         setSupportActionBar(toolbar); // Set the toolbar as the app bar
 
+        // Disable the default title
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(""); // Set an empty string
+        }
+
         drawerLayout = findViewById(R.id.drawer_layout); // Find the drawer layout
         NavigationView navigationView = findViewById(R.id.nav_Bar); // Find the navigation view
         navigationView.setNavigationItemSelectedListener(this); // Set navigation item selection listener

@@ -118,15 +118,20 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
             videoView.setVideoURI(Uri.parse(videoPath));
 
-//            //todo testme, if the controller is from the bottom video edge downwords, subtract the height of the controller too
-//            //get the controller position
+            //todo testme, if the controller is from the bottom video edge downwords, subtract the height of the controller too
+            //get the controller position
+
 //            int controllerBottom = view.getHeight() - view.findViewById(R.id.video_view).getHeight();
-//
-//
-//            // Initialize MediaController
-//            mediaController = new CustomMediaController(getContext());
+
+            VideoView videoView = view.findViewById(R.id.video_view);
+            int controllerBottom = videoView.getTop() + videoView.getHeight();
+
+            // Initialize MediaController
+            mediaController = new CustomMediaController(getContext());
+            mediaController.setAnchorView(videoView);
+////            todo WIP v2
 //            mediaController.setAnchorView(videoView, controllerBottom);
-//            videoView.setMediaController(mediaController);
+            videoView.setMediaController(mediaController);
 
             videoView.start();
 

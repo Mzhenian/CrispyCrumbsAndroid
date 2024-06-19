@@ -45,8 +45,6 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                // Check if the password meets the criteria
-//                if (!isPasswordValid(s.toString())) {
                 // Check if the password meets the criteria while the user is typing
                 if (!isPasswordValid(s.toString())) {
                     password.setError("Password must be at least 8 characters long and contain a mix of letters and digits.");
@@ -59,6 +57,7 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        // Set an OnClickListener for the login button
         login_button.setOnClickListener(v -> {
             UserItem user = UserLogic.ValidateLogin(user_name.getText().toString(), password.getText().toString());
             if (user != null) {

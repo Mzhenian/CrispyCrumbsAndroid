@@ -27,14 +27,14 @@ public class PreviewVideoCard {
 
     public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
     public String getVideoFile() { return videoFile; }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
+// todo check if redundant
+//    public String getProfilePicture() {
+//        return profilePicture;
+//    }
+//
+//    public void setProfilePicture(String profilePicture) {
+//        this.profilePicture = profilePicture;
+//    }
 
     public void setVideoFile(String videoFile) { this.videoFile = videoFile; }
 

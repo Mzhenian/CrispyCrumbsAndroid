@@ -19,6 +19,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.crispycrumbs.LoggedInUser;
+import com.example.crispycrumbs.R;
+
+
+import com.example.crispycrumbs.ui.LoginFragment;
+import com.example.crispycrumbs.ui.SignUpFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -90,6 +96,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
             } else if (itemId == R.id.nav_logout) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VideoPlayerFragment()).commit();
+            } else if (itemId == R.id.nav_signin) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).commit();
             } else if (itemId == R.id.theme_setter) {
                 // Toggle theme preference
                 boolean newThemeIsDark = toggleThemePreference();

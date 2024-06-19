@@ -105,6 +105,44 @@
     <string name="facebook">Facebook</string>
     <string name="tiktok">TikTok</string>
     <string name="twiter">Twiter</string>
+    <string name="title_activity_sign_up">SignUp</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="et_confirm_password">* confirm password</string>
+    <string name="et_mail_address">email address</string>
+    <string name="et_name">* displayed name</string>
+    <string name="et_password">* password</string>
+    <string name="btn_sigh_up">Sigh up!</string>
+    <string name="et_username">* username</string>
+    <string name="et_last_mame">last mame</string>
+    <string name="et_phone_number">phone number</string>
+    <string name="et_date_of_birth">birth date (dd/mm/yyyy)</string>
+    <string name="forgot_my_password">forgot my password?</string>
+    <string name="btn_already_have_a_user">already have a user?</string>
+    <string name="add_profile_picture">add profile picture:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="choose_a_file">choose a file:</string>
     <string name="search_hint">search...</string>
     <string name="home">Home</string>
     <string name="logout">LogOut</string>

@@ -25,7 +25,8 @@ public class LoggedInUser {
             user_email.setText(getUser().getEmail());
 
             ImageView profile_picture = MainPage.getInstance().findViewById(R.id.profile_picture);
-            profile_picture.setImageDrawable(getUser().getProfilePicture());
+//            todo
+//            profile_picture.setImageDrawable(getUser().getProfilePicture());
         }
     }
     public static void LogOut() {

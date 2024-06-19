@@ -48,6 +48,9 @@ public class UserLogic {
         }
 
         if (email != null && !email.isEmpty()) {
+//            String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+//            EmailValidation.patternMatches(email, regexPattern);
+
             if (!UserList.isEmailUnique(email)) {
                 return "Email is already in use (try to log in)";
             }
@@ -107,7 +110,38 @@ public class UserLogic {
             }
         }
         return null;
+    }
 
-
+    //todo debug math
+    public static String nextId(String last) {
+        Boolean succeeded = false;
+        char[] charArray = last.toCharArray();
+        for (int i = charArray.length - 1; i >= 0; i--) {
+            if (('0' <= charArray[i] && charArray[i] < '9')
+                    || ('a' <= charArray[i] && charArray[i] < 'z')
+                    || ('A' <= charArray[i] && charArray[i] < 'Z')) {
+                charArray[i]++;
+                succeeded = true;
+                break;
+            } else if (charArray[i] == '9') {
+                charArray[i] = 'a';
+                succeeded = true;
+                break;
+            } else if (charArray[i] == 'z') {
+                charArray[i] = 'A';
+                succeeded = true;
+                break;
+            } else {
+                charArray[i] = '0';
+            }
+        }
+        if (!succeeded) {
+            charArray = new char[charArray.length + 1];
+            charArray[0] = '0';
+            for (int i = 1; i < charArray.length; i++) {
+                charArray[i] = '0';
+            }
+        }
+        return new String(charArray);
     }
 }

@@ -1,7 +1,11 @@
 package com.example.crispycrumbs.data;
 
 import android.graphics.drawable.Drawable;
+
 import android.media.Image;
+
+import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.ui.MainPage;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -16,36 +20,14 @@ public class UserItem {
     private String phoneNumber;
     private Date dateOfBirth;
     private String country;
-    private Drawable profilePicture; // path to the profile picture
+    private String profilePicURI; // path to the profile picture
     private Set<String> videosIds = new HashSet<>();
     private final Set<String> followerIds = new HashSet<>();
     private final Set<String> followingIds = new HashSet<>();
     private final Set<String> likedVideoIds = new HashSet<>();
     private final Set<String> dislikedVideoIds = new HashSet<>();
 
-
-    //todo remove
-//    public UserItem(String username, String password, String displayedName) {
-//        this.userId = UserList.getInstance().takeNextUserId();
-//        this.username = username;
-//        this.password = password;
-//        this.displayedName = displayedName;
-//        UserList.getInstance().add(this);
-//    }
-//    public UserItem(String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicPath) {
-//        this.userId = UserList.getInstance().takeNextUserId();
-//        this.username = username;
-//        this.password = password;
-//        this.displayedName = displayedName;
-//        this.email = email;
-//        this.phoneNumber = phoneNumber;
-//        this.dateOfBirth = dateOfBirth;
-//        this.country = country;
-//        this.profilePicPath = profilePicPath;
-//        UserList.getInstance().add(this);
-//    }
-
-    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicture) {
+    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicURI) {
         this.userName = userName;
         this.password = password;
         this.displayedName = displayedName;
@@ -53,10 +35,16 @@ public class UserItem {
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.country = country;
-        this.profilePicture = profilePicture;
+        this.profilePicURI = profilePicURI;
+
+        String lastUserId = MainPage.getDataManager().lastUserId();
+        this.userId = UserLogic.nextId(lastUserId);
+    }
+    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
+        this(userName, password, displayedName, email, phoneNumber, dateOfBirth, country, MainPage.getInstance().getResources().getResourceEntryName(profilePicResId));
     }
 
-    public Image getProfilePicture
+    public Image getProfilePicture;
 
     public String getUserId() {
         return userId;
@@ -114,12 +102,12 @@ public class UserItem {
         this.country = country;
     }
 
-    public String getProfilePicture() {
-        return profilePicture;
+    public String getProfilePicURI() {
+        return profilePicURI;
     }
 
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+    public void setProfilePicURI(String profilePicURI) {
+        this.profilePicURI = profilePicURI;
     }
 
     public Boolean getIsFollowed(UserItem user) {
@@ -133,9 +121,6 @@ public class UserItem {
     public void addFallow(UserItem user) {
         followingIds.add(user.getUserId());
         user.followerIds.add(this.getUserId());
-//
-//        following.add(user);
-//        user.followers.add(this);
     }
 
     public void delFollow(UserItem user) {
@@ -195,5 +180,4 @@ public class UserItem {
     public String[] getFollowingIds() {
         return followingIds.toArray(new String[0]);
     }
-
 }

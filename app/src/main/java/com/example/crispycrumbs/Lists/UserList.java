@@ -21,7 +21,6 @@ public class UserList  {
         this.users.add(user);
     }
 
-    String nextUserId;
 //    private int lastUserId() {
 //        int max = 0;
 //        for (UserItem user : MainPage.getDataManager().getUserList()) {
@@ -32,15 +31,6 @@ public class UserList  {
 //        return max;
 //    }
 
-    private String lastUserId() {
-        String last = "";
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
-            if (user.getUserId().compareTo(last) > 0) {
-                last = user.getUserId();
-            }
-        }
-        return last;
-    }
 
     public static boolean isEmailUnique(String email) {
         for (UserItem user : MainPage.getDataManager().getUserList()) {
@@ -68,6 +58,9 @@ public class UserList  {
         }
         return true;
     }
+
+
+
 }
 
 //todo remove
@@ -81,9 +74,7 @@ public class UserList  {
 //        this.addAll(users);
 //        nextUserId = maxUserId() + 1; //todo move to the permanent users storage
 //    }
-//    public int takeNextUserId() {
-//        return nextUserId++;
-//    }
+
 //
 //    public static UserList getInstance() {
 //        if (instance == null) {

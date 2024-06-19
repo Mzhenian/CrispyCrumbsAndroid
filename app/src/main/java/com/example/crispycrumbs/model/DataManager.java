@@ -8,7 +8,6 @@ import com.example.crispycrumbs.Lists.VideoList;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -46,6 +45,14 @@ public class DataManager {
 
     public ArrayList<UserItem> getUserList() {
         return UserList;
+    }
+    public UserItem getUserById(String userId) {
+        for (UserItem user : UserList) {
+            if (user.getUserId().equals(userId)) {
+                return user;
+            }
+        }
+        return null;
     }
 
     public ArrayList<CommentItem> getCommentsForVideo(String videoId) {
@@ -104,51 +111,7 @@ public class DataManager {
 //        }
 //    }
 
-    // //todo remove V1
-//    public void loadUsersFromJson(Context context) {
-//        try {
-//            InputStream is = context.getAssets().open("usersDB.json");
-//            int size = is.available();
-//            byte[] buffer = new byte[size];
-//            is.read(buffer);
-//            is.close();
-//            String json = new String(buffer, StandardCharsets.UTF_8);
-//
-//            Gson gson = new Gson();
-//            UserList userListWrapper = gson.fromJson(json, UserList.class);
-//            if (userListWrapper != null && userListWrapper.getUsers() != null) {
-//                for (UserItem user : userListWrapper.getUsers()) {
-//                    UserList.add(user);
-//                }
-//            }
-//        } catch (JsonSyntaxException e) {
-//            Log.e("DataManager", "JsonSyntaxException: Failed to parse JSON", e);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-////        setFollowsFromIds(UserList);
-//    }
 
-//    public void loadUsersFromJson(Context context) {
-//        try {
-//            InputStream is = context.getAssets().open("usersDB.json");
-//            int size = is.available();
-//            byte[] buffer = new byte[size];
-//            is.read(buffer);
-//            is.close();
-//            String json = new String(buffer, StandardCharsets.UTF_8);
-//
-//            Gson gson = new Gson();
-//            UserList userListWrapper = gson.fromJson(json, UserList.class);
-//            if (userListWrapper != null && userListWrapper.getUsers() != null) {
-//                for (UserItem user : userListWrapper.getUsers()) {
-//                    this.UserList.add(user);
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void loadUsersFromJson(Context context) {
         try {
@@ -163,6 +126,10 @@ public class DataManager {
             UserList userListWrapper = gson.fromJson(json, UserList.class);
             if (userListWrapper != null && userListWrapper.getUsers() != null) {
                 for (UserItem user : userListWrapper.getUsers()) {
+                    //todo
+//                    int profilePicResId = context.getResources().getIdentifier(user.getProfilePicResId(), "drawable", context.getPackageName());
+//                    user.setProfilePicURI(profilePicResId);
+
                     this.UserList.add(user);
                 }
             }
@@ -173,15 +140,6 @@ public class DataManager {
         }
     }
 
-    private String lastUserId() {
-        String last = "";
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
-            if (user.getUserId().compareTo(last) > 0) {
-                last = user.getUserId();
-            }
-        }
-        return last;
-    }
 
     //private int maxUserId() {
     //        StringBuilder lastId = new StringBuilder("0");
@@ -200,8 +158,24 @@ public class DataManager {
         return newUser;
     }
 
+    public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
+        // Create a new UserItem instance with the provided details
+        UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
+        return newUser;
+    }
+
     public void addUser(UserItem user) {
         UserList.add(user);
+    }
+
+    public String lastUserId() {
+        String last = "";
+        for (UserItem user : UserList) {
+            if (user.getUserId().compareTo(last) > 0) {
+                last = user.getUserId();
+            }
+        }
+        return last;
     }
 
 private String TAG;

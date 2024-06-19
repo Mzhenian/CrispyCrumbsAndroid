@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
         // Load thumbnail using a resource ID
         holder.videoThumbnail.setImageResource(videoCard.getThumbnailResId());
+//todo
+//        holder.profile_picture.setImageResource(DataManager.getInstance().getUserById(videoCard.getUserId()).getProfilePictureResId());
 
         // Handle click events on items
         holder.itemView.setOnClickListener(v -> {
@@ -81,12 +84,13 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
     // ViewHolder class to hold and manage UI elements of each item
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView videoThumbnail;
+        ImageView videoThumbnail, profile_picture;
         TextView videoTitle, videoUser, videoViews, videoDate;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             // Initialize UI elements from the item layout
+            profile_picture = itemView.findViewById(R.id.profile_picture);
             videoThumbnail = itemView.findViewById(R.id.video_thumbnail);
             videoTitle = itemView.findViewById(R.id.video_title);
             videoUser = itemView.findViewById(R.id.user_name);

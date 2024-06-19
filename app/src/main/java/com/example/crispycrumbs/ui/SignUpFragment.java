@@ -124,10 +124,7 @@ public class SignUpFragment extends Fragment {
         final ProgressBar loadingProgressBar = binding.signUpProgressBar;
 
         binding.btnToSignIn.setOnClickListener(v -> {
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            LoginFragment loginFragment = new LoginFragment();
-            transaction.replace(R.id.container, loginFragment);
-            transaction.commit();
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         });
 
         binding.btnSighUp.setOnClickListener(v -> {
@@ -138,16 +135,14 @@ public class SignUpFragment extends Fragment {
             String returnedError = UserLogic.ValidateSignUp(binding.etEmailAddress.getText().toString(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etConfirmPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etPhoneNumber.getText().toString(), binding.etDateOfBirth.toString());
             if (returnedError == null) {
                 DataManager dataManager = DataManager.getInstance();
-                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, "default");
+                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, null);
                 dataManager.addUser(newUser);
                 LoggedInUser.SetLoggedInUser(newUser);
                 loadingProgressBar.setVisibility(View.GONE);
                 Toast.makeText(view.getContext(), "Sign Up Successful, welcome " + newUser.getDisplayedName(), Toast.LENGTH_SHORT).show();
 
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                HomeFragment homeFragment = new HomeFragment();
-                transaction.replace(R.id.container, homeFragment);
-                transaction.commit();
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+
             } else {
                 TextView errorDisplay = binding.errorDisplay;
                 errorDisplay.setText(returnedError);

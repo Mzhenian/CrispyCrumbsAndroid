@@ -4,11 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
@@ -18,68 +18,72 @@ import java.util.ArrayList;
 
 public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_Adapter.MyViewHolder> {
 
-    Context context;
-    ArrayList<CommentItem> commentItemArrayList;
+    private final Context context;
+    private final ArrayList<CommentItem> commentItemArrayList;
+    private final String currentUserId;
+    private final CommentActionListener commentActionListener;
 
     public interface CommentActionListener {
         void onEditComment(int position);
         void onDeleteComment(int position);
     }
 
-    private CommentActionListener commentActionListener;
-
-    // Constructor to initialize context and comment list
-    public CommentSection_Adapter(Context context, ArrayList<CommentItem> commentItemArrayList, CommentActionListener listener) {
+    public CommentSection_Adapter(Context context, ArrayList<CommentItem> commentItemArrayList, CommentActionListener listener, String currentUserId) {
         this.context = context;
         this.commentItemArrayList = commentItemArrayList;
         this.commentActionListener = listener;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
     @Override
-    public CommentSection_Adapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the layout for each comment item
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.comment_item, parent, false);
-        return new CommentSection_Adapter.MyViewHolder(view);
+        return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CommentSection_Adapter.MyViewHolder holder, int position) {
-        // Bind the data to the views for each comment item
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CommentItem item = commentItemArrayList.get(position);
         if (item != null) {
-            holder.userName.setText(item.getUserId());
+            holder.userName.setText(item.getUserName());
             holder.content.setText(item.getComment());
             holder.date.setText(item.getDate());
             holder.imageView.setImageResource(item.getAvatarResId());
 
-            holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(position));
-            holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(holder.getAdapterPosition()));
+            // Check if the current user is the owner of the comment
+            if (item.getUserId().equals(currentUserId)) {
+                holder.editButton.setVisibility(View.VISIBLE);
+                holder.deleteButton.setVisibility(View.VISIBLE);
+                holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(position));
+                holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(holder.getAdapterPosition()));
+            } else {
+                holder.editButton.setVisibility(View.GONE);
+                holder.deleteButton.setVisibility(View.GONE);
+            }
         }
     }
 
     @Override
     public int getItemCount() {
-        // Return the total number of comments
         return commentItemArrayList.size();
     }
 
     public void removeComment(int position) {
         commentItemArrayList.remove(position);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount()); // Notify the range change
+        notifyItemRangeChanged(position, getItemCount());
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         TextView userName, content, date;
-        Button editButton, deleteButton;
+        AppCompatButton editButton, deleteButton;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Initialize the views
             imageView = itemView.findViewById(R.id.profile_picture);
             userName = itemView.findViewById(R.id.comment_user);
             content = itemView.findViewById(R.id.comment_text);

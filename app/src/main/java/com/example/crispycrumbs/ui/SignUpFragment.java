@@ -23,11 +23,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.model.UserLogic;
 
 import java.io.File;
 import java.io.IOException;

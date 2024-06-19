@@ -4,11 +4,9 @@ import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +21,8 @@ import android.widget.VideoView;
 
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.adapters.CommentSection_Adapter;
+import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.CustomMediaController;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.R;
@@ -49,8 +49,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private static final String KEY_COMMENTS = "comments";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video_player, container, false);
 
         recyclerView = view.findViewById(R.id.comment_section);
@@ -59,7 +58,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         Button shareButton = view.findViewById(R.id.share_button);
         videoView = view.findViewById(R.id.video_view);
 
-        // Set up buttons
         Button commentButton = view.findViewById(R.id.comment_button);
         commentButton.setOnClickListener(v -> showAddCommentDialog());
 
@@ -93,7 +91,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             }
         });
 
-        // Receive the video data from the bundle
         Bundle bundle = getArguments();
         if (bundle != null) {
             String videoTitle = bundle.getString("videoTitle");
@@ -101,42 +98,23 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             String videoFile = bundle.getString("videoPath");
             videoId = bundle.getString("videoId");
 
-            // Fetch comments for the video from the DataManager
             DataManager dataManager = DataManager.getInstance();
             commentItemArrayList = dataManager.getCommentsForVideo(videoId);
 
-            // Set the video title in a TextView
             TextView titleTextView = view.findViewById(R.id.video_title);
             titleTextView.setText(videoTitle);
 
-            // Set the video description in a TextView
             TextView descriptionTextView = view.findViewById(R.id.video_date);
             descriptionTextView.setText(videoDescription);
 
-            // Load and play the video using the videoFile
-
-//            String videoPath = "file:///android_asset/" + videoFile;
             int videoResId = getResources().getIdentifier(videoFile, "raw", getContext().getPackageName());
             String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
-
             videoView.setVideoURI(Uri.parse(videoPath));
 
-            //todo testme, if the controller is from the bottom video edge downwords, subtract the height of the controller too
-            //get the controller position
-
-//            int controllerBottom = view.getHeight() - view.findViewById(R.id.video_view).getHeight();
-
-            VideoView videoView = view.findViewById(R.id.video_view);
-            int controllerBottom = videoView.getTop() + videoView.getHeight();
-
-            // Initialize MediaController
             mediaController = new CustomMediaController(getContext());
             mediaController.setAnchorView(videoView);
-////            todo WIP v2
-//            mediaController.setAnchorView(videoView, controllerBottom);
             videoView.setMediaController(mediaController);
 
-            // Restore video position if savedInstanceState is not null
             if (savedInstanceState != null) {
                 currentPosition = savedInstanceState.getInt(KEY_POSITION, 0);
                 commentItemArrayList = (ArrayList<CommentItem>) savedInstanceState.getSerializable(KEY_COMMENTS);
@@ -145,16 +123,28 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
             videoView.start();
 
-            // Initialize RecyclerView and Adapter with comments
-            adapter = new CommentSection_Adapter(getContext(), commentItemArrayList, this);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            UserItem currentUser = LoggedInUser.getUser();
+            String currentUserId = currentUser != null ? currentUser.getUserId() : null;
+
+            if (currentUserId != null) {
+                adapter = new CommentSection_Adapter(getContext(), commentItemArrayList, this, currentUserId);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            } else {
+                Toast.makeText(getContext(), "Please log in to comment.", Toast.LENGTH_SHORT).show();
+            }
         }
 
         return view;
     }
 
     private void showAddCommentDialog() {
+        UserItem currentUser = LoggedInUser.getUser();
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "Please log in to add a comment.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.add_comment_box, null);
@@ -168,22 +158,18 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         positiveButton.setOnClickListener(v -> {
             String content = inputContent.getText().toString();
-            String date = "Now"; // For simplicity, setting the date as "Now"
+            String date = "Now";
 
-            // Validate inputs
             if (!content.isEmpty()) {
-                // Add new comment to the list and notify adapter
-                CommentItem newComment = new CommentItem(R.drawable.small_logo, "DefaultUser", content, date);
+                CommentItem newComment = new CommentItem(R.drawable.small_logo, currentUser.getUserId(), currentUser.getUserName(), content, date);
                 commentItemArrayList.add(newComment);
                 adapter.notifyItemInserted(commentItemArrayList.size() - 1);
 
-                // Add comment to DataManager
                 DataManager dataManager = DataManager.getInstance();
                 dataManager.addCommentToVideo(videoId, newComment);
 
                 dialog.dismiss();
             } else {
-                // Handle empty inputs (show a message or do nothing)
                 Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -213,8 +199,9 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
             // Validate inputs
             if (!content.isEmpty()) {
+                UserItem currentUser = LoggedInUser.getUser();
                 // Update the comment and notify adapter
-                CommentItem updatedComment = new CommentItem(R.drawable.small_logo, "DefaultUser", content, commentItemArrayList.get(position).getDate());
+                CommentItem updatedComment = new CommentItem(R.drawable.small_logo, currentUser.getUserId(), currentUser.getUserName(), content, commentItemArrayList.get(position).getDate());
                 commentItemArrayList.set(position, updatedComment);
                 adapter.notifyItemChanged(position);
 
@@ -269,6 +256,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public void onDeleteComment(int position) {
+
         // Remove the comment from the adapter
         adapter.removeComment(position);
 

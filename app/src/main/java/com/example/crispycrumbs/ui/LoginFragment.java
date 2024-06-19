@@ -1,7 +1,5 @@
 package com.example.crispycrumbs.ui;
 
-import static com.example.crispycrumbs.model.UserLogic.isPasswordValid;
-
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,14 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.crispycrumbs.data.LoggedInUser;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.UserLogic;
 
 public class LoginFragment extends Fragment {
 

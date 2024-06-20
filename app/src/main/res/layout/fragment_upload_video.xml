@@ -5,8 +5,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.UploadVideoFragment"
-    style="@style/CONTAINER">
+    tools:context=".ui.UploadVideoFragment">
 
 
     <LinearLayout
@@ -19,9 +18,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/CONTAINER">
-
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/TitleUploadVideo"
@@ -38,10 +35,9 @@
             android:id="@+id/frameLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/btnCooseVideo"
-            app:layout_constraintTop_toTopOf="@+id/btnCooseVideo">
+            app:layout_constraintBottom_toTopOf="@+id/btnOpenCamera"
+            app:layout_constraintTop_toTopOf="@+id/btnOpenCamera">
 
-<!--            TODO de-invisible the progressbar-->
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -59,14 +55,15 @@
                 android:id="@+id/chooseAVideo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="choose your video"
+                android:text="choose your video (MP4)"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/btnChooseVideo"
-                app:layout_constraintTop_toTopOf="@+id/btnChooseVideo" />
+                app:layout_constraintStart_toStartOf="@+id/frameLayout2"
+                app:layout_constraintTop_toTopOf="@+id/frameLayout2" />
 
             <ImageView
                 android:id="@+id/uploadImageHolder"
+                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -75,22 +72,36 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/layer_1"
                 tools:layout_conversion_absoluteHeight="147dp"
-                tools:layout_conversion_absoluteWidth="210dp"
-                />
+                tools:layout_conversion_absoluteWidth="210dp" />
 
-            <Button
-                android:id="@+id/btnChooseVideo"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:backgroundTint="#00FFFFFF"
-                android:contentDescription="choose your video"
+            <LinearLayout
+                android:id="@+id/btnContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@+id/uploadImageHolder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/uploadImageHolder"
-                tools:layout_conversion_absoluteHeight="0dp"
-                tools:layout_conversion_absoluteWidth="392dp"
-                />
+                app:layout_constraintTop_toTopOf="@+id/uploadImageHolder">
+
+                <Button
+                    android:id="@+id/btnOpenCamera"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/open_camera"
+                    android:contentDescription="Open camera" />
+
+                <Button
+                    android:id="@+id/btnChooseFromGallery"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/choose_from_gallery"
+                    android:contentDescription="Choose from gallery" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -126,25 +137,16 @@
             android:ems="10"
             android:hint="Video description...\n\n\n\n"
             android:inputType="text"
-            android:background="@drawable/round_corners_white"/>
-
-        <!--TODO find out how to add tags one by one, each in it's own blob-->
-<!--        <TextView-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:id="@+id/VideoTags"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@drawable/diff_round_top_right_corner_orange"-->
-<!--            android:text="Video tags:    "-->
-<!--            android:textStyle="bold" />-->
+            android:background="@drawable/round_corners_white"
+            android:gravity="top" />/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/frameLayout3"
             android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/btnCooseVideo"
-            app:layout_constraintTop_toTopOf="@+id/btnCooseVideo">
+            app:layout_constraintBottom_toTopOf="@+id/btnOpenCamera"
+            app:layout_constraintTop_toTopOf="@+id/btnOpenCamera">
 
             <TextView
                 android:id="@+id/chooseAThumbnail"
@@ -185,30 +187,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            style="@style/CONTAINER">
+            android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatButton
+            <ImageButton
                 android:id="@+id/btnUpload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
                 android:layout_weight="1"
-                android:text="Button"
-                android:textStyle="bold"
-                style="@style/BUTTON"/>
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnCancel"
-                android:layout_margin="10dp"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/upload_video" />
+
+            <ImageButton
+                android:id="@+id/btnCancleUpload"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button"
-                style="@style/BUTTON"/>
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/cancel_upload" />
         </LinearLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="horizontal" />
 
     </LinearLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

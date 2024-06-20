@@ -41,6 +41,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private static DataManager dataManager = null;
     private static UserLogic userLogic = null;
 
+
     public static DataManager getDataManager() {
         return dataManager;
     }
@@ -121,6 +122,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        //todo remove, for testing only
+        LoggedInUser.SetLoggedInUser(getDataManager().getUserById("1"));
+        //todo remove, end
 
         updateNavHeader();
     }

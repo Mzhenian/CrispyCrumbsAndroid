@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.CrispyCrumbs" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
+        <!-- todo Customize your theme here. -->
     </style>
 
     <style name="TextAppearance.BoldText" parent="TextAppearance.AppCompat">

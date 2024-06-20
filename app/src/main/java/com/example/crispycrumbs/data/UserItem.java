@@ -38,7 +38,7 @@ public class UserItem {
         this.country = country;
         this.profilePicURI = profilePicURI;
 
-        String lastUserId = MainPage.getDataManager().lastUserId();
+        String lastUserId = MainPage.getDataManager().getLastUserId();
         this.userId = UserLogic.nextId(lastUserId);
     }
     public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {

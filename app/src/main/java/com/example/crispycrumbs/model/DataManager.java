@@ -8,29 +8,30 @@ import com.example.crispycrumbs.Lists.VideoList;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DataManager {
     private static DataManager instance;
-    private ArrayList<PreviewVideoCard> videoList;
+    private VideoList videoList;
     private Map<String, ArrayList<CommentItem>> commentsMap;
     private ArrayList<UserItem> UserList;
-    int nextUserId;
+    String lastUserId;
+    String lastVideoId;
 
     private DataManager() {
-        videoList = new ArrayList<>();
+        videoList = new VideoList();
         commentsMap = new HashMap<>();
         UserList = new ArrayList<>();
     }
@@ -43,7 +44,7 @@ public class DataManager {
     }
 
     public ArrayList<PreviewVideoCard> getVideoList() {
-        return videoList;
+        return videoList.getVideos();
     }
 
     public ArrayList<UserItem> getUserList() {
@@ -83,7 +84,7 @@ public class DataManager {
     }
 
     public void loadVideosFromJson(Context context) {
-        if (!videoList.isEmpty()) {
+        if (!videoList.getVideos().isEmpty()) {
             return; // Prevent reloading if already loaded
         }
         try {
@@ -100,7 +101,7 @@ public class DataManager {
                 for (PreviewVideoCard video : videoListWrapper.getVideos()) {
                     int thumbnailResId = context.getResources().getIdentifier(video.getThumbnail(), "drawable", context.getPackageName());
                     video.setThumbnailResId(thumbnailResId);
-                    videoList.add(video);
+                    videoList.addVideo(video);
 
                     commentsMap.put(video.getVideoId(), video.getComments());
                 }
@@ -168,7 +169,14 @@ public class DataManager {
         UserList.add(user);
     }
 
-    public String lastUserId() {
+    public void addVideo(PreviewVideoCard video) {
+        getVideoList().add(video);
+    }
+
+    public String getLastUserId() {
+        if (lastUserId != null) {
+            return lastUserId;
+        }
         String last = "";
         for (UserItem user : UserList) {
             if (user.getUserId().compareTo(last) > 0) {

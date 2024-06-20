@@ -9,6 +9,7 @@ import com.example.crispycrumbs.ui.MainPage;
 public class LoggedInUser {
     private static UserItem loggedInUser = null;
 
+
     public static UserItem getUser() {
         return loggedInUser;
     }
@@ -18,15 +19,16 @@ public class LoggedInUser {
         if (loggedInUser == null) {
             LogOut();
         } else {
-            TextView user_name = MainPage.getInstance().findViewById(R.id.user_name);
-            user_name.setText(getUser().getUserName());
+            MainPage.getInstance().updateNavHeader();
+//            TextView user_name = MainPage.getInstance().findViewById(R.id.user_name);
+//            user_name.setText(getUser().getUserName());
 
-            TextView user_email = MainPage.getInstance().findViewById(R.id.user_email);
-            user_email.setText(getUser().getEmail());
+//            TextView user_email = MainPage.getInstance().findViewById(R.id.user_email);
+//            user_email.setText(getUser().getEmail());
 
-            ImageView profile_picture = MainPage.getInstance().findViewById(R.id.profile_picture);
-//            todo
-//            profile_picture.setImageDrawable(getUser().getProfilePicture());
+//            ImageView profile_picture = MainPage.getInstance().findViewById(R.id.profile_picture);
+            //            todo
+            //            profile_picture.setImageDrawable(getUser().getProfilePicture());
         }
     }
     public static void LogOut() {

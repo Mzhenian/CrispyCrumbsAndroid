@@ -6,13 +6,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoList  {
-    private List<PreviewVideoCard> videos;
+    private ArrayList<PreviewVideoCard> videos;
 
-    public List<PreviewVideoCard> getVideos() {
+    public ArrayList<PreviewVideoCard> getVideos() {
         return videos;
     }
 
-    public void setVideos(List<PreviewVideoCard> videos) {
+    public VideoList() {
+        setVideos(new ArrayList<>());
+    }
+    public VideoList(ArrayList<PreviewVideoCard> videos) {
+        setVideos(videos);
+    }
+    public void setVideos(ArrayList<PreviewVideoCard> videos) {
         this.videos = videos;
+    }
+
+    public void addVideo(PreviewVideoCard video) {
+        videos.add(video);
     }
 }

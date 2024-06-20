@@ -123,9 +123,12 @@ public class DataManager {
             UserList userListWrapper = gson.fromJson(json, UserList.class);
             if (userListWrapper != null && userListWrapper.getUsers() != null) {
                 for (UserItem user : userListWrapper.getUsers()) {
-                    // Check if the profilePicURI is null or empty
-                    if (user.getProfilePicURI() == null || user.getProfilePicURI().isEmpty()) {
-                        // Set it to the resource name of the default user picture
+                    // Set the profilePicURI to the profilePhoto value from the JSON file
+                    String profilePhoto = user.getProfilePicURI();
+                    if (profilePhoto != null && !profilePhoto.isEmpty()) {
+                        user.setProfilePicURI("android.resource://" + context.getPackageName() + "/" + profilePhoto);
+                    } else {
+                        // If profilePhoto is null or empty, set it to the resource name of the default user picture
                         user.setProfilePicURI("android.resource://" + context.getPackageName() + "/drawable/default_user_pic");
                     }
                     this.UserList.add(user);

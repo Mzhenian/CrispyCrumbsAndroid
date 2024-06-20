@@ -8,7 +8,6 @@
         <item name="colorPrimaryDark">@color/crispy_orange_light</item>
         <item name="colorAccent">@color/crispy_orange_light</item>
         <item name="android:colorBackground">@color/off_white</item>
-        <item name="android:textColor">@color/black_light</item>
         <item name="android:windowBackground">@color/off_white</item>
     </style>
 
@@ -20,7 +19,6 @@
 
     <style name="SCREEN">
         <item name="android:background">@color/black_dark</item>
-        <item name="android:textColor">@color/white_dark</item>
     </style>
 
     <style name="TEXT">

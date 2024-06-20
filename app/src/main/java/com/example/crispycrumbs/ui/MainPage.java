@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -102,6 +103,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         dataManager = DataManager.getInstance();
         dataManager.loadVideosFromJson(this);
         dataManager.loadUsersFromJson(this);
+
+        for (UserItem user : dataManager.getUserList()) {
+            Log.d("User", "ID: " + user.getUserId() + ", Name: " + user.getUserName());
+        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();

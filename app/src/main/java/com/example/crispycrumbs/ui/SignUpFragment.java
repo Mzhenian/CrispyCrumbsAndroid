@@ -1,6 +1,7 @@
 package com.example.crispycrumbs.ui;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -39,6 +40,7 @@ public class SignUpFragment extends Fragment {
     private FragmentSignUpBinding binding;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_CAMERA_PERMISSION = 2;
+    private static final int REQUEST_IMAGE_PICK = 3;
     private String currentPhotoPath;
     private Uri photoURI;
 
@@ -60,13 +62,25 @@ public class SignUpFragment extends Fragment {
         });
 
         binding.btnAddProfileImg.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-            } else {
-                dispatchTakePictureIntent();
-            }
+            CharSequence[] options = {"Take Photo", "Choose from Gallery"};
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("Select Profile Picture");
+            builder.setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                            ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+                    } else {
+                        dispatchTakePictureIntent();
+                    }
+                } else if (which == 1) {
+                    Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhotoIntent, REQUEST_IMAGE_PICK);
+                }
+            });
+            builder.show();
         });
+
 
         binding.btnSighUp.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
@@ -129,10 +143,19 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            binding.btnAddProfileImg.setImageURI(photoURI);
+        if (resultCode == getActivity().RESULT_OK) {
+            if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                binding.btnAddProfileImg.setImageURI(photoURI);
+            } else if (requestCode == REQUEST_IMAGE_PICK) {
+                if (data != null) {
+                    Uri selectedImage = data.getData();
+                    binding.btnAddProfileImg.setImageURI(selectedImage);
+                    currentPhotoPath = selectedImage.toString(); // Update the photo path to the selected image's URI
+                }
+            }
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -145,4 +168,5 @@ public class SignUpFragment extends Fragment {
             }
         }
     }
+
 }

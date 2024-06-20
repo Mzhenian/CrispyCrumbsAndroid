@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 
 import android.media.Image;
 
+import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.ui.MainPage;
 import com.example.crispycrumbs.Lists.UserList;
@@ -36,13 +37,20 @@ public class UserItem {
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.country = country;
-        this.profilePicURI = profilePicURI;
+        this.profilePicURI = (profilePicURI == null || profilePicURI.isEmpty()) ? getDefaultProfilePicURI() : profilePicURI;
 
         String lastUserId = MainPage.getDataManager().lastUserId();
         this.userId = UserLogic.nextId(lastUserId);
     }
+
+
+
     public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
         this(userName, password, displayedName, email, phoneNumber, dateOfBirth, country, MainPage.getInstance().getResources().getResourceEntryName(profilePicResId));
+    }
+
+    private String getDefaultProfilePicURI() {
+        return "android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.baseline_account_circle_24;
     }
 
     public Image getProfilePicture;
@@ -95,21 +103,11 @@ public class UserItem {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry() {
-        this.country = country;
-    }
 
     public String getProfilePicURI() {
         return profilePicURI;
     }
 
-    public void setProfilePicURI(String profilePicURI) {
-        this.profilePicURI = profilePicURI;
-    }
 
     public Boolean getIsFollowed(UserItem user) {
         return followerIds.contains(user.getUserId());
@@ -133,21 +131,6 @@ public class UserItem {
         videosIds.add(videoId);
     }
 
-    public void SetLikeVideo(String videoId) {
-        likedVideoIds.add(videoId);
-    }
-
-    public void setDislikeVideo(String videoId) {
-        dislikedVideoIds.add(videoId);
-    }
-
-    public void delLike(String videoId) {
-        likedVideoIds.remove(videoId);
-    }
-
-    public void delDislike(String videoId) {
-        dislikedVideoIds.remove(videoId);
-    }
 
     public void delUploadedVideo(String videoId) {
         videosIds.remove(videoId);
@@ -164,6 +147,7 @@ public class UserItem {
     public Integer getUploadedVideosCount() {
         return videosIds.size();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -184,12 +168,11 @@ public class UserItem {
 
     public void likeVideo(String videoId) {
         likedVideoIds.add(videoId);
-        dislikedVideoIds.remove(videoId);
+
     }
 
     public void dislikeVideo(String videoId) {
         dislikedVideoIds.add(videoId);
-        likedVideoIds.remove(videoId);
     }
 
     public void removeLike(String videoId) {

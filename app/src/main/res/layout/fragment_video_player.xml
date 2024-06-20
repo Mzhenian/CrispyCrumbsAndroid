@@ -69,7 +69,8 @@
                             android:textAppearance="@style/TextAppearance.BoldText"
                             android:textSize="20sp"
                             android:layout_margin="10dp"
-                            android:textColor="@color/crispy_orange"/>
+                            android:textColor="@color/crispy_orange"
+                            />
 
                         <TextView
                             android:id="@+id/user_name"
@@ -107,14 +108,26 @@
                         android:textAppearance="@style/TextAppearance.BoldText"
                         android:textColor="@color/crispy_orange"/>
 
+                    <!-- Likes TextView -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/video_likes"
-                        android:text="1 like"
+                        android:text="@string/_0_likes"
                         android:layout_margin="10dp"
                         android:textAppearance="@style/TextAppearance.BoldText"
                         android:textColor="@color/crispy_orange"/>
+
+                    <!-- Dislikes TextView -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/video_dislikes"
+                        android:text="@string/_0_dislikes"
+                        android:layout_margin="10dp"
+                        android:textAppearance="@style/TextAppearance.BoldText"
+                        android:textColor="@color/crispy_orange"/>
+
                 </LinearLayout>
 
             </LinearLayout>

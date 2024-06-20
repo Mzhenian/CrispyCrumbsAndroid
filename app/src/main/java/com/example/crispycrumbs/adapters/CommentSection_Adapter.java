@@ -2,6 +2,7 @@ package com.example.crispycrumbs.adapters;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 
 public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_Adapter.MyViewHolder> {
 
+    private static final String TAG = "CommentSection_Adapter";
     private final Context context;
     private final ArrayList<CommentItem> commentItemArrayList;
     private final String currentUserId;
@@ -52,8 +54,18 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
         if (item != null) {
             UserItem user = DataManager.getInstance().getUserById(item.getUserId());
             if (user != null) {
-                Uri profilePicUri = Uri.parse(user.getProfilePicURI());
-                holder.profilePicture.setImageURI(profilePicUri);
+                String profilePicURI = user.getProfilePicURI();
+                if (profilePicURI != null && !profilePicURI.isEmpty()) {
+                    try {
+                        Uri profilePicUri = Uri.parse(profilePicURI);
+                        holder.profilePicture.setImageURI(profilePicUri);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Failed to parse profile picture URI: " + profilePicURI, e);
+                        holder.profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
+                    }
+                } else {
+                    holder.profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
+                }
                 holder.userName.setText(user.getUserName());
             } else {
                 holder.profilePicture.setImageResource(R.drawable.baseline_account_circle_24);

@@ -120,11 +120,18 @@ public class DataManager {
             String json = new String(buffer, StandardCharsets.UTF_8);
 
             Gson gson = new Gson();
-            Type userListType = new TypeToken<ArrayList<UserItem>>(){}.getType();
-            ArrayList<UserItem> users = gson.fromJson(json, userListType);
-            if (users != null) {
-                this.UserList.addAll(users);
+            UserList userListWrapper = gson.fromJson(json, UserList.class);
+            if (userListWrapper != null && userListWrapper.getUsers() != null) {
+                for (UserItem user : userListWrapper.getUsers()) {
+                    // Check if the profilePicURI is null or empty
+                    if (user.getProfilePicURI() == null || user.getProfilePicURI().isEmpty()) {
+                        // Set it to the resource name of the default user picture
+                        user.setProfilePicURI("android.resource://" + context.getPackageName() + "/drawable/default_user_pic");
+                    }
+                    this.UserList.add(user);
+                }
             }
+
         } catch (JsonSyntaxException e) {
             Log.e("DataManager", "JsonSyntaxException: Failed to parse JSON", e);
         } catch (IOException e) {

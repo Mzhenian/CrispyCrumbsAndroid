@@ -6,9 +6,9 @@ import android.util.Log;
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.Lists.VideoList;
 import com.example.crispycrumbs.data.CommentItem;
+import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -19,12 +19,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DataManager {
     private static DataManager instance;
     private VideoList videoList;
+    private VideoList personalVideoList;
     private Map<String, ArrayList<CommentItem>> commentsMap;
     private ArrayList<UserItem> UserList;
     String lastUserId;
@@ -32,6 +32,9 @@ public class DataManager {
 
     private DataManager() {
         videoList = new VideoList();
+        if (LoggedInUser.getUser() != null) {
+            personalVideoList = new VideoList();
+        }
         commentsMap = new HashMap<>();
         UserList = new ArrayList<>();
     }
@@ -45,6 +48,9 @@ public class DataManager {
 
     public ArrayList<PreviewVideoCard> getVideoList() {
         return videoList.getVideos();
+    }
+    public ArrayList<PreviewVideoCard> getpersonalVideoList() {
+        return personalVideoList.getVideos();
     }
 
     public ArrayList<UserItem> getUserList() {
@@ -120,19 +126,22 @@ public class DataManager {
             is.close();
             String json = new String(buffer, StandardCharsets.UTF_8);
 
+
+
+
             Gson gson = new Gson();
             UserList userListWrapper = gson.fromJson(json, UserList.class);
             if (userListWrapper != null && userListWrapper.getUsers() != null) {
                 for (UserItem user : userListWrapper.getUsers()) {
                     // Set the profilePicURI to the profilePhoto value from the JSON file
-                    String profilePhoto = user.getProfilePicURI();
+                    String profilePhoto = user.getProfilePhoto();
                     if (profilePhoto != null && !profilePhoto.isEmpty()) {
-                        user.setProfilePicURI("android.resource://" + context.getPackageName() + "/" + profilePhoto);
+                        user.setProfilePhoto("android.resource://" + context.getPackageName() + "/" + profilePhoto);
                     } else {
                         // If profilePhoto is null or empty, set it to the resource name of the default user picture
-                        user.setProfilePicURI("android.resource://" + context.getPackageName() + "/drawable/default_user_pic");
+                        user.setProfilePhoto("android.resource://" + context.getPackageName() + "/drawable/default_user_pic");
                     }
-                    this.UserList.add(user);
+                    UserList.add(user);
                 }
             }
 
@@ -171,6 +180,7 @@ public class DataManager {
 
     public void addVideo(PreviewVideoCard video) {
         getVideoList().add(video);
+
     }
 
     public String getLastUserId() {
@@ -181,6 +191,18 @@ public class DataManager {
         for (UserItem user : UserList) {
             if (user.getUserId().compareTo(last) > 0) {
                 last = user.getUserId();
+            }
+        }
+        return last;
+    }
+    public String getLastVideoId() {
+        if (lastVideoId != null) {
+            return lastVideoId;
+        }
+        String last = "";
+        for (PreviewVideoCard video : videoList.getVideos()) {
+            if (video.getVideoId().compareTo(last) > 0) {
+                last = video.getVideoId();
             }
         }
         return last;

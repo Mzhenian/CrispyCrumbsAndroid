@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.ui.MainPage;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
 import java.util.ArrayList;
@@ -58,7 +60,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
         // Fetch user information
         UserItem user = DataManager.getInstance().getUserById(videoCard.getUserId());
         if (user != null) {
-            Uri profilePicUri = Uri.parse(user.getProfilePicURI());
+            Uri profilePicUri = Uri.parse(user.getProfilePhoto());
             holder.profile_picture.setImageURI(profilePicUri);
             holder.videoUser.setText(user.getUserName());
         } else {
@@ -77,6 +79,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
             VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
             videoPlayerFragment.setArguments(bundle);
+
 
             // Replace current fragment with VideoPlayerFragment
             ((AppCompatActivity) context).getSupportFragmentManager()

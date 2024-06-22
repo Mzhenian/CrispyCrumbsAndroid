@@ -10,12 +10,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
@@ -40,7 +39,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private static Context appContext = null;
     private static DataManager dataManager = null;
     private static UserLogic userLogic = null;
-
 
     public static DataManager getDataManager() {
         return dataManager;
@@ -85,6 +83,16 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("");
         }
+
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Warning")
+                    .setMessage("Your Android version is too high for this app. Some features may not work correctly.\n this app is built for Android 13 and lower.")
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_Bar);
@@ -149,6 +157,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
         } else if (itemId == R.id.nav_profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).commit();
+        } else if (itemId == R.id.nav_my_videos) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyVideosFragment()).commit();
         } else if (itemId == R.id.nav_login) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         } else if (itemId == R.id.nav_logout) {
@@ -176,6 +186,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         menu.findItem(R.id.theme_setter).setVisible(true);
 
         menu.findItem(R.id.nav_profile).setVisible(isLoggedIn);
+        menu.findItem(R.id.nav_my_videos).setVisible(isLoggedIn);
         menu.findItem(R.id.nav_logout).setVisible(isLoggedIn);
         menu.findItem(R.id.nav_upload_video).setVisible(isLoggedIn);
         menu.findItem(R.id.nav_login).setVisible(!isLoggedIn);
@@ -205,7 +216,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         UserItem currentUser = LoggedInUser.getUser();
 
         if (currentUser != null) {
-            Uri profilePicUri = Uri.parse(currentUser.getProfilePicURI());
+            Uri profilePicUri = Uri.parse(currentUser.getProfilePhoto());
             profilePicture.setImageURI(profilePicUri);
             userName.setText(currentUser.getDisplayedName());
             userEmail.setText(currentUser.getEmail());

@@ -52,7 +52,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
         if (item != null) {
             UserItem user = DataManager.getInstance().getUserById(item.getUserId());
             if (user != null) {
-                Uri profilePicUri = Uri.parse(user.getProfilePicURI());
+                Uri profilePicUri = Uri.parse(user.getProfilePhoto());
                 holder.profilePicture.setImageURI(profilePicUri);
                 holder.userName.setText(user.getUserName());
             } else {

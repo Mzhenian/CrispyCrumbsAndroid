@@ -50,6 +50,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_video_player, container, false);
 
         recyclerView = view.findViewById(R.id.comment_section);
@@ -114,9 +115,12 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             descriptionTextView.setText(videoDescription);
 
             int videoResId = getResources().getIdentifier(videoFile, "raw", getContext().getPackageName());
-            String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
-            videoView.setVideoURI(Uri.parse(videoPath));
-
+            if (videoResId != 0) {
+                String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
+                videoView.setVideoURI(Uri.parse(videoPath));
+            } else {
+                videoView.setVideoURI(Uri.parse(videoFile));
+            }
             mediaController = new CustomMediaController(getContext());
             mediaController.setAnchorView(videoView);
             videoView.setMediaController(mediaController);
@@ -152,7 +156,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
             UserItem uploader = dataManager.getUserById(videoId);
             if (uploader != null) {
-                Uri profilePicUri = Uri.parse(uploader.getProfilePicURI());
+                Uri profilePicUri = Uri.parse(uploader.getProfilePhoto());
                 profilePicture.setImageURI(profilePicUri);
                 userNameTextView.setText(uploader.getUserName());
             } else {

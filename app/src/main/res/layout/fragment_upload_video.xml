@@ -5,10 +5,12 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.UploadVideoFragment">
+    tools:context=".ui.UploadVideoFragment"
+    android:windowSoftInputMode="adjustPan">
 
 
-    <LinearLayout
+
+<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp"
@@ -19,6 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
 
         <TextView
             android:id="@+id/TitleUploadVideo"
@@ -31,19 +34,19 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frameLayout2"
+        <RelativeLayout
+            android:id="@+id/chooseVideo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/btnOpenCamera"
-            app:layout_constraintTop_toTopOf="@+id/btnOpenCamera">
+            android:layout_height="200dp"
+
+            android:gravity="center">
 
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:visibility="invisible"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="200dp"
                 android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
                 android:progressDrawable="@android:drawable/progress_horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -51,58 +54,37 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <Button
+                android:id="@+id/btnChooseVideo"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_alignTop="@id/imageView"
+                android:layout_alignBottom="@id/imageView"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="@android:color/transparent" />
+
             <TextView
-                android:id="@+id/chooseAVideo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="choose your video (MP4)"
-                android:textSize="16sp"
+                android:layout_height="200dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:text="choose a video"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/frameLayout2"
-                app:layout_constraintTop_toTopOf="@+id/frameLayout2" />
+                android:textSize="16sp" />
 
             <ImageView
-                android:id="@+id/uploadImageHolder"
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/layer_1"
-                tools:layout_conversion_absoluteHeight="147dp"
-                tools:layout_conversion_absoluteWidth="210dp" />
+                android:id="@+id/imageView"
+                android:clickable="false"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/layer_1"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true" />
+        </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/btnContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="@+id/uploadImageHolder"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/uploadImageHolder">
 
-                <Button
-                    android:id="@+id/btnOpenCamera"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/open_camera"
-                    android:contentDescription="Open camera" />
-
-                <Button
-                    android:id="@+id/btnChooseFromGallery"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/choose_from_gallery"
-                    android:contentDescription="Choose from gallery" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/VideoTitle"
@@ -138,51 +120,47 @@
             android:hint="Video description...\n\n\n\n"
             android:inputType="text"
             android:background="@drawable/round_corners_white"
-            android:gravity="top" />/>
+            android:gravity="top" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frameLayout3"
-            android:layout_marginTop="15dp"
+
+        <RelativeLayout
+            android:id="@+id/chooseThumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/btnOpenCamera"
-            app:layout_constraintTop_toTopOf="@+id/btnOpenCamera">
-
-            <TextView
-                android:id="@+id/chooseAThumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="choose a thumbnail"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@+id/btnChooseThumbnail"
-                app:layout_constraintTop_toTopOf="@+id/btnChooseThumbnail" />
-
-            <ImageView
-                android:id="@+id/thumbnailImageHolder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/layer_1"
-                tools:layout_conversion_absoluteHeight="147dp"
-                tools:layout_conversion_absoluteWidth="210dp" />
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true">
 
             <Button
                 android:id="@+id/btnChooseThumbnail"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:backgroundTint="#00FFFFFF"
-                android:contentDescription="@string/choose_a_file"
-                app:layout_constraintBottom_toBottomOf="@+id/thumbnailImageHolder"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/thumbnailImageHolder"
-                tools:layout_conversion_absoluteHeight="0dp"
-                tools:layout_conversion_absoluteWidth="392dp" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_width="match_parent"
+                android:layout_alignTop="@id/thumbnailImageHolder"
+                android:layout_alignBottom="@id/thumbnailImageHolder"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_height="200dp"
+                android:background="@android:color/transparent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:text="choose a thumbnail"
+                android:textStyle="bold"
+                android:layout_height="200dp"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/thumbnailImageHolder"
+
+                android:layout_height="200dp"
+                android:clickable="false"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/layer_1" />
+        </RelativeLayout>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -1,12 +1,9 @@
 package com.example.crispycrumbs.data;
 
-import android.graphics.drawable.Drawable;
-
 import android.media.Image;
 
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.ui.MainPage;
-import com.example.crispycrumbs.Lists.UserList;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -21,14 +18,14 @@ public class UserItem {
     private String phoneNumber;
     private Date dateOfBirth;
     private String country;
-    private String profilePicURI; // path to the profile picture
+    private String profilePhoto; // path to the profile picture
     private Set<String> videosIds = new HashSet<>();
     private final Set<String> followerIds = new HashSet<>();
     private final Set<String> followingIds = new HashSet<>();
     private final Set<String> likedVideoIds = new HashSet<>();
     private final Set<String> dislikedVideoIds = new HashSet<>();
 
-    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicURI) {
+    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {
         this.userName = userName;
         this.password = password;
         this.displayedName = displayedName;
@@ -36,7 +33,7 @@ public class UserItem {
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.country = country;
-        this.profilePicURI = profilePicURI;
+        this.profilePhoto = profilePhoto;
 
         String lastUserId = MainPage.getDataManager().getLastUserId();
         this.userId = UserLogic.nextId(lastUserId);
@@ -103,12 +100,12 @@ public class UserItem {
         this.country = country;
     }
 
-    public String getProfilePicURI() {
-        return profilePicURI;
+    public String getProfilePhoto() {
+        return profilePhoto;
     }
 
-    public void setProfilePicURI(String profilePicURI) {
-        this.profilePicURI = profilePicURI;
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 
     public Boolean getIsFollowed(UserItem user) {
@@ -122,6 +119,13 @@ public class UserItem {
     public void addFallow(UserItem user) {
         followingIds.add(user.getUserId());
         user.followerIds.add(this.getUserId());
+    }
+    public void addVideo(String videoId) {
+        videosIds.add(videoId);
+    }
+
+    public Set<String> getUploadedVideos() {
+        return videosIds;
     }
 
     public void delFollow(UserItem user) {

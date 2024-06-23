@@ -1,6 +1,8 @@
 package com.example.crispycrumbs.ui;
 
 
+import static android.content.Intent.getIntent;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -43,8 +45,6 @@ import android.widget.Toast;
 
 public class UploadVideoFragment extends Fragment {
 
-    private PreviewVideoCard previewVideoCard;
-
     private FragmentUploadVideoBinding binding;
     private EditText etVideoTitle, etVideoDescription;
     private ImageView thumbnailImageHolder;
@@ -72,7 +72,6 @@ public class UploadVideoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        previewVideoCard = new PreviewVideoCard();
 
         binding = FragmentUploadVideoBinding.inflate(inflater, container, false);
         View view = binding.getRoot();

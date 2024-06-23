@@ -33,13 +33,7 @@ public class PreviewVideoCard {
         this.comments = new ArrayList<>();
         this.views = 0;
         this.profilePicture = MainPage.getDataManager().getUserById(userId).getProfilePhoto();
-//        this.uploadDate = (new SimpleDateFormat("dd/MM/yyyy")).format(new Date());
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            this.uploadDate = format.parse(this.uploadDate).toString();
-        } catch (ParseException e) {
-            this.uploadDate = null;
-        }
+        this.uploadDate = LocalDate.now().toString();
     }
 
     public PreviewVideoCard() {}

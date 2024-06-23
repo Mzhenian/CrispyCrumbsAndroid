@@ -208,13 +208,12 @@ public class UploadVideoFragment extends Fragment {
                 binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
             } else if (requestCode == REQUEST_THUMBNAIL_CAPTURE) {
                 binding.thumbnailImageHolder.setImageURI(thumbnailUri);
-                previewVideoCard.setThumbnail(thumbnailUri.toString());
+                currentThumbnailPath = thumbnailUri.toString();
             } else if (requestCode == REQUEST_THUMBNAIL_PICK) {
                 if (data != null) {
                     Uri selectedImage = data.getData();
                     binding.thumbnailImageHolder.setImageURI(selectedImage);
                     currentThumbnailPath = selectedImage.toString(); // Update the photo path to the selected image's URI
-                    previewVideoCard.setThumbnail(currentThumbnailPath);
                 }
             } else {
                 Log.e("UploadVideoFragment", "Unknown request code: " + requestCode);
@@ -237,9 +236,6 @@ public class UploadVideoFragment extends Fragment {
             }
 
             currentVideoPath = videoUri.toString();
-            previewVideoCard.setVideoFile(currentVideoPath);
-//            previewVideoCard.setVideoFile(videoUri.getPath());
-//            previewVideoCard.setVideoFile(videoUri.toString());
             out.close();
             in.close();
         } catch (IOException e) {
@@ -249,18 +245,18 @@ public class UploadVideoFragment extends Fragment {
 
 
     private Boolean validateUploadable() {
-        if (previewVideoCard.getTitle().isEmpty()) {
+        if (etVideoTitle.getText().toString().trim().isEmpty()) {
             etVideoTitle.setError("Video title is required");
             etVideoTitle.requestFocus();
             return false;
-        } else if (previewVideoCard.getVideoFile() == null) {
+        } else if (currentVideoPath == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Error");
             builder.setMessage("Please select a video to upload");
             builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
             builder.show();
             return false;
-        } else if (previewVideoCard.getThumbnail() == null) {
+        } else if (currentThumbnailPath == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Error");
             builder.setMessage("Please select a thumbnail for the video");
@@ -272,41 +268,32 @@ public class UploadVideoFragment extends Fragment {
         // Test that previewVideoCard.getVideoFile() is playable by VideoPlayerFragment
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(getContext(), Uri.parse(previewVideoCard.getVideoFile()));
+            mediaPlayer.setDataSource(getContext(), Uri.parse(currentVideoPath));
             mediaPlayer.prepare();
             mediaPlayer.release();
         } catch (IOException e) {
             Log.e("UploadVideoFragment", "Video not playable: " + videoUri, e);
             return false;
         }
-
-        // Test that previewVideoCard.getThumbnail() is presentable by HomeFragment
-        File thumbnailFile = new File(previewVideoCard.getThumbnail());
-        if (!thumbnailFile.exists() || !thumbnailFile.isFile()) {
-            Log.e("UploadVideoFragment", "Thumbnail not presentable: " + previewVideoCard.getThumbnail());
-            return false;
-        }
-
         return true;
     }
 
     private void upload() {
         progressBar.setVisibility(View.VISIBLE);
-        previewVideoCard.setTitle(etVideoTitle.getText().toString());
         String lastVideoId = MainPage.getDataManager().getLastVideoId();
-        previewVideoCard.setVideoId(UserLogic.nextId(lastVideoId));
+
+        PreviewVideoCard previewVideoCard = new PreviewVideoCard(UserLogic.nextId(lastVideoId), etVideoTitle.getText().toString(), currentThumbnailPath, currentVideoPath);
 
         // If validateUploadable() == true, add them to DataManager's video list and navigate back to HomeFragment
         //todo test
-//        if (validateUploadable()) {
+        if (validateUploadable()) {
             DataManager.getInstance().addVideo(previewVideoCard);
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-//        }
+        }
         progressBar.setVisibility(View.GONE);
     }
 
     private void cancelUpload() {
-        previewVideoCard = null;
         // Navigate back to HomeFragment
         getActivity().getSupportFragmentManager().popBackStack();
     }

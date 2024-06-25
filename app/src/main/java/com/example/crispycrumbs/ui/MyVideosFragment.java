@@ -1,5 +1,8 @@
 package com.example.crispycrumbs.ui;
 
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
+import com.example.crispycrumbs.adapters.MyVideoList_Adapter;
 import com.example.crispycrumbs.data.LoggedInUser;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,14 +19,13 @@ import android.widget.SearchView;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.adapters.VideoList_Adapter;
 
 import java.util.ArrayList;
 
 public class MyVideosFragment extends Fragment {
 
     // Adapter for the RecyclerView
-    private VideoList_Adapter adapter;
+    private MyVideoList_Adapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,8 +37,8 @@ public class MyVideosFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
 
         // Initialize the adapter with the context and video list
-        ArrayList<PreviewVideoCard> videoList = getPersonalVideoList();
-        adapter = new VideoList_Adapter(getContext(), videoList);
+        ArrayList<PreviewVideoCard> myVideoList = getPersonalVideoList();
+        adapter = new MyVideoList_Adapter(getContext(), myVideoList);
 
         // Set the adapter and layout manager for the RecyclerView
         recyclerView.setAdapter(adapter);
@@ -64,13 +66,13 @@ public class MyVideosFragment extends Fragment {
                 return false;
             }
         });
-
-        // Call updateNavigationMenu after user logs in
-        MainPage mainPage = (MainPage) getActivity();
-        if (mainPage != null) {
-            mainPage.updateNavigationMenu();
-            mainPage.updateNavHeader();
-        }
+//
+//        // Call updateNavigationMenu after user logs in
+//        MainPage mainPage = (MainPage) getActivity();
+//        if (mainPage != null) {
+//            mainPage.updateNavigationMenu();
+//            mainPage.updateNavHeader();
+//        }
 
         return view; // Return the created view
     }
@@ -81,10 +83,14 @@ public class MyVideosFragment extends Fragment {
         ArrayList<PreviewVideoCard> filteredVideoList = new ArrayList<>();
         String id = LoggedInUser.getUser().getUserId();
 
-        for (PreviewVideoCard video : originalVideoList) {
-            if (video.getVideoId().equals(id)) {
-                filteredVideoList.add(video);
-            }
+//        for (PreviewVideoCard video : originalVideoList) {
+//            if (video.getUserId().equals(id)) {
+//                filteredVideoList.add(video);
+//            }
+//        }
+
+        for (String videoId : LoggedInUser.getUser().getUploadedVideos()) {
+                    filteredVideoList.add( getDataManager().getVideoById(videoId));
         }
 //        notifyDataSetChanged(); // Notify adapter of data change
         return filteredVideoList;

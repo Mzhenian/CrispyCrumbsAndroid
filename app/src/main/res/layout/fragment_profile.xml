@@ -14,7 +14,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/baseline_account_circle_24"
+        android:src="@drawable/default_profile_picture"
         android:layout_marginTop="16dp"
         android:contentDescription="@string/profile_picture"
         android:scaleType="centerCrop"

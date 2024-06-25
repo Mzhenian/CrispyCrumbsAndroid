@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.UploadVideoFragment"
+    tools:context=".ui.EditVideoFragment"
     android:windowSoftInputMode="adjustPan">
 
 
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
-<LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="10dp"
@@ -27,15 +27,25 @@
 
 
         <TextView
-            android:id="@+id/TitleUploadVideo"
+            android:id="@+id/TitleEditVideo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/diff_round_corners_orange"
             android:paddingHorizontal="10dp"
-            android:text="Upload a video"
+            android:text="Edit [video title]"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtChooseVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="original thumbnail:"
+            android:textStyle="bold"
+            android:textSize="16sp" />
 
         <RelativeLayout
             android:id="@+id/chooseVideo"
@@ -56,26 +66,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btnChooseVideo"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_alignTop="@id/imageView"
-                android:layout_alignBottom="@id/imageView"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="@android:color/transparent" />
-
-            <TextView
-                android:id="@+id/txtChooseVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:text="choose a video"
-                android:textStyle="bold"
-                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/imageView"
@@ -127,6 +117,16 @@
             android:gravity="top" />
 
 
+        <TextView
+            android:id="@+id/txtChooseThumbnail"
+            android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="new thumbnail"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+
         <RelativeLayout
             android:id="@+id/chooseThumbnail"
             android:layout_width="match_parent"
@@ -144,16 +144,6 @@
                 android:clickable="true"
                 android:layout_height="200dp"
                 android:background="@android:color/transparent" />
-
-            <TextView
-                android:id="@+id/txtChooseThumbnail"
-                android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:text="choose a thumbnail"
-                android:textStyle="bold"
-                android:layout_height="200dp"
-                android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/thumbnailImageHolder"
@@ -173,22 +163,23 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/btnUpload"
+                android:id="@+id/btnUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="#00FFFFFF"
-                android:src="@drawable/upload_video" />
+                android:src="@drawable/update" />
 
             <ImageButton
-                android:id="@+id/btnCancleUpload"
+                android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="#00FFFFFF"
-                android:src="@drawable/cancel_upload" />
+                android:src="@drawable/delete" />
         </LinearLayout>
 
-</LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

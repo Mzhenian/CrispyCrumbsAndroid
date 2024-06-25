@@ -34,6 +34,7 @@
 
                 <VideoView
                     android:id="@+id/video_view"
+                    android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="270dp"/>
 
@@ -49,7 +50,7 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/baseline_account_circle_24"
+                        android:src="@drawable/default_profile_picture"
                         android:contentDescription="@string/profile_picture"
                         android:scaleType="centerCrop"
                         android:background="@drawable/circle_background"
@@ -211,6 +212,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/comment_section"
+            tools:listitem="@layout/comment_item"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="1dp"

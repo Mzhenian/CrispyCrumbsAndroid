@@ -12,7 +12,7 @@
         android:id="@+id/my_videos_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="my videos"
+        android:text="My videos (EDIT)"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/crispy_orange"
@@ -29,6 +29,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/video_recycler_view"
+        tools:listitem="@layout/video_pre_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/SCREEN"/>

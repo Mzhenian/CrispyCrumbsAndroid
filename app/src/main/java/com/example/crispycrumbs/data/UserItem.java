@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.data;
 
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import android.media.Image;
 
 import com.example.crispycrumbs.model.UserLogic;
@@ -35,12 +37,12 @@ public class UserItem {
         this.country = country;
         this.profilePhoto = profilePhoto;
 
-        String lastUserId = MainPage.getDataManager().getLastUserId();
+        String lastUserId = getDataManager().getLastUserId();
         this.userId = UserLogic.nextId(lastUserId);
     }
-    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
-        this(userName, password, displayedName, email, phoneNumber, dateOfBirth, country, MainPage.getInstance().getResources().getResourceEntryName(profilePicResId));
-    }
+//    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
+//        this(userName, password, displayedName, email, phoneNumber, dateOfBirth, country, MainPage.getInstance().getResources().getResourceEntryName(profilePicResId));
+//    }
 
     public Image getProfilePicture;
 
@@ -133,9 +135,9 @@ public class UserItem {
         user.followerIds.remove(this.getUserId());
     }
 
-    public void setUploadedVideo(String videoId) {
-        videosIds.add(videoId);
-    }
+//    public void setUploadedVideo(String videoId) {
+//        videosIds.add(videoId);
+//    }
 
     public void SetLikeVideo(String videoId) {
         likedVideoIds.add(videoId);

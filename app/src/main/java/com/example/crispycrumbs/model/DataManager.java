@@ -1,7 +1,10 @@
 package com.example.crispycrumbs.model;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.Lists.VideoList;
@@ -9,6 +12,7 @@ import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -20,8 +24,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import android.webkit.MimeTypeMap;
+import android.net.Uri;
+import android.content.ContentResolver;
 
 public class DataManager {
+    public static final String PACKAGE_NAME = MainPage.getInstance().getPackageName();
     private static DataManager instance;
     private VideoList videoList;
     private VideoList personalVideoList;
@@ -49,6 +57,7 @@ public class DataManager {
     public ArrayList<PreviewVideoCard> getVideoList() {
         return videoList.getVideos();
     }
+
     public ArrayList<PreviewVideoCard> getpersonalVideoList() {
         return personalVideoList.getVideos();
     }
@@ -61,6 +70,14 @@ public class DataManager {
         for (UserItem user : UserList) {
             if (user.getUserId().equals(userId)) {
                 return user;
+            }
+        }
+        return null;
+    }
+    public PreviewVideoCard getVideoById(String videoId) {
+        for (PreviewVideoCard video : videoList.getVideos()) {
+            if (video.getVideoId().equals(videoId)) {
+                return video;
             }
         }
         return null;
@@ -105,8 +122,8 @@ public class DataManager {
             VideoList videoListWrapper = gson.fromJson(json, VideoList.class);
             if (videoListWrapper != null && videoListWrapper.getVideos() != null) {
                 for (PreviewVideoCard video : videoListWrapper.getVideos()) {
-                    int thumbnailResId = context.getResources().getIdentifier(video.getThumbnail(), "drawable", context.getPackageName());
-                    video.setThumbnailResId(thumbnailResId);
+//                    int thumbnailResId = context.getResources().getIdentifier(video.getThumbnail(), "drawable", context.getPackageName());
+//                    video.setThumbnailResId(thumbnailResId);
                     videoList.addVideo(video);
 
                     commentsMap.put(video.getVideoId(), video.getComments());
@@ -118,6 +135,9 @@ public class DataManager {
     }
 
     public void loadUsersFromJson(Context context) {
+        if (!UserList.isEmpty()) {
+            return; // Prevent reloading if already loaded
+        }
         try {
             InputStream is = context.getAssets().open("usersDB.json");
             int size = is.available();
@@ -125,9 +145,6 @@ public class DataManager {
             is.read(buffer);
             is.close();
             String json = new String(buffer, StandardCharsets.UTF_8);
-
-
-
 
             Gson gson = new Gson();
             UserList userListWrapper = gson.fromJson(json, UserList.class);
@@ -152,27 +169,27 @@ public class DataManager {
         }
     }
 
-    public void saveUsersToJson(Context context) {
-        Gson gson = new Gson();
-        String json = gson.toJson(UserList);
-        try {
-            FileOutputStream fos = context.openFileOutput("usersDB.json", Context.MODE_PRIVATE);
-            fos.write(json.getBytes(StandardCharsets.UTF_8));
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void saveUsersToJson(Context context) {
+//        Gson gson = new Gson();
+//        String json = gson.toJson(UserList);
+//        try {
+//            FileOutputStream fos = context.openFileOutput("usersDB.json", Context.MODE_PRIVATE);
+//            fos.write(json.getBytes(StandardCharsets.UTF_8));
+//            fos.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicPath) {
         UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicPath);
         return newUser;
     }
 
-    public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
-        UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
-        return newUser;
-    }
+//    public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
+//        UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
+//        return newUser;
+//    }
 
     public void addUser(UserItem user) {
         UserList.add(user);
@@ -206,5 +223,23 @@ public class DataManager {
             }
         }
         return last;
+    }
+    public String getFileExtension(Uri uri) {
+        ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        // Return file extension
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    public static Uri getUriFromResOrFile(String path) {
+        int resId = MainPage.getInstance().getResources().getIdentifier(path, "raw",  PACKAGE_NAME);
+        if (resId != 0) {
+            return Uri.parse("android.resource://" + PACKAGE_NAME + "/" + resId);
+        } else {
+            return Uri.parse(path);
+        }
+    }
+    public  void deleteVideo(PreviewVideoCard video) {
+        videoList.getVideos().remove(video);
     }
 }

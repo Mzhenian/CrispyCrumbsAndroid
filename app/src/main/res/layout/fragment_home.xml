@@ -19,6 +19,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/video_recycler_view"
+        tools:listitem="@layout/video_pre_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/SCREEN"/>

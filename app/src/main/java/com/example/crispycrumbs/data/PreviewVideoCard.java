@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.data;
 
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import com.example.crispycrumbs.ui.MainPage;
 
 import java.text.ParseException;
@@ -15,33 +17,86 @@ public class PreviewVideoCard {
     private String profilePicture;
     private String videoFile;
     private String userId;
+    private String description;
     private int views;
     private String uploadDate;
     private ArrayList<CommentItem> comments;
+    private int likes, dislikes;
 
-    // Assuming that you will set the resource ID later in the code
-    private transient int thumbnailResId, ProfilePicResId;
+//    private TextView title;
+//    private TextView videoDate;
+//    private TextView videoViews;
+//    private TextView videoLikes;
+//    private  int likescount = 0;
+//
+//    public VideoCardItem(TextView title, TextView videoDate, TextView videoViews, TextView videoLikes) {
+//        this.title = title;
+//        this.videoDate = videoDate;
+//        this.videoViews = videoViews;
+//        this.videoLikes = videoLikes;
+//    }
+//
+//    public TextView getTitle() {
+//        return title;
+//    }
+//
+//    public TextView getVideoDate() {
+//        return videoDate;
+//    }
+//
+//    public TextView getVideoViews() {
+//        return videoViews;
+//    }
+//
+//    public TextView getVideoLikes() {
+//        return videoLikes;
+//    }
+//
+//    public void setVideoViews(TextView videoViews) {
+//        this.videoViews = videoViews;
+//    }
+//
+//    public void setVideoLikes(TextView videoLikes) {
+//        this.videoLikes = videoLikes;
+//    }
+//
+//    public int getLikesCount() {
+//        return likescount;
+//    }
+//
+//    public void setLikesCount(int likesCount) {
+//        this.likescount = likesCount;
+//    }
 
-
-    public PreviewVideoCard(String videoId, String title, String thumbnail, String videoFile) {
+    public PreviewVideoCard(String videoId, String title, String thumbnail, String videoFile, String description) {
         this.videoId = videoId;
         this.title = title;
         this.thumbnail = thumbnail;
         this.videoFile = videoFile;
+        this.description = description;
 
         this.userId = LoggedInUser.getUser().getUserId();
         this.comments = new ArrayList<>();
         this.views = 0;
-        this.profilePicture = MainPage.getDataManager().getUserById(userId).getProfilePhoto();
+        this.profilePicture = getDataManager().getUserById(userId).getProfilePhoto();
         this.uploadDate = LocalDate.now().toString();
     }
+
+    public int getLikes() {
+        return likes;
+    }
+
 
     public PreviewVideoCard() {}
     // Getters and setters for all fields
 
     public String getVideoId() { return videoId; }
     public void setVideoId(String videoId) { this.videoId = videoId; }
+
     public String getTitle() { return title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
     public void setTitle(String title) { this.title = title; }
     public String getThumbnail() { return thumbnail; }
@@ -60,8 +115,8 @@ public class PreviewVideoCard {
     public String getUploadDate() { return uploadDate; }
     public void setUploadDate(String uploadDate) { this.uploadDate = uploadDate; }
 
-    public int getThumbnailResId() { return thumbnailResId; }
-    public void setThumbnailResId(int thumbnailResId) { this.thumbnailResId = thumbnailResId; }
+//    public int getThumbnailResId() { return thumbnailResId; }
+//    public void setThumbnailResId(int thumbnailResId) { this.thumbnailResId = thumbnailResId; }
 
 
 

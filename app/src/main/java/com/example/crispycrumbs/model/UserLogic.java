@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.model;
 
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.ui.MainPage;
@@ -101,7 +103,7 @@ public class UserLogic {
             return null;
         }
 
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
+        for (UserItem user : getDataManager().getUserList()) {
             if (user == null) {
                 continue;
             }

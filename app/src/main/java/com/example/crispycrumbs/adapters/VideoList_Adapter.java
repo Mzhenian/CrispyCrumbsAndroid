@@ -1,5 +1,8 @@
 package com.example.crispycrumbs.adapters;
 
+import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.ui.MainPage;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
@@ -26,8 +27,8 @@ import java.util.ArrayList;
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<PreviewVideoCard> originalVideoList; // Original list of video items
-    private ArrayList<PreviewVideoCard> filteredVideoList; // List of filtered video items
+    protected ArrayList<PreviewVideoCard> originalVideoList; // Original list of video items
+    protected ArrayList<PreviewVideoCard> filteredVideoList; // List of filtered video items
 
     public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList) {
         this.context = context;
@@ -54,18 +55,16 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
         holder.videoViews.setText(String.valueOf(videoCard.getViews()));
         holder.videoDate.setText(videoCard.getUploadDate());
 
-        // Load thumbnail using a resource ID
-        holder.videoThumbnail.setImageResource(videoCard.getThumbnailResId());
+        holder.videoThumbnail.setImageURI(getUriFromResOrFile(videoCard.getThumbnail()));
 
         // Fetch user information
-        UserItem user = DataManager.getInstance().getUserById(videoCard.getUserId());
+        UserItem user = getDataManager().getUserById(videoCard.getUserId());
         if (user != null) {
-            Uri profilePicUri = Uri.parse(user.getProfilePhoto());
-            holder.profile_picture.setImageURI(profilePicUri);
+            holder.profile_picture.setImageURI(getUriFromResOrFile(user.getProfilePhoto()));
             holder.videoUser.setText(user.getUserName());
         } else {
-            holder.profile_picture.setImageResource(R.drawable.baseline_account_circle_24);
-            holder.videoUser.setText("Unknown");
+            holder.profile_picture.setImageResource(R.drawable.default_profile_picture);
+            holder.videoUser.setText("[deleted user]");
         }
 
         // Handle click events on items
@@ -73,9 +72,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             // Pass data to VideoPlayerFragment using BundleF
             Bundle bundle = new Bundle();
             bundle.putString("videoId", videoCard.getVideoId());
-            bundle.putString("videoTitle", videoCard.getTitle());
-            bundle.putString("videoDescription", videoCard.getUploadDate());
-            bundle.putString("videoPath", videoCard.getVideoFile());
+
 
             VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
             videoPlayerFragment.setArguments(bundle);

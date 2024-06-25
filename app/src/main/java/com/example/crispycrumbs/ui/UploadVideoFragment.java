@@ -3,6 +3,9 @@ package com.example.crispycrumbs.ui;
 
 import static android.content.Intent.getIntent;
 
+import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -25,7 +28,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.databinding.FragmentUploadVideoBinding;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
@@ -41,33 +46,29 @@ import java.util.Locale;
 import android.app.AlertDialog;
 import android.Manifest;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class UploadVideoFragment extends Fragment {
-
     private FragmentUploadVideoBinding binding;
+
     private EditText etVideoTitle, etVideoDescription;
+    private TextView txtChooseVideo;
+    private TextView txtChooseThumbnail;
     private ImageView thumbnailImageHolder;
     private Button btnOpenCamera, btnChooseFromGallery;
     private ImageButton btnUpload, btnCancleUpload;
+    private ProgressBar progressBar;
+
     private String currentThumbnailPath;
     private String currentVideoPath;
     private Uri thumbnailUri, videoUri;
-    private ProgressBar progressBar;
 
     private static final int REQUEST_VIDEO_CAPTURE = 1;
     private static final int REQUEST_VIDEO_PICK = 2;
     private static final int REQUEST_THUMBNAIL_PICK = 3;
     private static final int REQUEST_THUMBNAIL_CAPTURE = 4;
     private static final int REQUEST_CAMERA_PERMISSION = 5;
-
-    public Uri getVideoUri() {
-        return videoUri;
-    }
-
-    public Uri getThumbnailUri() {
-        return thumbnailUri;
-    }
 
     @Nullable
     @Override
@@ -80,6 +81,8 @@ public class UploadVideoFragment extends Fragment {
         thumbnailImageHolder = view.findViewById(R.id.thumbnailImageHolder);
         progressBar = view.findViewById(R.id.progressBar);
         etVideoDescription = view.findViewById(R.id.etVideoDescription);
+        txtChooseVideo = view.findViewById(R.id.txtChooseVideo);
+        txtChooseThumbnail = view.findViewById(R.id.txtChooseThumbnail);
 
         binding.btnChooseVideo.setOnClickListener(v -> takeVideo());
         binding.btnChooseThumbnail.setOnClickListener(v -> takeThumbnail());
@@ -139,7 +142,7 @@ public class UploadVideoFragment extends Fragment {
         File storageDir = getActivity().getExternalFilesDir(null);
         File video = File.createTempFile(
                 videoFileName,  /* prefix */
-                ".mp4",         /* suffix */
+                getDataManager().getFileExtension(videoUri),         /* suffix */
                 storageDir      /* directory */
         );
 
@@ -202,18 +205,22 @@ public class UploadVideoFragment extends Fragment {
                 videoUri = data.getData();
                 saveVideoLocally(videoUri);
                 binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
+                txtChooseVideo.setText("");
             } else if (requestCode == REQUEST_VIDEO_CAPTURE) {
                 Uri videoUri = data.getData();
                 saveVideoLocally(videoUri);
                 binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
+                txtChooseVideo.setText("");
             } else if (requestCode == REQUEST_THUMBNAIL_CAPTURE) {
                 binding.thumbnailImageHolder.setImageURI(thumbnailUri);
                 currentThumbnailPath = thumbnailUri.toString();
+                txtChooseThumbnail.setText("");
             } else if (requestCode == REQUEST_THUMBNAIL_PICK) {
                 if (data != null) {
                     Uri selectedImage = data.getData();
                     binding.thumbnailImageHolder.setImageURI(selectedImage);
                     currentThumbnailPath = selectedImage.toString(); // Update the photo path to the selected image's URI
+                    txtChooseThumbnail.setText("");
                 }
             } else {
                 Log.e("UploadVideoFragment", "Unknown request code: " + requestCode);
@@ -225,7 +232,7 @@ public class UploadVideoFragment extends Fragment {
         try {
             InputStream in = getContext().getContentResolver().openInputStream(videoUri);
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String videoFileName = "VIDEO_" + timeStamp + ".mp4";
+            String videoFileName = "VIDEO_" + timeStamp + getDataManager().getFileExtension(videoUri);
             File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES);
             File videoFile = new File(storageDir, videoFileName);
             OutputStream out = new FileOutputStream(videoFile);
@@ -268,7 +275,7 @@ public class UploadVideoFragment extends Fragment {
         // Test that previewVideoCard.getVideoFile() is playable by VideoPlayerFragment
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
-            mediaPlayer.setDataSource(getContext(), Uri.parse(currentVideoPath));
+            mediaPlayer.setDataSource(getContext(), getUriFromResOrFile(currentVideoPath));
             mediaPlayer.prepare();
             mediaPlayer.release();
         } catch (IOException e) {
@@ -280,14 +287,14 @@ public class UploadVideoFragment extends Fragment {
 
     private void upload() {
         progressBar.setVisibility(View.VISIBLE);
-        String lastVideoId = MainPage.getDataManager().getLastVideoId();
+        String lastVideoId = getDataManager().getLastVideoId();
 
-        PreviewVideoCard previewVideoCard = new PreviewVideoCard(UserLogic.nextId(lastVideoId), etVideoTitle.getText().toString(), currentThumbnailPath, currentVideoPath);
+        PreviewVideoCard previewVideoCard = new PreviewVideoCard(UserLogic.nextId(lastVideoId), etVideoTitle.getText().toString(), currentThumbnailPath, currentVideoPath, etVideoDescription.getText().toString());
 
-        // If validateUploadable() == true, add them to DataManager's video list and navigate back to HomeFragment
-        //todo test
+
         if (validateUploadable()) {
             DataManager.getInstance().addVideo(previewVideoCard);
+            LoggedInUser.getUser().addVideo(previewVideoCard.getVideoId());
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
         }
         progressBar.setVisibility(View.GONE);

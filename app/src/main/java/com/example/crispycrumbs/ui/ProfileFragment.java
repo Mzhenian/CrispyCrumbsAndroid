@@ -21,6 +21,8 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
+
+
         binding.btnMyVideos.setOnClickListener(v -> {
             FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
             MyVideosFragment myVideosFragment = new MyVideosFragment();

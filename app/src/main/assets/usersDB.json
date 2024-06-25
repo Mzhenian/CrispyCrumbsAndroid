@@ -128,7 +128,7 @@
       "followerIds": ["7"],
       "followingIds": ["9"],
       "videosIds": ["8"],
-      "likedVideoIds": ["", ""],
+      "likedVideoIds": [],
       "dislikedVideoIds": []
 
     },

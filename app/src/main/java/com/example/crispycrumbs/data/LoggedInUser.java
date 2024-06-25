@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.data;
 
+import static com.example.crispycrumbs.ui.MainPage.getInstance;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +21,7 @@ public class LoggedInUser {
         if (loggedInUser == null) {
             LogOut();
         } else {
-            MainPage.getInstance().updateNavHeader();
+            getInstance().updateNavHeader();
 //            TextView user_name = MainPage.getInstance().findViewById(R.id.user_name);
 //            user_name.setText(getUser().getUserName());
 
@@ -33,11 +35,14 @@ public class LoggedInUser {
     }
     public static void LogOut() {
         LoggedInUser.loggedInUser = null;
-        TextView user_name = MainPage.getInstance().findViewById(R.id.user_name);
+        TextView user_name = getInstance().findViewById(R.id.user_name);
         user_name.setText("guest");
 
-        TextView user_email = MainPage.getInstance().findViewById(R.id.user_email);
+        TextView user_email = getInstance().findViewById(R.id.user_email);
         user_email.setText("");
 
     };
+    public static  void  removeVideo(PreviewVideoCard videoItem) {
+        loggedInUser.getUploadedVideos().remove(videoItem);
+    }
 }

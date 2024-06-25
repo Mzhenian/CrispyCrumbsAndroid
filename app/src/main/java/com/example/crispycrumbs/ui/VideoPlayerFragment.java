@@ -1,7 +1,9 @@
 package com.example.crispycrumbs.ui;
 
+import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import android.app.AlertDialog;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,6 +25,7 @@ import android.widget.VideoView;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.adapters.CommentSection_Adapter;
 import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.CustomMediaController;
 import com.example.crispycrumbs.model.DataManager;
@@ -31,19 +34,24 @@ import com.example.crispycrumbs.R;
 import java.util.ArrayList;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
-    private CustomMediaController mediaController;
     private VideoView videoView;
-    private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
-    private int currentPosition = 0;
-    private String videoId;
 
+    private CustomMediaController mediaController;
+    private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
     private RecyclerView recyclerView;
     private CommentSection_Adapter adapter;
 
-    private ImageButton likeButton;
-    private ImageButton unlikeButton;
-    private boolean isLiked = false;
-    private boolean isUnliked = false;
+    private String videoId, uploaderId;
+    PreviewVideoCard video;
+    UserItem uploader;
+    private boolean isLiked, isUnliked;
+    private int currentPosition = 0;
+
+    private  TextView videoViews;
+    private  TextView videoLikes;
+    private ImageButton likeButton, unlikeButton;
+    private Button shareButton;
+    private  Button commentButton;
 
     private static final String KEY_POSITION = "position";
     private static final String KEY_COMMENTS = "comments";
@@ -52,20 +60,41 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_video_player, container, false);
-
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            videoId = bundle.getString("videoId");
+            video = DataManager.getInstance().getVideoById(videoId);
+        }
         recyclerView = view.findViewById(R.id.comment_section);
         likeButton = view.findViewById(R.id.like_button);
-        unlikeButton = view.findViewById(R.id.unlike_button);
-        Button shareButton = view.findViewById(R.id.share_button);
-        videoView = view.findViewById(R.id.video_view);
 
-        Button commentButton = view.findViewById(R.id.comment_button);
+
+        unlikeButton = view.findViewById(R.id.unlike_button);
+        videoView = view.findViewById(R.id.video_view);
+        videoLikes = view.findViewById(R.id.video_likes);
+        videoLikes.setText(getDataManager().getVideoById(videoId).getLikes() + " Likes");
+        shareButton = view.findViewById(R.id.share_button);
+        shareButton.setOnClickListener(v -> showShareMenu());
+        commentButton = view.findViewById(R.id.comment_button);
         commentButton.setOnClickListener(v -> showAddCommentDialog());
 
-        shareButton.setOnClickListener(v -> showShareMenu());
+        UserItem currentUser = LoggedInUser.getUser();
+
+        if (currentUser != null) {
+            if (!currentUser.hasLiked(videoId)) {
+                likeButton.setColorFilter(getResources().getColor(R.color.black_div));
+                unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
+                currentUser.likeVideo(videoId);
+                isLiked = true;
+                isUnliked = false;
+            } else {
+                likeButton.setColorFilter(getResources().getColor(R.color.off_white));
+                currentUser.removeLike(videoId);
+                isLiked = false;
+            }
+        }
 
         likeButton.setOnClickListener(v -> {
-            UserItem currentUser = LoggedInUser.getUser();
             if (currentUser != null) {
                 if (!currentUser.hasLiked(videoId)) {
                     likeButton.setColorFilter(getResources().getColor(R.color.black_div));
@@ -82,7 +111,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         });
 
         unlikeButton.setOnClickListener(v -> {
-            UserItem currentUser = LoggedInUser.getUser();
             if (currentUser != null) {
                 if (!currentUser.hasDisliked(videoId)) {
                     unlikeButton.setColorFilter(getResources().getColor(R.color.black_div));
@@ -98,12 +126,12 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             }
         });
 
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            String videoTitle = bundle.getString("videoTitle");
-            String videoDescription = bundle.getString("videoDescription");
-            String videoFile = bundle.getString("videoPath");
-            videoId = bundle.getString("videoId");
+
+
+            String videoTitle =video.getTitle();
+            String videoDescription = video.getDescription();
+            String videoFile = video.getVideoFile();
+            uploaderId = video.getUserId();
 
             DataManager dataManager = DataManager.getInstance();
             commentItemArrayList = dataManager.getCommentsForVideo(videoId);
@@ -111,16 +139,19 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             TextView titleTextView = view.findViewById(R.id.video_title);
             titleTextView.setText(videoTitle);
 
-            TextView descriptionTextView = view.findViewById(R.id.video_date);
-            descriptionTextView.setText(videoDescription);
+//            TextView descriptionTextView = view.findViewById(R.id.video_description);
+//            descriptionTextView.setText(videoDescription);
 
-            int videoResId = getResources().getIdentifier(videoFile, "raw", getContext().getPackageName());
-            if (videoResId != 0) {
-                String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
-                videoView.setVideoURI(Uri.parse(videoPath));
-            } else {
-                videoView.setVideoURI(Uri.parse(videoFile));
-            }
+//            int videoResId = getResources().getIdentifier(videoFile, "raw", getContext().getPackageName());
+//            if (videoResId != 0) {
+//                String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
+//                videoView.setVideoURI(Uri.parse(videoPath));
+//            } else {
+//                videoView.setVideoURI(Uri.parse(videoFile));
+//            }
+            videoView.setVideoURI(getUriFromResOrFile(videoFile));
+
+
             mediaController = new CustomMediaController(getContext());
             mediaController.setAnchorView(videoView);
             videoView.setMediaController(mediaController);
@@ -133,7 +164,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
             videoView.start();
 
-            UserItem currentUser = LoggedInUser.getUser();
             String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
             if (currentUserId != null) {
@@ -154,17 +184,14 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             ImageView profilePicture = view.findViewById(R.id.profile_picture);
             TextView userNameTextView = view.findViewById(R.id.user_name);
 
-            UserItem uploader = dataManager.getUserById(videoId);
+            UserItem uploader = dataManager.getUserById(uploaderId);
             if (uploader != null) {
-                Uri profilePicUri = Uri.parse(uploader.getProfilePhoto());
-                profilePicture.setImageURI(profilePicUri);
+                profilePicture.setImageURI(getUriFromResOrFile(uploader.getProfilePhoto()));
                 userNameTextView.setText(uploader.getUserName());
             } else {
-                profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
-                userNameTextView.setText("Unknown");
+                profilePicture.setImageResource(R.drawable.default_profile_picture);
+                userNameTextView.setText("[deleted user]");
             }
-        }
-
         return view;
     }
 

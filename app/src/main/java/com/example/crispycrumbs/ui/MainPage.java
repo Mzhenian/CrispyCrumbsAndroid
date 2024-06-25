@@ -1,8 +1,9 @@
 package com.example.crispycrumbs.ui;
 
+import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -132,7 +133,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         });
 
         //todo remove, for testing only
-        LoggedInUser.SetLoggedInUser(getDataManager().getUserById("1"));
+        LoggedInUser.SetLoggedInUser(getDataManager().getUserById("6"));
         //todo remove, end
 
         updateNavHeader();
@@ -216,12 +217,11 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         UserItem currentUser = LoggedInUser.getUser();
 
         if (currentUser != null) {
-            Uri profilePicUri = Uri.parse(currentUser.getProfilePhoto());
-            profilePicture.setImageURI(profilePicUri);
+            profilePicture.setImageURI(getUriFromResOrFile(currentUser.getProfilePhoto()));
             userName.setText(currentUser.getDisplayedName());
             userEmail.setText(currentUser.getEmail());
         } else {
-            profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
+            profilePicture.setImageResource(R.drawable.default_profile_picture);
             userName.setText(R.string.guest);
             userEmail.setText("");
         }

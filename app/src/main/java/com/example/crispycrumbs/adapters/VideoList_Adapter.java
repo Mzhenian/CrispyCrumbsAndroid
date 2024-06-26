@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.ui.MainPage;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
@@ -126,27 +127,21 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             videoDate = itemView.findViewById(R.id.video_date);
         }
 
-        public void bind(final PreviewVideoCard videoCard, final OnItemClickListener listener) {
-            videoTitle.setText(videoCard.getTitle());
-            UserItem uploader = DataManager.getInstance().getUserById(videoCard.getUserId());
+        public void bind(final PreviewVideoCard video, final OnItemClickListener listener) {
+            videoTitle.setText(video.getTitle());
+            UserItem uploader = DataManager.getInstance().getUserById(video.getUserId());
             if (uploader != null) {
-                String profilePicURI = uploader.getProfilePicURI();
-                if (profilePicURI != null && !profilePicURI.isEmpty()) {
-                    Uri profilePicUri = Uri.parse(profilePicURI);
-                    profilePicture.setImageURI(profilePicUri);
-                } else {
-                    profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
-                }
+                profilePicture.setImageURI(getUriFromResOrFile(uploader.getProfilePhoto()));
                 videoUser.setText(uploader.getUserName());
             } else {
-                profilePicture.setImageResource(R.drawable.baseline_account_circle_24);
-                videoUser.setText("Unknown");
+                profilePicture.setImageResource(R.drawable.default_profile_picture);
+                videoUser.setText("[deleted user]");
             }
-            videoViews.setText(videoCard.getViews() + " views");
-            videoDate.setText(videoCard.getUploadDate());
-            videoThumbnail.setImageResource(videoCard.getThumbnailResId());
+            videoViews.setText(video.getViews() + " views");
+            videoDate.setText(video.getUploadDate());
+            videoThumbnail.setImageURI(getUriFromResOrFile(video.getThumbnail()));
 
-            itemView.setOnClickListener(v -> listener.onItemClick(videoCard));
+            itemView.setOnClickListener(v -> listener.onItemClick(video));
         }
     }
 }

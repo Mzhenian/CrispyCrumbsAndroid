@@ -24,28 +24,38 @@ There are 2 option you can choose on where to run the app :
    The navigation bar will show different option whether a user is logged or not, specificly, if there are no logged users it will show the option to log in and sign up, and if a user is logged
    it will show the option to logout, or go to the video upload page.
     Picture pending till work is done.
+    ![NavBar](https://github.com/Mzhenian/CrispyCrumbsAndroid/assets/158558632/90122e81-fc66-44f3-b6a7-f8d3eae921da)
+    ![Guest Bar](https://github.com/Mzhenian/CrispyCrumbsAndroid/assets/158558632/b5252ac8-a777-4ce1-a656-7091df881be8)
 
 1. ### Homepage
   
     The homepage of the Crispy Crumbs app features a search bar at the top, and a list of watchable videos presented with a video thumbnail and other details such as views, upload date, and title.
-   
+
+   ![HomePage](https://github.com/Mzhenian/CrispyCrumbsAndroid/assets/158558632/5afff91b-0f84-4e47-8f97-7d67cbaa99d6)
+
 2. ### Sign Up
   
    This page is for user sign-up or profile editing. It includes fields for entering full name, username, email, password, birthday, and phone number. There is also an option to upload a profile photo.
    The form includes "Sign up" and "Already have an account" buttons at the bottom.
 
+   ![SignUp](https://github.com/Mzhenian/CrispyCrumbsAndroid/assets/158558632/cc9c2cde-a74d-4aa1-ae6e-06eea534b68f)
+
 3. ### Login
 
    This page is for user login. It includes fields for entering the username and password. If you want yo log in use one of our ready user : User name- Tuna Password - password6.
 
-4. ### Video Upload
+   ![Login](https://github.com/Mzhenian/CrispyCrumbsAndroid/assets/158558632/32536ac8-723e-4292-a154-911072f97036)
+
+5. ### Video Upload
 
    This page is for uploading videos. After the user picks a video, the page includes fields for entering the video title, description, category, and tags. There is also an option to upload a thumbnail image for the video. At the bottom, there are "Upload" and "Cancel" buttons.
 
-5. ### Video Page
+6. ### Video Page
 
    This page shows a video player at the top, playing the selected video. Below the video, there are details about the video, including the uploader's name, upload date and views. Users can see and add comments below the video as well as delete and edit their comments.
     There also a like/unlike buttons, and a share button to open a "stupid" share menu.
+
+   ![VideoPlayer](https://github.com/Mzhenian/CrispyCrumbsAndroid/assets/158558632/e1fffa48-3ba6-457c-b251-494dabb8cb30)
 
 ## Work process -  
 Our project was built collaboratively as a team. 

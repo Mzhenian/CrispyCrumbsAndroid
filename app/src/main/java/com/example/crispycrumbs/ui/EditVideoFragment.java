@@ -91,7 +91,7 @@ public class EditVideoFragment extends Fragment {
         }
 
         TitleEditVideo = view.findViewById(R.id.TitleEditVideo);
-        TitleEditVideo.setText("Edit: " + video.getTitle() + " #" + video.getVideoId());
+        TitleEditVideo.setText("Editing: " + video.getTitle() + " #" + video.getVideoId());
         etVideoTitle = view.findViewById(R.id.etVideoTitle);
         etVideoTitle.setText(video.getTitle());
         etVideoDescription = view.findViewById(R.id.etVideoDescription);

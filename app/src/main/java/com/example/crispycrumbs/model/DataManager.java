@@ -187,16 +187,24 @@ public class DataManager {
         return newUser;
     }
 
-    public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
-        UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
-        return newUser;
-    }
+//    public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
+//        UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
+//        return newUser;
+//    }
 
     public void addUser(UserItem user) {
         UserList.add(user);
     }
 
-    public String lastUserId() {
+    public void addVideo(PreviewVideoCard video) {
+        getVideoList().add(video);
+
+    }
+
+    public String getLastUserId() {
+        if (lastUserId != null) {
+            return lastUserId;
+        }
         String last = "";
         for (UserItem user : UserList) {
             if (user.getUserId().compareTo(last) > 0) {
@@ -216,6 +224,7 @@ public class DataManager {
         if (likesMap.containsKey(videoId)) {
             likesMap.put(videoId, likesMap.get(videoId) - 1);
         }
+    }
     public String getLastVideoId() {
         if (lastVideoId != null) {
             return lastVideoId;
@@ -246,7 +255,6 @@ public class DataManager {
     public  void deleteVideo(PreviewVideoCard video) {
         videoList.getVideos().remove(video);
     }
-    }
 
     public void incrementDislikes(String videoId) {
         if (dislikesMap.containsKey(videoId)) {
@@ -266,15 +274,6 @@ public class DataManager {
 
     public int getDislikesCount(String videoId) {
         return dislikesMap.getOrDefault(videoId, 0);
-    }
-
-    public PreviewVideoCard getVideoById(String videoId) {
-        for (PreviewVideoCard video : videoList) {
-            if (video.getVideoId().equals(videoId)) {
-                return video;
-            }
-        }
-        return null;
     }
 }
 

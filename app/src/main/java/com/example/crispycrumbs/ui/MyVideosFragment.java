@@ -38,7 +38,7 @@ public class MyVideosFragment extends Fragment {
 
         // Initialize the adapter with the context and video list
         ArrayList<PreviewVideoCard> myVideoList = getPersonalVideoList();
-        adapter = new MyVideoList_Adapter(getContext(), myVideoList);
+        adapter = new MyVideoList_Adapter(getContext(), myVideoList, null);
 
         // Set the adapter and layout manager for the RecyclerView
         recyclerView.setAdapter(adapter);

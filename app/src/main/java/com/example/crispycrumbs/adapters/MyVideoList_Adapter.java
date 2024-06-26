@@ -25,8 +25,16 @@ import com.example.crispycrumbs.ui.VideoPlayerFragment;
 import java.util.ArrayList;
 
 public class MyVideoList_Adapter extends VideoList_Adapter  {
-    public MyVideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList) {
-        super(context, videoArrayList);
+
+//    private final VideoList_Adapter.OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(PreviewVideoCard videoCard);
+    }
+
+    public MyVideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, VideoList_Adapter.OnItemClickListener listener) {
+        super(context, videoArrayList, listener);
+
     }
 
     @Override

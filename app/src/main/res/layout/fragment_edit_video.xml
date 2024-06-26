@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/diff_round_corners_orange"
             android:paddingHorizontal="10dp"
-            android:text="Edit [video title]"
+            android:text="Editing [video title]"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />

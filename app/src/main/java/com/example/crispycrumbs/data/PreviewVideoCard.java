@@ -21,52 +21,6 @@ public class PreviewVideoCard {
     private int views;
     private String uploadDate;
     private ArrayList<CommentItem> comments;
-    private int likes, dislikes;
-
-//    private TextView title;
-//    private TextView videoDate;
-//    private TextView videoViews;
-//    private TextView videoLikes;
-//    private  int likescount = 0;
-//
-//    public VideoCardItem(TextView title, TextView videoDate, TextView videoViews, TextView videoLikes) {
-//        this.title = title;
-//        this.videoDate = videoDate;
-//        this.videoViews = videoViews;
-//        this.videoLikes = videoLikes;
-//    }
-//
-//    public TextView getTitle() {
-//        return title;
-//    }
-//
-//    public TextView getVideoDate() {
-//        return videoDate;
-//    }
-//
-//    public TextView getVideoViews() {
-//        return videoViews;
-//    }
-//
-//    public TextView getVideoLikes() {
-//        return videoLikes;
-//    }
-//
-//    public void setVideoViews(TextView videoViews) {
-//        this.videoViews = videoViews;
-//    }
-//
-//    public void setVideoLikes(TextView videoLikes) {
-//        this.videoLikes = videoLikes;
-//    }
-//
-//    public int getLikesCount() {
-//        return likescount;
-//    }
-//
-//    public void setLikesCount(int likesCount) {
-//        this.likescount = likesCount;
-//    }
 
     public PreviewVideoCard(String videoId, String title, String thumbnail, String videoFile, String description) {
         this.videoId = videoId;
@@ -82,45 +36,99 @@ public class PreviewVideoCard {
         this.uploadDate = LocalDate.now().toString();
     }
 
-    public int getLikes() {
-        return likes;
-    }
+    //
+    // Assuming that you will set the resource ID later in the code
+    private transient UserItem uploader;
+
+    private int likesCount; // Add this field
+    private int dislikesCount; // Add this field
 
 
     public PreviewVideoCard() {}
     // Getters and setters for all fields
 
-    public String getVideoId() { return videoId; }
-    public void setVideoId(String videoId) { this.videoId = videoId; }
+    public String getVideoId() {
+        return videoId;
+    }
 
-    public String getTitle() { return title; }
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public void setTitle(String title) { this.title = title; }
-    public String getThumbnail() { return thumbnail; }
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 
-    public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
-    public String getVideoFile() { return videoFile; }
+    public String getVideoFile() {
+        return videoFile;
+    }
 
-    public void setVideoFile(String videoFile) { this.videoFile = videoFile; }
+    public void setVideoFile(String videoFile) {
+        this.videoFile = videoFile;
+    }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public String getUserId() {
+        return userId;
+    }
 
-    public int getViews() { return views; }
-    public void setViews(int views) { this.views = views; }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-    public String getUploadDate() { return uploadDate; }
-    public void setUploadDate(String uploadDate) { this.uploadDate = uploadDate; }
+    public int getViews() {
+        return views;
+    }
+    public void setViews(int views) {
+        this.views = views;
+    }
+    public String getUploadDate() {
+        return uploadDate;
+    }
 
-//    public int getThumbnailResId() { return thumbnailResId; }
-//    public void setThumbnailResId(int thumbnailResId) { this.thumbnailResId = thumbnailResId; }
-
-
+    public void setUploadDate(String uploadDate) {
+        this.uploadDate = uploadDate;
+    }
 
     public ArrayList<CommentItem> getComments() {
         return comments;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public int getDislikesCount() {
+        return dislikesCount;
+    }
+
+    public void setDislikesCount(int dislikesCount) {
+        this.dislikesCount = dislikesCount;
+    }
+
+    public UserItem getUploader() {
+        return uploader;
+    }
+
+    public void setUploader(UserItem uploader) {
+        this.uploader = uploader;
     }
 }

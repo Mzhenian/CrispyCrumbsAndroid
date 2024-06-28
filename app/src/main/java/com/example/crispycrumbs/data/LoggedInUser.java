@@ -8,6 +8,8 @@ import android.widget.TextView;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.ui.MainPage;
 
+import java.io.Serializable;
+
 public class LoggedInUser {
     private static UserItem loggedInUser = null;
 
@@ -22,24 +24,19 @@ public class LoggedInUser {
             LogOut();
         } else {
             getInstance().updateNavHeader();
-//            TextView user_name = MainPage.getInstance().findViewById(R.id.user_name);
-//            user_name.setText(getUser().getUserName());
-
-//            TextView user_email = MainPage.getInstance().findViewById(R.id.user_email);
-//            user_email.setText(getUser().getEmail());
-
-//            ImageView profile_picture = MainPage.getInstance().findViewById(R.id.profile_picture);
-            //            todo
-            //            profile_picture.setImageDrawable(getUser().getProfilePicture());
         }
     }
     public static void LogOut() {
         LoggedInUser.loggedInUser = null;
         TextView user_name = getInstance().findViewById(R.id.user_name);
-        user_name.setText("guest");
+        if (user_name != null) {
+            user_name.setText("guest");
+        }
 
         TextView user_email = getInstance().findViewById(R.id.user_email);
-        user_email.setText("");
+        if (user_email != null) {
+            user_email.setText("");
+        }
 
     };
     public static  void  removeVideo(PreviewVideoCard videoItem) {

@@ -10,6 +10,9 @@
     <color name="white_div">#EAE4D8</color>
     <color name="ofek_white">#F8F3EB</color>
     <color name="ofek_blue_light">#3C7E8C</color>
+    <color name="link_blue">#0000EE</color>
+    <color name="visited_link_purple">#551A8B</color>
+
 
     <!-- Light Mode Colors -->
     <color name="crispy_orange_light">#FFA726</color>

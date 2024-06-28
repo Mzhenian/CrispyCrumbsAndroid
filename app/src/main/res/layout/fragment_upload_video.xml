@@ -100,7 +100,7 @@
 
         <EditText
             android:id="@+id/etVideoTitle"
-            android:hint="Video title"
+            android:hint="* Video title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/round_corners_white"

@@ -33,17 +33,6 @@ public class UserList  {
         this.users.add(user);
     }
 
-//    private int lastUserId() {
-//        int max = 0;
-//        for (UserItem user : MainPage.getDataManager().getUserList()) {
-//            if (user.getUserId() > max) {
-//                max = user.getUserId();
-//            }
-//        }
-//        return max;
-//    }
-
-
     public static boolean isEmailUnique(String email) {
         for (UserItem user : getDataManager().getUserList()) {
             if (user.getEmail().equals(email)) {

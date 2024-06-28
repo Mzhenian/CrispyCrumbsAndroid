@@ -1,13 +1,11 @@
 package com.example.crispycrumbs.ui;
 
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,13 +32,9 @@ import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.databinding.FragmentEditVideoBinding;
 import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.model.UserLogic;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -77,7 +70,7 @@ public class EditVideoFragment extends Fragment {
             MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UploadVideoFragment()).commit();
             return view;
         }
-        if (null == LoggedInUser.getUser().getUserId()) {
+        if (null == LoggedInUser.getUser() || null == LoggedInUser.getUser().getUserId()) {
             MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             return view;
         }

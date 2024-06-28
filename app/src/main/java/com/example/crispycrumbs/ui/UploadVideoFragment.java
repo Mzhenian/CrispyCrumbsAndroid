@@ -73,6 +73,7 @@ public class UploadVideoFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getContext().getTheme().applyStyle(R.style.Base_Theme_CrispyCrumbs_Light, true);
 
         binding = FragmentUploadVideoBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -146,8 +147,6 @@ public class UploadVideoFragment extends Fragment {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
-//        currentVideoPath = video.getAbsolutePath();
         return video;
     }
 
@@ -218,9 +217,11 @@ public class UploadVideoFragment extends Fragment {
             } else if (requestCode == REQUEST_THUMBNAIL_PICK) {
                 if (data != null) {
                     Uri selectedImage = data.getData();
-                    binding.thumbnailImageHolder.setImageURI(selectedImage);
-                    currentThumbnailPath = selectedImage.toString(); // Update the photo path to the selected image's URI
-                    txtChooseThumbnail.setText("");
+                    if (selectedImage != null) {
+                        binding.thumbnailImageHolder.setImageURI(selectedImage);
+                        currentThumbnailPath = selectedImage.toString(); // Update the photo path to the selected image's URI
+                        txtChooseThumbnail.setText("");
+                    }
                 }
             } else {
                 Log.e("UploadVideoFragment", "Unknown request code: " + requestCode);
@@ -296,8 +297,10 @@ public class UploadVideoFragment extends Fragment {
             DataManager.getInstance().addVideo(previewVideoCard);
             LoggedInUser.getUser().addVideo(previewVideoCard.getVideoId());
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            Toast.makeText(getContext(), "uploaded " + previewVideoCard.getTitle() + " successfully", Toast.LENGTH_SHORT).show();
         }
         progressBar.setVisibility(View.GONE);
+
     }
 
     private void cancelUpload() {

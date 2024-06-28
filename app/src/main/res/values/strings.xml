@@ -2,7 +2,7 @@
     <string name="app_name">CrispyCrumbs</string>
     <string name="user_name">User name</string>
     <string name="password">Password</string>
-    <string name="login">Log in!</string>
+    <string name="login">Log in</string>
     <string name="new_user">New user? Sign up!</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
@@ -27,7 +27,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="et_confirm_password">* confirm password</string>
-    <string name="et_mail_address">email address</string>
+    <string name="et_mail_address">* email address</string>
     <string name="et_name">* displayed name</string>
     <string name="et_password">* password</string>
     <string name="btn_sign_up">Sign up!</string>
@@ -80,4 +80,6 @@
     <string name="_0_likes">0 likes</string>
     <string name="_0_dislikes">o dislikes</string>
     <string name="birth_date">Birth Date:</string>
+    <string name="more">more</string>
+    <string name="less">less</string>
 </resources>

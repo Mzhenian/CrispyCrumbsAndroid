@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.crispycrumbs.data.LoggedInUser;
@@ -28,7 +29,11 @@ public class LoginFragment extends Fragment {
         Button login_button = view.findViewById(R.id.login_button);
         EditText user_name = view.findViewById(R.id.username_input);
         EditText password = view.findViewById(R.id.password_input);
+        TextView newUser = view.findViewById(R.id.new_user);
 
+        newUser.setOnClickListener(v -> {
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).commit();
+        });
         // Add a TextWatcher to the password EditText
         password.addTextChangedListener(new TextWatcher() {
             @Override

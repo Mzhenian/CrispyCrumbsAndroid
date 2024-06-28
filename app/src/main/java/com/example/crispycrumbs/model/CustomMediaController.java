@@ -24,19 +24,6 @@ public class CustomMediaController extends MediaController {
         // Set margins (left, top, right, bottom) to adjust the position
         params.setMargins(0, 0, 0, 500); // Adjust bottom margin as needed
         this.setLayoutParams(params);
-
-//// todo WIP v2
-//        public void setAnchorView(View view, int bottomMargin) {
-//            super.setAnchorView(view);
-//
-//            // Customize the position and size of the MediaController
-//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-//                    ViewGroup.LayoutParams.MATCH_PARENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT
-//            );
-//            // Set margins (left, top, right, bottom) to adjust the position
-//            params.setMargins(0, 0, 0, bottomMargin + getHeight()); //todo pin bottom margin to video bottom
-//            this.setLayoutParams(params);
     }
 }
 

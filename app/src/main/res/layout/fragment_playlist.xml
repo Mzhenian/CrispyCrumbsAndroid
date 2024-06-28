@@ -4,18 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.MyVideosFragment"
+    tools:context=".ui.PlayListFragment"
     style="@style/SCREEN"
     >
 
     <TextView
-        android:id="@+id/my_videos_title"
+        android:id="@+id/playlist_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="My videos (EDIT)"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/crispy_orange"
+        android:gravity="center_horizontal"
+        android:layout_marginHorizontal="20dp"
         android:layout_alignParentTop="true"/>
 
     <SearchView

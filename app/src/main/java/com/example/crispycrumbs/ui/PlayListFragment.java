@@ -2,7 +2,7 @@ package com.example.crispycrumbs.ui;
 
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
-import com.example.crispycrumbs.adapters.MyVideoList_Adapter;
+import com.example.crispycrumbs.adapters.PlayList_Adapter;
 import com.example.crispycrumbs.data.LoggedInUser;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,29 +16,53 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 
 
+import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.databinding.FragmentPlaylistBinding;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 
 import java.util.ArrayList;
 
-public class MyVideosFragment extends Fragment {
+public class PlayListFragment extends Fragment {
 
     // Adapter for the RecyclerView
-    private MyVideoList_Adapter adapter;
+    private FragmentPlaylistBinding binding;
+    private PlayList_Adapter adapter;
+    private  UserItem user;
+
+    public PlayListFragment() {
+    }
+    public PlayListFragment(UserItem user) {
+        this.user=user;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        binding =  FragmentPlaylistBinding.inflate(getLayoutInflater(), container, false);
+
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_my_videos, container, false);
+        View view =  binding.getRoot();
+
+        if (user != null && user != LoggedInUser.getUser()) {
+            binding.playlistTitle.setText(user.getDisplayedName() + " Videos");
+        }
 
         // Find the RecyclerView in the layout
         RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
 
         // Initialize the adapter with the context and video list
-        ArrayList<PreviewVideoCard> myVideoList = getPersonalVideoList();
-        adapter = new MyVideoList_Adapter(getContext(), myVideoList, null);
+        ArrayList<PreviewVideoCard> subVideoList;
+        if (user != null) {
+            subVideoList = getSubVideoList(user);
+            adapter = new PlayList_Adapter(getContext(), subVideoList, null, user);
+        } else {
+            subVideoList = getSubVideoList();
+            adapter = new PlayList_Adapter(getContext(), subVideoList, null, LoggedInUser.getUser());
+        }
+
+
 
         // Set the adapter and layout manager for the RecyclerView
         recyclerView.setAdapter(adapter);
@@ -66,33 +90,28 @@ public class MyVideosFragment extends Fragment {
                 return false;
             }
         });
-//
-//        // Call updateNavigationMenu after user logs in
-//        MainPage mainPage = (MainPage) getActivity();
-//        if (mainPage != null) {
-//            mainPage.updateNavigationMenu();
-//            mainPage.updateNavHeader();
-//        }
 
         return view; // Return the created view
     }
-    //todo replace with: for every videoId in user.getUploadedVideos, add the video to the list
-    public ArrayList<PreviewVideoCard> getPersonalVideoList() {
+    public ArrayList<PreviewVideoCard> getSubVideoList() {
         DataManager dataManager = DataManager.getInstance();
         ArrayList<PreviewVideoCard> originalVideoList = dataManager.getVideoList();
         ArrayList<PreviewVideoCard> filteredVideoList = new ArrayList<>();
-        String id = LoggedInUser.getUser().getUserId();
-
-//        for (PreviewVideoCard video : originalVideoList) {
-//            if (video.getUserId().equals(id)) {
-//                filteredVideoList.add(video);
-//            }
-//        }
 
         for (String videoId : LoggedInUser.getUser().getUploadedVideos()) {
                     filteredVideoList.add( getDataManager().getVideoById(videoId));
         }
 //        notifyDataSetChanged(); // Notify adapter of data change
+        return filteredVideoList;
+    }
+    public ArrayList<PreviewVideoCard> getSubVideoList(UserItem user) {
+        DataManager dataManager = DataManager.getInstance();
+        ArrayList<PreviewVideoCard> originalVideoList = dataManager.getVideoList();
+        ArrayList<PreviewVideoCard> filteredVideoList = new ArrayList<>();
+
+        for (String videoId :user.getUploadedVideos()) {
+            filteredVideoList.add( getDataManager().getVideoById(videoId));
+        }
         return filteredVideoList;
     }
 

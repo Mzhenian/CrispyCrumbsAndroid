@@ -4,11 +4,8 @@ import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import com.example.crispycrumbs.ui.MainPage;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class PreviewVideoCard {
     private String videoId;
@@ -21,6 +18,8 @@ public class PreviewVideoCard {
     private int views;
     private String uploadDate;
     private ArrayList<CommentItem> comments;
+    private int likes;
+    private int dislikes;
 
     public PreviewVideoCard(String videoId, String title, String thumbnail, String videoFile, String description) {
         this.videoId = videoId;
@@ -38,10 +37,7 @@ public class PreviewVideoCard {
 
     //
     // Assuming that you will set the resource ID later in the code
-    private transient UserItem uploader;
 
-    private int likesCount; // Add this field
-    private int dislikesCount; // Add this field
 
 
     public PreviewVideoCard() {}
@@ -108,27 +104,27 @@ public class PreviewVideoCard {
         return comments;
     }
 
-    public int getLikesCount() {
-        return likesCount;
+    public int getLikes() {
+        return likes;
     }
 
-    public void setLikesCount(int likesCount) {
-        this.likesCount = likesCount;
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
-    public int getDislikesCount() {
-        return dislikesCount;
+    public int getDislikes() {
+        return dislikes;
     }
 
-    public void setDislikesCount(int dislikesCount) {
-        this.dislikesCount = dislikesCount;
+    public void setDislikes(int dislikes) {
+        this.dislikes = dislikes;
     }
 
     public UserItem getUploader() {
-        return uploader;
+        return MainPage.getDataManager().getUserById(userId);
     }
 
     public void setUploader(UserItem uploader) {
-        this.uploader = uploader;
+        this.userId = uploader.getUserId();
     }
 }

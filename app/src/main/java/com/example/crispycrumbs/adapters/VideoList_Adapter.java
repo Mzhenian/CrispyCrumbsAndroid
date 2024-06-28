@@ -4,8 +4,8 @@ import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +20,19 @@ import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.ui.MainPage;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
 import java.util.ArrayList;
 
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
-
+    private static final String TAG = "VideoList_Adapter";
     private Context context;
     protected ArrayList<PreviewVideoCard> originalVideoList;
     protected ArrayList<PreviewVideoCard> filteredVideoList;
     private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(PreviewVideoCard videoCard);
+        void onItemClick(PreviewVideoCard video);
     }
 
     public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
@@ -53,32 +52,36 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PreviewVideoCard videoCard = filteredVideoList.get(position);
+        PreviewVideoCard video = filteredVideoList.get(position);
+        if (video == null) {
+            Log.e(TAG, "Video is null");
+            return;
+        }
+        holder.bind(video, listener);
 
-        holder.bind(videoCard, listener);
+        holder.videoTitle.setText(video.getTitle());
+        holder.videoUser.setText(video.getUserId());
+        holder.videoViews.setText(String.valueOf(video.getViews()));
+        holder.videoDate.setText(video.getUploadDate());
 
-        holder.videoTitle.setText(videoCard.getTitle());
-        holder.videoUser.setText(videoCard.getUserId());
-        holder.videoViews.setText(String.valueOf(videoCard.getViews()));
-        holder.videoDate.setText(videoCard.getUploadDate());
-
-        holder.videoThumbnail.setImageURI(getUriFromResOrFile(videoCard.getThumbnail()));
+        holder.videoThumbnail.setImageURI(getUriFromResOrFile(video.getThumbnail()));
 
         // Fetch user information
-        UserItem user = getDataManager().getUserById(videoCard.getUserId());
+        UserItem user = getDataManager().getUserById(video.getUserId());
         if (user != null) {
             holder.profilePicture.setImageURI(getUriFromResOrFile(user.getProfilePhoto()));
             holder.videoUser.setText(user.getUserName());
         } else {
             holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
             holder.videoUser.setText("[deleted user]");
+            Log.e(TAG, "User not found");
         }
 
         // Handle click events on items
         holder.itemView.setOnClickListener(v -> {
             // Pass data to VideoPlayerFragment using BundleF
             Bundle bundle = new Bundle();
-            bundle.putString("videoId", videoCard.getVideoId());
+            bundle.putString("videoId", video.getVideoId());
 
 
             VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
@@ -89,7 +92,6 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             ((AppCompatActivity) context).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, videoPlayerFragment)
-                    .addToBackStack(null) // Add to back stack for fragment navigation
                     .commit();
         });
     }
@@ -127,7 +129,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             videoDate = itemView.findViewById(R.id.video_date);
         }
 
-        public void bind(final PreviewVideoCard video, final OnItemClickListener listener) {
+        public void bind(PreviewVideoCard video, final OnItemClickListener listener) {
             videoTitle.setText(video.getTitle());
             UserItem uploader = DataManager.getInstance().getUserById(video.getUserId());
             if (uploader != null) {
@@ -136,6 +138,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             } else {
                 profilePicture.setImageResource(R.drawable.default_profile_picture);
                 videoUser.setText("[deleted user]");
+                Log.e(TAG, "User not found");
             }
             videoViews.setText(video.getViews() + " views");
             videoDate.setText(video.getUploadDate());

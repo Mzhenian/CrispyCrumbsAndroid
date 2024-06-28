@@ -10,6 +10,7 @@
     android:id="@+id/top_bar"
     >
     <ImageView
+        android:id="@+id/topBarLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/small_logo"

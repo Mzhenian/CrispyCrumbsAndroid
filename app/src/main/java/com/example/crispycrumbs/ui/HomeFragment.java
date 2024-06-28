@@ -62,13 +62,10 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
     }
 
     @Override
-    public void onItemClick(PreviewVideoCard videoCard) {
+    public void onItemClick(PreviewVideoCard video) {
         VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
         Bundle args = new Bundle();
-        args.putString("videoId", videoCard.getVideoId());
-        args.putString("videoTitle", videoCard.getTitle());
-        args.putString("videoDate", videoCard.getUploadDate());
-        args.putString("videoPath", videoCard.getVideoFile());
+        args.putString("videoId", video.getVideoId());
         videoPlayerFragment.setArguments(args);
 
         getParentFragmentManager().beginTransaction()

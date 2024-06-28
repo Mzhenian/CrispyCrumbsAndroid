@@ -59,10 +59,7 @@ public class SignUpFragment extends Fragment {
         final ProgressBar loadingProgressBar = binding.signUpProgressBar;
 
         binding.btnToSignIn.setOnClickListener(v -> {
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            LoginFragment loginFragment = new LoginFragment();
-            transaction.replace(R.id.container, loginFragment);
-            transaction.commit();
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         });
 
         binding.btnAddProfileImg.setOnClickListener(v -> {
@@ -95,7 +92,8 @@ public class SignUpFragment extends Fragment {
             if (returnedError == null) {
                 DataManager dataManager = DataManager.getInstance();
                 // Use default profile picture if no photo is taken
-                String profilePicPath = currentPhotoPath != null ? currentPhotoPath : "android.resource://" + getContext().getPackageName() + "/" + R.drawable.default_profile_picture;
+                String profilePicPath = DataManager.getUriFromResOrFile(currentPhotoPath).toString();
+//                currentPhotoPath != null ? currentPhotoPath : "android.resource://" + getContext().getPackageName() + "/" + R.drawable.default_profile_picture;
                 UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, profilePicPath);
                 dataManager.addUser(newUser);
                 LoggedInUser.SetLoggedInUser(newUser);
@@ -139,7 +137,7 @@ public class SignUpFragment extends Fragment {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, getDataManager().getFileExtension(photoURI), storageDir);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
@@ -150,11 +148,14 @@ public class SignUpFragment extends Fragment {
         if (resultCode == getActivity().RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 binding.btnAddProfileImg.setImageURI(photoURI);
+                currentPhotoPath = photoURI.toString();
             } else if (requestCode == REQUEST_IMAGE_PICK) {
                 if (data != null) {
                     Uri selectedImage = data.getData();
-                    binding.btnAddProfileImg.setImageURI(selectedImage);
-                    currentPhotoPath = selectedImage.toString(); // Update the photo path to the selected image's URI
+                    if (selectedImage != null) {
+                        binding.btnAddProfileImg.setImageURI(selectedImage);
+                        currentPhotoPath = selectedImage.toString();
+                    }
                 }
             }
         }

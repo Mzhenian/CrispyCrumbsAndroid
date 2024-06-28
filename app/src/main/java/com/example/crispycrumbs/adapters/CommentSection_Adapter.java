@@ -17,6 +17,8 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.ui.MainPage;
+import com.example.crispycrumbs.ui.ProfileFragment;
 
 import java.util.ArrayList;
 
@@ -59,6 +61,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             } else {
                 holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
                 holder.userName.setText("[deleted user]");
+                Log.e(TAG, "User not found");
             }
             holder.content.setText(item.getComment());
             holder.date.setText(item.getDate());
@@ -72,6 +75,9 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                 holder.editButton.setVisibility(View.GONE);
                 holder.deleteButton.setVisibility(View.GONE);
             }
+            holder.profilePicture.setOnClickListener(v -> {
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(item.getUserId())).commit();
+            });
         }
     }
 

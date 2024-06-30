@@ -40,6 +40,6 @@ public class LoggedInUser {
 
     };
     public static  void  removeVideo(PreviewVideoCard videoItem) {
-        loggedInUser.getUploadedVideos().remove(videoItem);
+        loggedInUser.delUploadedVideo(videoItem.getVideoId());
     }
 }

@@ -211,7 +211,7 @@ public class EditVideoFragment extends Fragment {
     private void delete() {
         // Navigate back to HomeFragment
         DataManager.getInstance().deleteVideo(video);
-        LoggedInUser.removeVideo(video);
+        LoggedInUser.removeVideo(video); //to ensure you can delete a video only if you can log into this account
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
     }
 }

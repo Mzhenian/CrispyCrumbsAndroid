@@ -9,8 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.crispycrumbs"
-        minSdk = 26
-        targetSdk = 33
+        minSdk = 29
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.appcompat)
+//    implementation("libs.appcompat:appcompat:1.1.0")
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)

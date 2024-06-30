@@ -1,9 +1,9 @@
 package com.example.crispycrumbs.ui;
 
+import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -38,7 +38,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
-    private static final String THEME_PREF_KEY = "app_theme";
     private static MainPage instance = null;
     private static DataManager dataManager = null;
     private static UserLogic userLogic = null;
@@ -99,14 +98,21 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (currentFragment instanceof VideoPlayerFragment) {
+                    ((VideoPlayerFragment) currentFragment).hideMediaController();
+                }
+            }
+        };
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
-        SharedPreferences sharedPrefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
 
-        boolean isDarkTheme = sharedPrefs.getBoolean(THEME_PREF_KEY, false);
-        applyTheme(isDarkTheme);
 
         userLogic = UserLogic.getInstance();
         dataManager = DataManager.getInstance();
@@ -142,6 +148,9 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     @Override
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment instanceof VideoPlayerFragment) {
+            ((VideoPlayerFragment) currentFragment).hideMediaController();
+        }
 
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -188,11 +197,34 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         } else if (itemId == R.id.nav_upload_video) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UploadVideoFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.theme_setter) {
-            boolean newThemeIsDark = toggleThemePreference();
-            applyTheme(newThemeIsDark);
+            toggleDarkTheme();
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void toggleDarkTheme() {
+        Configuration configuration = getResources().getConfiguration();
+        int currentNightMode = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            default:
+//                setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+//                int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+//                if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
+//                    setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+//                } else {
+//                    setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//                }
+                break;
+        }
     }
 
     public void updateNavigationMenu() {
@@ -209,20 +241,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         menu.findItem(R.id.nav_upload_video).setVisible(isLoggedIn);
         menu.findItem(R.id.nav_login).setVisible(!isLoggedIn);
         menu.findItem(R.id.nav_signup).setVisible(!isLoggedIn);
-    }
-
-    private boolean toggleThemePreference() {
-        SharedPreferences sharedPrefs = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
-        boolean currentThemeIsDark = sharedPrefs.getBoolean(THEME_PREF_KEY, false);
-        boolean newThemeIsDark = !currentThemeIsDark;
-        sharedPrefs.edit().putBoolean(THEME_PREF_KEY, newThemeIsDark).apply();
-        return newThemeIsDark;
-    }
-
-    private void applyTheme(boolean isDarkTheme) {
-        AppCompatDelegate.setDefaultNightMode(
-                isDarkTheme ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO
-        );
     }
 
     public void updateNavHeader() {

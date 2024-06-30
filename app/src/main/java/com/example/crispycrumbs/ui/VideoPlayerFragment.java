@@ -33,7 +33,6 @@ import com.example.crispycrumbs.adapters.CommentSection_Adapter;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.data.PreviewVideoCard;
-import com.example.crispycrumbs.model.CustomMediaController;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.R;
 
@@ -42,7 +41,7 @@ import java.util.Map;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
     private static final String TAG = "VideoPlayerFragment";
-    private CustomMediaController mediaController;
+    private MediaController mediaController;
     private VideoView videoView;
     private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
     private int currentPosition = 0;
@@ -152,7 +151,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         videoView.setVideoURI(videoUri);
         videoView.start();
 
-        mediaController = new CustomMediaController(getContext());
+//        mediaController = new CustomMediaController(getContext());
+        mediaController = new MediaController(getContext());
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
 
@@ -398,6 +398,11 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT; // or whatever size you need
             videoView.setLayoutParams(params);
+        }
+    }
+    public void hideMediaController() {
+        if (mediaController != null) {
+            mediaController.hide();
         }
     }
 }

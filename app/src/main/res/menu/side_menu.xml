@@ -42,7 +42,7 @@
 
         <item android:id="@+id/theme_setter"
             android:icon="@drawable/dark_light_mode_icon"
-            android:title="Switch theme"/>
+            android:title="Toggle theme"/>
 
     </group>
 

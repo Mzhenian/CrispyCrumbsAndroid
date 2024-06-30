@@ -9,6 +9,7 @@ Zohar Mzhen 314621806
 Dolev Menajem 207272220
 
 ## Running the Crispy Crumbs App
+The app is built for android 10 and above, and is designed to run on android devices and emulators.
 Getting the Crispy Crumbs app to work on your device is simple and straightforward.
 Open the project in android studio and press the run button for the MainPage activity.
 This will launch the home page of the app, which you can access all the other parts of the app through the navigation side menu.

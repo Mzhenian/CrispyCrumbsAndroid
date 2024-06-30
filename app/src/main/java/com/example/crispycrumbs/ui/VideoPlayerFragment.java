@@ -1,7 +1,6 @@
 package com.example.crispycrumbs.ui;
 
 import static com.example.crispycrumbs.R.id.comment_section_container;
-import static com.example.crispycrumbs.model.DataManager.LIKE;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.app.AlertDialog;
@@ -37,7 +36,6 @@ import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.R;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
     private static final String TAG = "VideoPlayerFragment";
@@ -139,8 +137,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         video.setViews(video.getViews() + 1);
 
-        updateVideoLikesAndViews();
-
+        updateLikesAndViewsCount();
+        updateLikeButtons();
 
         return view;
     }
@@ -354,7 +352,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         dialog.show();
     }
 
-    private void updateVideoLikesAndViews() {
+    private void updateLikesAndViewsCount() {
         if (video != null) {
             likesTextView.setText(DataManager.getInstance().getLikesCount(videoId) + " likes");
             views.setText(video.getViews() + " views");
@@ -381,7 +379,11 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
 //            unlikeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange));
         }
-        updateVideoLikesAndViews();
+        updateLikesAndViewsCount();
+    }
+    private void updateLikeButtons() {
+        int likeDislike = MainPage.getDataManager().getLikeDislike(videoId);
+        updateLikeButtons(likeDislike);
     }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

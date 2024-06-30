@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FF000000</color>
+    <color name="black">#FFFFFFFF</color>
+
+    <color name="ofek_white">#101010</color>
+    <color name="ofek_black">#F8F3EB</color>
+
+    <color name="white_div">#1E1D1A</color>
+    <color name="black_div">#EAE4D8</color>
+
+    <color name="crispy_orange_light">#FF9800</color>
+    <color name="crispy_orange_dark">#FFA726</color>
+
+    <color name="black_light">#121212</color>
+    <color name="black_dark">#000000</color>
+
+    <color name="gray_light">#4B4B4B</color>
+    <color name="gray_dark">#F8F3EB</color>
+
+    <color name="off_white">#757575</color>
+    <color name="white_dark">#757575</color>
+
+    <color name="background_gray">#1E1D1A</color>
+</resources>

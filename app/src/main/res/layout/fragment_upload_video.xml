@@ -33,7 +33,7 @@
             android:background="@drawable/diff_round_corners_orange"
             android:paddingHorizontal="10dp"
             android:text="Upload a video"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black_div"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -75,6 +75,7 @@
                 android:layout_alignParentStart="true"
                 android:text="choose a video"
                 android:textStyle="bold"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <ImageView
@@ -96,6 +97,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/diff_round_top_right_corner_orange"
             android:text="Video title:    "
+            android:textColor="@color/black"
             android:textStyle="bold" />
 
         <EditText
@@ -106,6 +108,8 @@
             android:background="@drawable/round_corners_white"
             android:ems="10"
             android:inputType="text"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/white"
             android:minHeight="48dp" />
 
         <TextView
@@ -115,6 +119,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/diff_round_top_right_corner_orange"
             android:text="Video description:    "
+            android:textColor="@color/black"
             android:textStyle="bold" />
         <EditText
             android:id="@+id/etVideoDescription"
@@ -124,6 +129,8 @@
             android:hint="Video description...\n\n\n\n"
             android:inputType="text"
             android:background="@drawable/round_corners_white"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/white"
             android:gravity="top" />
 
 
@@ -153,6 +160,7 @@
                 android:text="choose a thumbnail"
                 android:textStyle="bold"
                 android:layout_height="200dp"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <ImageView

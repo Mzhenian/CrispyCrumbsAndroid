@@ -72,6 +72,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         setContentView(R.layout.page_main);
         instance = this;
 
+//        setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

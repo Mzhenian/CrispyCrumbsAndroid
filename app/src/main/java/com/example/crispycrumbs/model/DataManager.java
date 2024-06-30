@@ -306,6 +306,19 @@ public class DataManager {
             return DISLIKE;
         }
     }
+    public int getLikeDislike (String videoId) {
+        UserItem user = LoggedInUser.getUser();
+        if (user == null) {
+            return NO_LIKE_DISLIKE;
+        }
+        if (user.hasLiked(videoId)) {
+            return LIKE;
+        } else if (user.hasDisliked(videoId)) {
+            return DISLIKE;
+        } else {
+            return NO_LIKE_DISLIKE;
+        }
+    }
 
     public int getLikesCount(String videoId) {
         return likesMap.getOrDefault(videoId, 0);

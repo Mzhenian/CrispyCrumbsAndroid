@@ -33,7 +33,7 @@
             android:background="@drawable/diff_round_corners_orange"
             android:paddingHorizontal="10dp"
             android:text="Editing [video title]"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/black_div"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -45,6 +45,7 @@
             android:layout_alignParentStart="true"
             android:text="original thumbnail:"
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <RelativeLayout
@@ -86,6 +87,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/diff_round_top_right_corner_orange"
             android:text="Video title:    "
+            android:textColor="@color/black_div"
             android:textStyle="bold" />
 
         <EditText
@@ -94,8 +96,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/round_corners_white"
+            android:backgroundTint="@color/white"
             android:ems="10"
             android:inputType="text"
+            android:textColor="@color/black"
             android:minHeight="48dp" />
 
         <TextView
@@ -105,6 +109,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/diff_round_top_right_corner_orange"
             android:text="Video description:    "
+            android:textColor="@color/black_div"
             android:textStyle="bold" />
         <EditText
             android:id="@+id/etVideoDescription"
@@ -114,6 +119,8 @@
             android:hint="Video description...\n\n\n\n"
             android:inputType="text"
             android:background="@drawable/round_corners_white"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/white"
             android:gravity="top" />
 
 
@@ -122,9 +129,10 @@
             android:layout_width="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            android:text="new thumbnail"
+            android:text="new thumbnail:"
             android:textStyle="bold"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:textSize="16sp" />
 
         <RelativeLayout

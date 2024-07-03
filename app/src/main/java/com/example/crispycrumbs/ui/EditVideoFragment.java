@@ -2,10 +2,10 @@ package com.example.crispycrumbs.ui;
 
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
-import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,12 +19,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.crispycrumbs.R;
@@ -40,8 +37,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class EditVideoFragment extends Fragment {
+    private static final int REQUEST_THUMBNAIL_PICK = 23;
     private FragmentEditVideoBinding binding;
-
     private EditText etVideoTitle, etVideoDescription;
     private TextView txtChooseVideo;
     private TextView txtChooseThumbnail;
@@ -49,16 +46,11 @@ public class EditVideoFragment extends Fragment {
     private ImageView imageView, thumbnailImageHolder;
     private Button btnOpenCamera, btnChooseFromGallery;
     private ProgressBar progressBar;
-
     private String currentThumbnailPath;
     private String currentVideoPath;
     private String videoId;
     private PreviewVideoCard video;
     private Uri thumbnailUri, videoUri;
-
-    private static final int REQUEST_THUMBNAIL_PICK = 3;
-    private static final int REQUEST_THUMBNAIL_CAPTURE = 4;
-    private static final int REQUEST_CAMERA_PERMISSION = 5;
 
     @Nullable
     @Override
@@ -98,49 +90,13 @@ public class EditVideoFragment extends Fragment {
         txtChooseVideo = view.findViewById(R.id.txtChooseVideo);
         txtChooseThumbnail = view.findViewById(R.id.txtChooseThumbnail);
 
-        binding.btnChooseThumbnail.setOnClickListener(v -> takeThumbnail());
+        binding.btnChooseThumbnail.setOnClickListener(v -> uploadPhoto());
         binding.btnUpdate.setOnClickListener(v -> update());
         binding.btnDelete.setOnClickListener(v -> delete());
 
         return view;
     }
 
-    private void takeThumbnail() {
-        CharSequence[] options = {"Take Photo", "Choose from Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select Thumbnail");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getContext(), "for that please allow to open the camera and save your picture:", Toast.LENGTH_LONG).show();
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                } else {
-                    dispatchTakeThumbnailIntent();
-                }
-            } else if (which == 1) {
-                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhotoIntent, REQUEST_THUMBNAIL_PICK);
-            }
-        });
-        builder.show();
-    }
-    private void dispatchTakeThumbnailIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Log.e("EditVideo", "IO exception creating image file", ex);
-            }
-            if (photoFile != null) {
-                thumbnailUri = FileProvider.getUriForFile(getContext(), "com.example.crispycrumbs.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, thumbnailUri);
-                startActivityForResult(takePictureIntent, REQUEST_THUMBNAIL_CAPTURE);
-            }
-        }
-    }
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -154,22 +110,32 @@ public class EditVideoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == REQUEST_THUMBNAIL_CAPTURE) {
-                binding.thumbnailImageHolder.setImageURI(thumbnailUri);
-                currentThumbnailPath = thumbnailUri.toString();
-                txtChooseThumbnail.setText("");
-            } else if (requestCode == REQUEST_THUMBNAIL_PICK) {
-                if (data != null) {
-                    Uri selectedImage = data.getData();
-                    binding.thumbnailImageHolder.setImageURI(selectedImage);
-                    currentThumbnailPath = selectedImage.toString(); // Update the photo path to the selected image's URI
+        getActivity();
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            if (requestCode == REQUEST_THUMBNAIL_PICK) {
+
+
+                Uri photoUri = data.getData();
+                try {
+                    Bitmap thumbnailBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+                    binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
+
+//                    currentThumbnailPath = thumbnailBitmap.toString(); // Update the photo path to the selected image's URI
+                    currentThumbnailPath = photoUri.toString();
                     txtChooseThumbnail.setText("");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             } else {
                 Log.e("EditVideoFragment", "Unknown request code: " + requestCode);
             }
         }
+    }
+
+    private void uploadPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_THUMBNAIL_PICK);
     }
 
     private Boolean validateUploadable() {

@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -35,13 +34,12 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle drawerToggle;
-    private NavigationView navigationView;
     private static MainPage instance = null;
     private static DataManager dataManager = null;
     private static UserLogic userLogic = null;
-
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+    private NavigationView navigationView;
 
     public static DataManager getDataManager() {
         return dataManager;
@@ -82,18 +80,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         }
 
         toolbar.setOnClickListener(v -> {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).addToBackStack(null).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).addToBackStack(null).commit();
         });
-
-        if (android.os.Build.VERSION.SDK_INT >= 34) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Warning")
-                    .setMessage("Your Android version is too high for this app. Some features may not work correctly.\n this app is built for Android 13 and lower.")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-        }
-
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_Bar);
@@ -113,7 +101,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         };
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
-
 
 
         userLogic = UserLogic.getInstance();
@@ -182,8 +169,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         if (itemId == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             //todo enable in next release
-//        } else if (itemId == R.id.nav_settings) {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_my_videos) {
@@ -216,15 +201,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
             default:
-//                setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
-//                int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-//                if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {
-//                    setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//                } else {
-//                    setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//                }
                 break;
         }
     }
@@ -234,7 +212,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         boolean isLoggedIn = LoggedInUser.getUser() != null;
 
         menu.findItem(R.id.nav_home).setVisible(true);
-//        menu.findItem(R.id.nav_settings).setVisible(true);
         menu.findItem(R.id.theme_setter).setVisible(true);
 
         menu.findItem(R.id.nav_profile).setVisible(isLoggedIn);
@@ -267,6 +244,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             userEmail.setText("");
         }
     }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

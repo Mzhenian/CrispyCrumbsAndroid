@@ -8,9 +8,17 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -18,27 +26,20 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.VideoView;
-
-import com.example.crispycrumbs.data.CommentItem;
-import com.example.crispycrumbs.adapters.CommentSection_Adapter;
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.data.PreviewVideoCard;
-import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.adapters.CommentSection_Adapter;
+import com.example.crispycrumbs.data.CommentItem;
+import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.DataManager;
 
 import java.util.ArrayList;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
     private static final String TAG = "VideoPlayerFragment";
+    private static final String KEY_POSITION = "position";
+    private static final String KEY_COMMENTS = "comments";
     private MediaController mediaController;
     private VideoView videoView;
     private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
@@ -50,17 +51,12 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private TextView description, descriptionButton;
     private Button shareButton, commentButton;
     private ConstraintLayout buttonBar, commentSectionContainer;
-
     private RecyclerView recyclerView;
     private CommentSection_Adapter adapter;
-
     private ImageButton likeButton;
     private ImageButton unlikeButton;
     private TextView likesTextView;
     private TextView views;
-
-    private static final String KEY_POSITION = "position";
-    private static final String KEY_COMMENTS = "comments";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -162,6 +158,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         videoView.start();
     }
+
     private void toggleDescriptionComments() {
         if (description.getVisibility() == View.VISIBLE) {
             descriptionButton.setText(getString(R.string.more));
@@ -171,6 +168,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             initializeDescription();
         }
     }
+
     private void initializeDescription() {
         description.setText(video.getDescription());
 
@@ -179,6 +177,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         commentSectionContainer.setVisibility(View.GONE);
 
     }
+
     private void initializeComments() {
         UserItem currentUser = LoggedInUser.getUser();
         if (currentUser == null) {
@@ -358,22 +357,25 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             views.setText(video.getViews() + " views");
         }
     }
+
     private void likeClick() {
         updateLikeButtons(MainPage.getDataManager().likeClick(videoId));
     }
+
     private void dislikeClick() {
         updateLikeButtons(MainPage.getDataManager().dislikeClick(videoId));
     }
+
     private void updateLikeButtons(int likeDislike) {
         if (likeDislike == DataManager.LIKE) {
-            likeButton.setColorFilter(getResources().getColor(R.color.off_white));
+            likeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
 //            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange_light));
         } else {
             likeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
 //            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange));
         }
         if (likeDislike == DataManager.DISLIKE) {
-            unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
+            unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
 //            unlikeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange_light));
         } else {
             unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
@@ -381,10 +383,12 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         }
         updateLikesAndViewsCount();
     }
+
     private void updateLikeButtons() {
         int likeDislike = MainPage.getDataManager().getLikeDislike(videoId);
         updateLikeButtons(likeDislike);
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -395,13 +399,14 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
             videoView.setLayoutParams(params);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             ViewGroup.LayoutParams params = videoView.getLayoutParams();
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT; // or whatever size you need
             videoView.setLayoutParams(params);
         }
     }
+
     public void hideMediaController() {
         if (mediaController != null) {
             mediaController.hide();

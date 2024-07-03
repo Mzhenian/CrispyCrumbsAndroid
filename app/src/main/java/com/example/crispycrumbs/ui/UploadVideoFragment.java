@@ -1,13 +1,14 @@
 package com.example.crispycrumbs.ui;
 
 
-import static android.content.Intent.getIntent;
-
+import static android.app.Activity.RESULT_OK;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
+import android.app.AlertDialog;
+import android.content.ContentUris;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,16 +22,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
-import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.databinding.FragmentUploadVideoBinding;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
@@ -43,15 +46,11 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import android.app.AlertDialog;
-import android.Manifest;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class UploadVideoFragment extends Fragment {
+    private static final int REQUEST_VIDEO_PICK = 12;
+    private static final int REQUEST_THUMBNAIL_PICK = 13;
     private FragmentUploadVideoBinding binding;
-
     private EditText etVideoTitle, etVideoDescription;
     private TextView txtChooseVideo;
     private TextView txtChooseThumbnail;
@@ -59,16 +58,9 @@ public class UploadVideoFragment extends Fragment {
     private Button btnOpenCamera, btnChooseFromGallery;
     private ImageButton btnUpload, btnCancleUpload;
     private ProgressBar progressBar;
-
     private String currentThumbnailPath;
     private String currentVideoPath;
     private Uri thumbnailUri, videoUri;
-
-    private static final int REQUEST_VIDEO_CAPTURE = 1;
-    private static final int REQUEST_VIDEO_PICK = 2;
-    private static final int REQUEST_THUMBNAIL_PICK = 3;
-    private static final int REQUEST_THUMBNAIL_CAPTURE = 4;
-    private static final int REQUEST_CAMERA_PERMISSION = 5;
 
     @Nullable
     @Override
@@ -85,55 +77,12 @@ public class UploadVideoFragment extends Fragment {
         txtChooseVideo = view.findViewById(R.id.txtChooseVideo);
         txtChooseThumbnail = view.findViewById(R.id.txtChooseThumbnail);
 
-        binding.btnChooseVideo.setOnClickListener(v -> takeVideo());
-        binding.btnChooseThumbnail.setOnClickListener(v -> takeThumbnail());
+        binding.btnChooseVideo.setOnClickListener(v -> uploadVideo());
+        binding.btnChooseThumbnail.setOnClickListener(v -> uploadPhoto());
         binding.btnUpload.setOnClickListener(v -> upload());
         binding.btnCancleUpload.setOnClickListener(v -> cancelUpload());
 
         return view;
-    }
-
-    private void takeVideo() {
-        CharSequence[] options = {"Record Video", "Choose from Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select Video");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) { // Record Video
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                } else {
-                    dispatchTakeVideoIntent();
-                }
-            } else if (which == 1) { // Choose from Gallery
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                } else {
-                    Intent pickVideoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickVideoIntent, REQUEST_VIDEO_PICK);
-                }
-            }
-        });
-        builder.show();
-    }
-
-    private void dispatchTakeVideoIntent() {
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
-//            File videoFile = null;
-//            try {
-//                videoFile = createVideoFile();
-//            } catch (IOException ex) {
-//                Log.e("UploadVideo", "IO exception creating video file", ex);
-//            }
-//            if (videoFile != null) {
-//                videoUri = FileProvider.getUriForFile(getContext(), "com.example.crispycrumbs.fileprovider", videoFile);
-//                takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
-//                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
-//            }
-        }
     }
 
     private File createVideoFile() throws IOException {
@@ -141,51 +90,13 @@ public class UploadVideoFragment extends Fragment {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String videoFileName = "VIDEO_" + timeStamp + "_";
         File storageDir = getActivity().getExternalFilesDir(null);
-        File video = File.createTempFile(
-                videoFileName,  /* prefix */
+        File video = File.createTempFile(videoFileName,  /* prefix */
                 getDataManager().getFileExtension(videoUri),         /* suffix */
-                storageDir      /* directory */
-        );
+                storageDir      /* directory */);
 
         return video;
     }
 
-    private void takeThumbnail() {
-        CharSequence[] options = {"Take Photo", "Choose from Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Select Thumbnail");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getContext(), "for that please allow to open the camera and save your picture:", Toast.LENGTH_LONG).show();
-                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-                } else {
-                    dispatchTakeThumbnailIntent();
-                }
-            } else if (which == 1) {
-                Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhotoIntent, REQUEST_THUMBNAIL_PICK);
-            }
-        });
-        builder.show();
-    }
-    private void dispatchTakeThumbnailIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Log.e("UploadVideo", "IO exception creating image file", ex);
-            }
-            if (photoFile != null) {
-                thumbnailUri = FileProvider.getUriForFile(getContext(), "com.example.crispycrumbs.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, thumbnailUri);
-                startActivityForResult(takePictureIntent, REQUEST_THUMBNAIL_CAPTURE);
-            }
-        }
-    }
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -195,39 +106,59 @@ public class UploadVideoFragment extends Fragment {
         return image;
     }
 
+    private Bitmap getVideoThumbnail(Uri videoUri) {
+        Bitmap thumbnail = null;
+        try {
+            thumbnail = MediaStore.Video.Thumbnails.getThumbnail(getContext().getContentResolver(), ContentUris.parseId(videoUri), MediaStore.Video.Thumbnails.MINI_KIND, null);
+        } catch (Exception e) {
+            Log.e("Thumbnail", "Could not get thumbnail", e);
+        }
+        return thumbnail;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null) {
+            if (requestCode == REQUEST_THUMBNAIL_PICK) {
+                Uri photoUri = data.getData();
+                try {
+                    Bitmap thumbnailBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+                    binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
 
-        if (resultCode == getActivity().RESULT_OK) {
-            if (requestCode == REQUEST_VIDEO_PICK) {
-                videoUri = data.getData();
-                saveVideoLocally(videoUri);
-                binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
-                txtChooseVideo.setText("");
-            } else if (requestCode == REQUEST_VIDEO_CAPTURE) {
-                Uri videoUri = data.getData();
-                saveVideoLocally(videoUri);
-                binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
-                txtChooseVideo.setText("");
-            } else if (requestCode == REQUEST_THUMBNAIL_CAPTURE) {
-                binding.thumbnailImageHolder.setImageURI(thumbnailUri);
-                currentThumbnailPath = thumbnailUri.toString();
-                txtChooseThumbnail.setText("");
-            } else if (requestCode == REQUEST_THUMBNAIL_PICK) {
-                if (data != null) {
-                    Uri selectedImage = data.getData();
-                    if (selectedImage != null) {
-                        binding.thumbnailImageHolder.setImageURI(selectedImage);
-                        currentThumbnailPath = selectedImage.toString(); // Update the photo path to the selected image's URI
-                        txtChooseThumbnail.setText("");
-                    }
+//                    currentThumbnailPath = thumbnailBitmap.toString(); // Update the photo path to the selected image's URI
+                    currentThumbnailPath = photoUri.toString();
+                    txtChooseThumbnail.setText("");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } else {
-                Log.e("UploadVideoFragment", "Unknown request code: " + requestCode);
+            } else if (requestCode == REQUEST_VIDEO_PICK) {
+                videoUri = data.getData();
+                try {
+                    Bitmap thumbnail = getVideoThumbnail(videoUri);
+                    saveVideoLocally(videoUri);
+
+                    binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
+                    txtChooseVideo.setText("");
+//                    binding.thumbnailImageHolder.setImageBitmap(thumbnail);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
+
+    private void uploadPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_THUMBNAIL_PICK);
+    }
+
+    private void uploadVideo() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_VIDEO_PICK);
+    }
+
 
     private void saveVideoLocally(Uri videoUri) {
         try {

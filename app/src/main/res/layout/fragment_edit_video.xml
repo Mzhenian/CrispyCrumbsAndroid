@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.EditVideoFragment"
+    android:windowSoftInputMode="adjustPan">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginVertical="20dp"
+        android:background="@drawable/round_corners_gray"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <TextView
+            android:id="@+id/TitleEditVideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/diff_round_corners_orange"
+            android:paddingHorizontal="10dp"
+            android:text="Editing [video title]"
+            android:textColor="@color/black_div"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtChooseVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="original thumbnail:"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <RelativeLayout
+            android:id="@+id/chooseVideo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+
+            android:gravity="center">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:visibility="invisible"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
+                android:progressDrawable="@android:drawable/progress_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:clickable="false"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/layer_1"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true" />
+        </RelativeLayout>
+
+
+
+        <TextView
+            android:id="@+id/VideoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/diff_round_top_right_corner_orange"
+            android:text="Video title:    "
+            android:textColor="@color/black_div"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etVideoTitle"
+            android:hint="Video title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_corners_white"
+            android:backgroundTint="@color/white"
+            android:ems="10"
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:minHeight="48dp" />
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:id="@+id/VideoDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/diff_round_top_right_corner_orange"
+            android:text="Video description:    "
+            android:textColor="@color/black_div"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etVideoDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Video description...\n\n\n\n"
+            android:inputType="text"
+            android:background="@drawable/round_corners_white"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/white"
+            android:gravity="top" />
+
+
+        <TextView
+            android:id="@+id/txtChooseThumbnail"
+            android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:text="new thumbnail:"
+            android:textStyle="bold"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <RelativeLayout
+            android:id="@+id/chooseThumbnail"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            android:layout_height="200dp"
+            android:adjustViewBounds="true">
+
+            <Button
+                android:id="@+id/btnChooseThumbnail"
+                android:layout_width="match_parent"
+                android:layout_alignTop="@id/thumbnailImageHolder"
+                android:layout_alignBottom="@id/thumbnailImageHolder"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_height="200dp"
+                android:background="@android:color/transparent" />
+
+            <ImageView
+                android:id="@+id/thumbnailImageHolder"
+
+                android:layout_height="200dp"
+                android:clickable="false"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/layer_1" />
+        </RelativeLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/update" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#00FFFFFF"
+                android:src="@drawable/delete" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

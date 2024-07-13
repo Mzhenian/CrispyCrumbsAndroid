@@ -1,8 +1,8 @@
 package com.example.crispycrumbs.ui;
 
-import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,18 +16,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.UserLogic;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.model.UserLogic;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,9 +32,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class SignUpFragment extends Fragment {
+    private static final int REQUEST_IMAGE_PICK = 3;
     private FragmentSignUpBinding binding;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_CAMERA_PERMISSION = 2;
     private String currentPhotoPath;
     private Uri photoURI;
 
@@ -53,20 +48,11 @@ public class SignUpFragment extends Fragment {
         final ProgressBar loadingProgressBar = binding.signUpProgressBar;
 
         binding.btnToSignIn.setOnClickListener(v -> {
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            LoginFragment loginFragment = new LoginFragment();
-            transaction.replace(R.id.container, loginFragment);
-            transaction.commit();
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
         });
 
-        binding.btnAddProfileImg.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
-            } else {
-                dispatchTakePictureIntent();
-            }
-        });
+        binding.btnAddProfileImg.setOnClickListener(v -> uploadPhoto());
+
 
         binding.btnSighUp.setOnClickListener(v -> {
             loadingProgressBar.setVisibility(View.VISIBLE);
@@ -76,7 +62,10 @@ public class SignUpFragment extends Fragment {
             String returnedError = UserLogic.ValidateSignUp(binding.etEmailAddress.getText().toString(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etConfirmPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etPhoneNumber.getText().toString(), binding.etDateOfBirth.toString());
             if (returnedError == null) {
                 DataManager dataManager = DataManager.getInstance();
-                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, null);
+                // Use default profile picture if no photo is taken
+                String profilePicPath = DataManager.getUriFromResOrFile(currentPhotoPath).toString();
+//                currentPhotoPath != null ? currentPhotoPath : "android.resource://" + getContext().getPackageName() + "/" + R.drawable.default_profile_picture;
+                UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, profilePicPath);
                 dataManager.addUser(newUser);
                 LoggedInUser.SetLoggedInUser(newUser);
                 loadingProgressBar.setVisibility(View.GONE);
@@ -92,29 +81,12 @@ public class SignUpFragment extends Fragment {
                 signUpButton.setEnabled(true);
                 usernameEditText.setEnabled(true);
                 passwordEditText.setEnabled(true);
-
             }
         });
 
         return view;
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Handle error
-            }
-            if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(getContext(), "com.example.crispycrumbs.fileprovider", photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
 
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
@@ -128,20 +100,27 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            binding.btnAddProfileImg.setImageURI(photoURI);
-        }
-}
+        getActivity();
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            if (requestCode == REQUEST_IMAGE_PICK) {
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                dispatchTakePictureIntent();
-            } else {
-                // Permission denied
+                Uri photoUri = data.getData();
+                try {
+                    Bitmap thumbnailBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
+                    binding.btnAddProfileImg.setImageBitmap(thumbnailBitmap);
+
+//                    currentThumbnailPath = thumbnailBitmap.toString(); // Update the photo path to the selected image's URI
+                    currentPhotoPath = photoUri.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
+
+    private void uploadPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    }
+
 }

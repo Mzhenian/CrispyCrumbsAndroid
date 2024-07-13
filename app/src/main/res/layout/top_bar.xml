@@ -10,10 +10,12 @@
     android:id="@+id/top_bar"
     >
     <ImageView
+        android:id="@+id/topBarLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/small_logo"
         android:layout_margin="10dp"/>
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_view"
         android:layout_width="match_parent"

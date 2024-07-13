@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
-
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
@@ -19,67 +18,73 @@ import com.example.crispycrumbs.adapters.VideoList_Adapter;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemClickListener {
 
-    // Adapter for the RecyclerView
+    private static final String TAG = "HomeFragment";
     private VideoList_Adapter adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        // Find the RecyclerView in the layout
         RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
 
-        // Initialize the adapter with the context and video list
         DataManager dataManager = DataManager.getInstance();
         ArrayList<PreviewVideoCard> videoList = dataManager.getVideoList();
-        adapter = new VideoList_Adapter(getContext(), videoList);
+        adapter = new VideoList_Adapter(getContext(), videoList, this);
 
-        // Set the adapter and layout manager for the RecyclerView
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Find the SearchView in the layout
         SearchView searchBar = view.findViewById(R.id.search_bar);
-
-        // Customize the search icon in the SearchView
         customizeSearchViewIcon(searchBar);
 
-        // Set a listener for query text changes in the SearchView
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Perform the final search when the user submits the query
                 adapter.filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Filter the video list as the user types
                 adapter.filter(newText);
                 return false;
             }
         });
 
-        return view; // Return the created view
+        MainPage mainPage = (MainPage) getActivity();
+        if (mainPage != null) {
+            mainPage.updateNavigationMenu();
+            mainPage.updateNavHeader();
+        }
+
+        return view;
+    }
+
+    @Override
+    public void onItemClick(PreviewVideoCard video) {
+        VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
+        Bundle args = new Bundle();
+        args.putString("videoId", video.getVideoId());
+        videoPlayerFragment.setArguments(args);
+
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, videoPlayerFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private void customizeSearchViewIcon(SearchView searchView) {
         try {
-            // Find the ImageView for the search icon
             int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
             ImageView searchIcon = searchView.findViewById(searchIconId);
             if (searchIcon != null) {
-                searchIcon.setImageResource(R.drawable.search_icon); // Replace with your custom icon
+                searchIcon.setImageResource(R.drawable.search_icon);
             } else {
-                Log.e("HomeFragment", "Search icon ImageView not found");
+                Log.e(TAG, "Search icon ImageView not found");
             }
         } catch (Exception e) {
-            Log.e("HomeFragment", "Error customizing search icon", e);
+            Log.e(TAG, "Error customizing search icon", e);
         }
     }
 }

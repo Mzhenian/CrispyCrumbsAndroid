@@ -6,11 +6,10 @@
     android:layout_height="200dp"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="@drawable/small_logo"
     android:gravity="bottom"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     style="@style/SCREEN"
-    tools:context=".VideoPlayerFragment">
+    android:background="@drawable/header_gradient_background"> <!-- Updated background -->
 
     <!-- Profile Picture -->
     <com.google.android.material.imageview.ShapeableImageView
@@ -18,11 +17,12 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/baseline_account_circle_24"
+        android:src="@drawable/default_profile_picture"
         android:contentDescription="@string/profile_picture"
         android:scaleType="centerCrop"
         android:background="@drawable/circle_background"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"/>
+
     <!-- User Name -->
     <TextView
         android:id="@+id/user_name"
@@ -45,5 +45,4 @@
         android:text="your.email@example.com"
         android:textColor="@color/ofek_black"
         android:textSize="14sp"/>
-
 </LinearLayout>

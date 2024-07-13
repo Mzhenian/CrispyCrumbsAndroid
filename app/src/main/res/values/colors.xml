@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <!-- Pairs of Light Mode Colors and their dark alternative -->
+
+    <color name="absolute_ofek_white">#FFFFFFFF</color>
+
     <color name="white">#FFFFFFFF</color>
-    <color name="off_white">#F8F3EB</color>
-    <color name="background_gray">#EAE4D8</color>
-    <color name="crispy_orange">#E09231</color>
-    <color name="ofek_black">#101010</color>
-    <color name="black_div">#1E1D1A</color>
-    <color name="white_div">#EAE4D8</color>
+    <color name="black">#FF000000</color>
+
     <color name="ofek_white">#F8F3EB</color>
-    <color name="ofek_blue_light">#3C7E8C</color>
+    <color name="ofek_black">#101010</color>
 
-    <!-- Light Mode Colors -->
+    <color name="white_div">#EAE4D8</color>
+    <color name="black_div">#1E1D1A</color>
+
     <color name="crispy_orange_light">#FFA726</color>
-    <color name="black_light">#000000</color>
-    <color name="gray_light">#757575</color>
-
-    <!-- Dark Mode Colors -->
-    <color name="black_dark">#121212</color>
     <color name="crispy_orange_dark">#FF9800</color>
+
+    <color name="black_light">#000000</color>
+    <color name="black_dark">#121212</color>
+
+    <color name="gray_light">#757575</color>
+    <color name="gray_dark">#4B4B4B</color>
+
+    <color name="off_white">#F8F3EB</color>
     <color name="white_dark">#FFFFFF</color>
-    <color name="gray_dark">#757575</color>
+
+    <color name="background_gray">#EAE4D8</color>
+
+
+    <!--    Colors not dependent on dark/light mode-->
+    <color name="crispy_orange">#E09231</color>
+    <color name="ofek_blue_light">#3C7E8C</color>
+    <color name="link_blue">#0000EE</color>
+    <color name="visited_link_purple">#551A8B</color>
 </resources>

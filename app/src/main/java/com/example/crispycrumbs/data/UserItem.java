@@ -1,18 +1,18 @@
 package com.example.crispycrumbs.data;
 
-import android.graphics.drawable.Drawable;
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import android.media.Image;
 
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.ui.MainPage;
-import com.example.crispycrumbs.Lists.UserList;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserItem {
+public class UserItem implements Serializable {
     private String userId;
     private String userName;
     private String email;
@@ -21,14 +21,14 @@ public class UserItem {
     private String phoneNumber;
     private Date dateOfBirth;
     private String country;
-    private String profilePicURI; // path to the profile picture
+    private String profilePhoto; // path to the profile picture
     private Set<String> videosIds = new HashSet<>();
     private final Set<String> followerIds = new HashSet<>();
     private final Set<String> followingIds = new HashSet<>();
     private final Set<String> likedVideoIds = new HashSet<>();
     private final Set<String> dislikedVideoIds = new HashSet<>();
 
-    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicURI) {
+    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {
         this.userName = userName;
         this.password = password;
         this.displayedName = displayedName;
@@ -36,16 +36,11 @@ public class UserItem {
         this.phoneNumber = phoneNumber;
         this.dateOfBirth = dateOfBirth;
         this.country = country;
-        this.profilePicURI = profilePicURI;
+        this.profilePhoto = profilePhoto;
 
-        String lastUserId = MainPage.getDataManager().lastUserId();
+        String lastUserId = getDataManager().getLastUserId();
         this.userId = UserLogic.nextId(lastUserId);
     }
-    public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
-        this(userName, password, displayedName, email, phoneNumber, dateOfBirth, country, MainPage.getInstance().getResources().getResourceEntryName(profilePicResId));
-    }
-
-    public Image getProfilePicture;
 
     public String getUserId() {
         return userId;
@@ -103,12 +98,12 @@ public class UserItem {
         this.country = country;
     }
 
-    public String getProfilePicURI() {
-        return profilePicURI;
+    public String getProfilePhoto() {
+        return profilePhoto;
     }
 
-    public void setProfilePicURI(String profilePicURI) {
-        this.profilePicURI = profilePicURI;
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 
     public Boolean getIsFollowed(UserItem user) {
@@ -123,14 +118,17 @@ public class UserItem {
         followingIds.add(user.getUserId());
         user.followerIds.add(this.getUserId());
     }
+    public void addVideo(String videoId) {
+        videosIds.add(videoId);
+    }
+
+    public Set<String> getUploadedVideos() {
+        return videosIds;
+    }
 
     public void delFollow(UserItem user) {
         followingIds.remove(user.getUserId());
         user.followerIds.remove(this.getUserId());
-    }
-
-    public void setUploadedVideo(String videoId) {
-        videosIds.add(videoId);
     }
 
     public void SetLikeVideo(String videoId) {
@@ -180,5 +178,29 @@ public class UserItem {
     }
     public String[] getFollowingIds() {
         return followingIds.toArray(new String[0]);
+    }
+
+    public void likeVideo(String videoId) {
+        likedVideoIds.add(videoId);
+    }
+
+    public void dislikeVideo(String videoId) {
+        dislikedVideoIds.add(videoId);
+    }
+
+    public void removeLike(String videoId) {
+        likedVideoIds.remove(videoId);
+    }
+
+    public void removeDislike(String videoId) {
+        dislikedVideoIds.remove(videoId);
+    }
+
+    public boolean hasLiked(String videoId) {
+        return likedVideoIds.contains(videoId);
+    }
+
+    public boolean hasDisliked(String videoId) {
+        return dislikedVideoIds.contains(videoId);
     }
 }

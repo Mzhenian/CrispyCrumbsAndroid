@@ -4,21 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SignUpFragment">
+    tools:context=".ui.SignUpFragment"
+    android:id="@+id/container">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        tools:context=".ui.login.SignUpActivity">
+        tools:context=".ui.login.SignUpActivity"
+        android:background="@drawable/round_corners_gray"
+
+        android:layout_margin="15dp">
 
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/logo_background"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
@@ -27,12 +29,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
-            <ImageView
-                android:id="@+id/LogoSignUp"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/small_logo" />
+                android:text="Enter Email :"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"
+               />
 
             <EditText
                 android:id="@+id/etEmailAddress"
@@ -42,20 +45,37 @@
                 android:ems="10"
                 android:hint="@string/et_mail_address"
                 android:inputType="textEmailAddress"
+                android:background="@drawable/round_corners_white"
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
-                android:paddingVertical="@dimen/activity_vertical_margin" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username :"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"/>
 
             <EditText
                 android:id="@+id/etUsername"
                 android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#1AFFFFFF"
+                android:background="@drawable/round_corners_white"
                 android:ems="10"
                 android:hint="@string/et_username"
                 android:inputType="text"
-                android:paddingVertical="@dimen/activity_vertical_margin" />
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password :"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"/>
             <EditText
                 android:id="@+id/etPassword"
                 android:imeOptions="actionNext"
@@ -64,19 +84,36 @@
                 android:ems="10"
                 android:hint="@string/et_password"
                 android:inputType="textPassword"
-                android:paddingVertical="@dimen/activity_vertical_margin" />
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:background="@drawable/round_corners_white"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirm Password :"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"/>
             <EditText
                 android:id="@+id/et_confirm_password"
                 android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#1AFFFFFF"
+                android:background="@drawable/round_corners_white"
                 android:ems="10"
                 android:hint="@string/et_confirm_password"
                 android:inputType="textPassword"
-                android:paddingVertical="@dimen/activity_vertical_margin" />
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Displayed name :"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"/>
             <EditText
                 android:id="@+id/etDisplayName"
                 android:imeOptions="actionNext"
@@ -86,19 +123,36 @@
                 android:ems="10"
                 android:hint="@string/et_name"
                 android:inputType="text"
-                android:paddingVertical="@dimen/activity_vertical_margin" />
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:background="@drawable/round_corners_white"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number :"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"/>
             <EditText
                 android:id="@+id/etPhoneNumber"
                 android:imeOptions="actionNext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#1AFFFFFF"
+                android:background="@drawable/round_corners_white"
                 android:ems="10"
                 android:hint="@string/et_phone_number"
                 android:inputType="phone"
-                android:paddingVertical="@dimen/activity_vertical_margin" />
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/birth_date"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div"/>
             <EditText
                 android:id="@+id/etDateOfBirth"
                 android:layout_width="match_parent"
@@ -106,9 +160,13 @@
                 android:ems="10"
                 android:hint="@string/et_date_of_birth"
                 android:paddingVertical="@dimen/activity_vertical_margin"
-                android:inputType="date" />
+                android:inputType="date"
+                android:background="@drawable/round_corners_white"
+                android:padding="10dp"
+                android:textColorHint="@color/gray_light"/>
 
             <FrameLayout
+                android:id="@+id/add_profile_picture_frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -117,7 +175,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/add_profile_picture"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textColor="@color/black_div"/>
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/btnAddProfileImg"
@@ -141,28 +200,36 @@
             </FrameLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnSighUp"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_sigh_up"
-            app:layout_constraintBottom_toTopOf="@+id/btnToSignIn"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/errorDisplay" />
-
-        <Button
-            android:id="@+id/btnToSignIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-            android:text="@string/btn_already_have_a_user"
-            android:textColor="#0000EE"
-            android:textSize="12sp"
-            android:textStyle="bold"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSighUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_sign_up"
+                android:layout_marginEnd="20dp"
+                style="@style/BUTTON"
+                android:textColor="@color/off_white"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnToSignIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                android:layout_marginStart="20dp"
+                style="@style/BUTTON"
+                android:textColor="@color/off_white"/>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/errorDisplay"

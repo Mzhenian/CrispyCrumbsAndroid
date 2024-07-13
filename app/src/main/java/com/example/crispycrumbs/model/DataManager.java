@@ -1,13 +1,18 @@
 package com.example.crispycrumbs.model;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.Lists.VideoList;
 import com.example.crispycrumbs.data.CommentItem;
+import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -20,16 +25,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataManager {
+    private static final String TAG = "DataManager";
+    public static final String PACKAGE_NAME = MainPage.getInstance().getPackageName();
+    public static final int NO_LIKE_DISLIKE = 0, LIKE = 1, DISLIKE = -1;
     private static DataManager instance;
-    private ArrayList<PreviewVideoCard> videoList;
+    private VideoList videoList;
+    private VideoList personalVideoList;
     private Map<String, ArrayList<CommentItem>> commentsMap;
     private ArrayList<UserItem> UserList;
+    String lastUserId;
+    String lastVideoId;
+    private Map<String, Integer> likesMap;
+    private Map<String, Integer> dislikesMap;
+
     int nextUserId;
 
     private DataManager() {
-        videoList = new ArrayList<>();
+        videoList = new VideoList();
+        if (LoggedInUser.getUser() != null) {
+            personalVideoList = new VideoList();
+        }
         commentsMap = new HashMap<>();
         UserList = new ArrayList<>();
+        likesMap = new HashMap<>();
+        dislikesMap = new HashMap<>();
     }
 
     public static synchronized DataManager getInstance() {
@@ -40,16 +59,29 @@ public class DataManager {
     }
 
     public ArrayList<PreviewVideoCard> getVideoList() {
-        return videoList;
+        return videoList.getVideos();
+    }
+
+    public ArrayList<PreviewVideoCard> getpersonalVideoList() {
+        return personalVideoList.getVideos();
     }
 
     public ArrayList<UserItem> getUserList() {
         return UserList;
     }
+
     public UserItem getUserById(String userId) {
         for (UserItem user : UserList) {
             if (user.getUserId().equals(userId)) {
                 return user;
+            }
+        }
+        return null;
+    }
+    public PreviewVideoCard getVideoById(String videoId) {
+        for (PreviewVideoCard video : videoList.getVideos()) {
+            if (video.getVideoId().equals(videoId)) {
+                return video;
             }
         }
         return null;
@@ -78,10 +110,8 @@ public class DataManager {
         }
     }
 
-
-
     public void loadVideosFromJson(Context context) {
-        if (!videoList.isEmpty()) {
+        if (!videoList.getVideos().isEmpty()) {
             return; // Prevent reloading if already loaded
         }
         try {
@@ -96,40 +126,23 @@ public class DataManager {
             VideoList videoListWrapper = gson.fromJson(json, VideoList.class);
             if (videoListWrapper != null && videoListWrapper.getVideos() != null) {
                 for (PreviewVideoCard video : videoListWrapper.getVideos()) {
-                    int thumbnailResId = context.getResources().getIdentifier(video.getThumbnail(), "drawable", context.getPackageName());
-//                    int thumbnailResId = context.getResources().getIdentifier(
-//                            video.getThumbnail(), "drawable", context.getPackageName());
-                    video.setThumbnailResId(thumbnailResId);
-                    videoList.add(video);
+                    videoList.addVideo(video);
 
                     commentsMap.put(video.getVideoId(), video.getComments());
+                    likesMap.put(video.getVideoId(), video.getLikes());
+                    dislikesMap.put(video.getVideoId(), video.getDislikes());
+
+                    // Associate video with user
+                    UserItem uploader = getUserById(video.getUserId());
+                    if (uploader != null) {
+                        video.setUploader(uploader);
+                    }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-//    //sets each users followers and following from their ids
-//    private void setFollowsFromIds(ArrayList<UserItem> UserList) {
-//        for (UserItem user : UserList) {
-//            for (Integer followerId : user.getFollowerIds()) {
-//                for (UserItem follower : UserList) {
-//                    if (follower.getUserId().equals(followerId)) {
-//                        user.followers.add(follower);
-//                    }
-//                }
-//            }
-//            for (Integer followingId : user.getFollowingIds()) {
-//                for (UserItem following : UserList) {
-//                    if (following.getUserId().equals(followingId)) {
-//                        user.following.add(following);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-
 
     public void loadUsersFromJson(Context context) {
         try {
@@ -144,41 +157,27 @@ public class DataManager {
             UserList userListWrapper = gson.fromJson(json, UserList.class);
             if (userListWrapper != null && userListWrapper.getUsers() != null) {
                 for (UserItem user : userListWrapper.getUsers()) {
-                    //todo
-//                    int profilePicResId = context.getResources().getIdentifier(user.getProfilePicResId(), "drawable", context.getPackageName());
-//                    user.setProfilePicURI(profilePicResId);
-
-                    this.UserList.add(user);
+                    // Set the profilePicURI to the profilePhoto value from the JSON file
+                    String profilePhoto = user.getProfilePhoto();
+                    if (profilePhoto != null && !profilePhoto.isEmpty()) {
+                        user.setProfilePhoto("android.resource://" + context.getPackageName() + "/" + profilePhoto);
+                    } else {
+                        // If profilePhoto is null or empty, set it to the resource name of the default user picture
+                        user.setProfilePhoto("android.resource://" + context.getPackageName() + "/drawable/default_user_pic");
+                    }
+                    UserList.add(user);
                 }
             }
+
         } catch (JsonSyntaxException e) {
             Log.e("DataManager", "JsonSyntaxException: Failed to parse JSON", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("DataManager", "IOException: Failed to read JSON file", e);
         }
     }
 
-
-    //private int maxUserId() {
-    //        StringBuilder lastId = new StringBuilder("0");
-    //        for (UserItem user : UserList) {
-    //            if ((user.getUserId().compareTo(String.valueOf(lastId)) > 0) ||  {
-    //                lastId = user.getUserId();
-    //            }
-    //        }
-    //        return lastId;
-    //    }
-
-
     public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicPath) {
-        // Create a new UserItem instance with the provided details
         UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicPath);
-        return newUser;
-    }
-
-    public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, int profilePicResId) {
-        // Create a new UserItem instance with the provided details
-        UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicResId);
         return newUser;
     }
 
@@ -186,7 +185,17 @@ public class DataManager {
         UserList.add(user);
     }
 
-    public String lastUserId() {
+    public void addVideo(PreviewVideoCard video) {
+        getVideoList().add(video);
+        commentsMap.put(video.getVideoId(), video.getComments());
+        dislikesMap.put(video.getVideoId(), video.getDislikes());
+        likesMap.put(video.getVideoId(), video.getLikes());
+    }
+
+    public String getLastUserId() {
+        if (lastUserId != null) {
+            return lastUserId;
+        }
         String last = "";
         for (UserItem user : UserList) {
             if (user.getUserId().compareTo(last) > 0) {
@@ -196,5 +205,127 @@ public class DataManager {
         return last;
     }
 
-private String TAG;
+    public String getLastVideoId() {
+        if (lastVideoId != null) {
+            return lastVideoId;
+        }
+        String last = "";
+        for (PreviewVideoCard video : videoList.getVideos()) {
+            if (video.getVideoId().compareTo(last) > 0) {
+                last = video.getVideoId();
+            }
+        }
+        return last;
+    }
+    public String getFileExtension(Uri uri) {
+        ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        // Return file extension
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    public static Uri getUriFromResOrFile(String path) {
+        try {
+            int resId = MainPage.getInstance().getResources().getIdentifier(path, "raw",  PACKAGE_NAME);
+            if (resId != 0) {
+                return Uri.parse("android.resource://" + PACKAGE_NAME + "/" + resId);
+            } else {
+                return Uri.parse(path);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to parse URI: " + path, e);
+            return null;
+        }
+    }
+    public  void deleteVideo(PreviewVideoCard video) {
+        videoList.getVideos().remove(video);
+    }
+
+    public int likeClick(String videoId) {
+        UserItem user = LoggedInUser.getUser();
+        if (user == null) {
+            return NO_LIKE_DISLIKE;
+        }
+        if (user.hasLiked(videoId)) {
+            user.removeLike(videoId);
+
+            int newLikes = likesMap.get(videoId) -1;
+            likesMap.put(videoId,newLikes);
+            getVideoById(videoId).setLikes(newLikes);
+
+            return NO_LIKE_DISLIKE;
+        } else if (user.hasDisliked(videoId)) {
+            user.delDislike(videoId);
+            user.likeVideo(videoId);
+
+            int newLikes = likesMap.get(videoId) + 1;
+            int newDisLikes = dislikesMap.get(videoId) - 1;
+            likesMap.put(videoId,newLikes);
+            dislikesMap.put(videoId,newDisLikes);
+            getVideoById(videoId).setLikes(newLikes);
+            getVideoById(videoId).setDislikes(newDisLikes);
+            return LIKE;
+        } else { //didn't like or dislike
+            user.likeVideo(videoId);
+            int newLikes = likesMap.get(videoId) + 1;
+            likesMap.put(videoId,newLikes);
+            getVideoById(videoId).setLikes(newLikes);
+            return LIKE;
+        }
+    }
+
+    public int dislikeClick(String videoId) {
+        UserItem user = LoggedInUser.getUser();
+        if (user == null) {
+            return NO_LIKE_DISLIKE;
+        }
+        if (user.hasDisliked(videoId)) {
+            user.removeDislike(videoId);
+
+            int newDisLikes = dislikesMap.get(videoId) -1;
+            dislikesMap.put(videoId,newDisLikes);
+            getVideoById(videoId).setDislikes(newDisLikes);
+
+            return NO_LIKE_DISLIKE;
+        } else if (user.hasLiked(videoId)) {
+            user.delLike(videoId);
+            user.dislikeVideo(videoId);
+
+            int newDisLikes = dislikesMap.get(videoId) + 1;
+            int newLikes = likesMap.get(videoId) - 1;
+            dislikesMap.put(videoId,newDisLikes);
+            likesMap.put(videoId,newLikes);
+            getVideoById(videoId).setDislikes(newDisLikes);
+            getVideoById(videoId).setLikes(newLikes);
+            return DISLIKE;
+        } else { //didn't like or dislike
+            user.dislikeVideo(videoId);
+            int newDisLikes = dislikesMap.get(videoId) + 1;
+            dislikesMap.put(videoId,newDisLikes);
+            getVideoById(videoId).setDislikes(newDisLikes);
+            return DISLIKE;
+        }
+    }
+    public int getLikeDislike (String videoId) {
+        UserItem user = LoggedInUser.getUser();
+        if (user == null) {
+            return NO_LIKE_DISLIKE;
+        }
+        if (user.hasLiked(videoId)) {
+            return LIKE;
+        } else if (user.hasDisliked(videoId)) {
+            return DISLIKE;
+        } else {
+            return NO_LIKE_DISLIKE;
+        }
+    }
+
+    public int getLikesCount(String videoId) {
+        return likesMap.getOrDefault(videoId, 0);
+    }
+
+    public int getDislikesCount(String videoId) {
+        return dislikesMap.getOrDefault(videoId, 0);
+    }
 }
+

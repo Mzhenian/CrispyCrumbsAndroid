@@ -14,7 +14,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/baseline_account_circle_24"
+        android:src="@drawable/default_profile_picture"
         android:layout_marginTop="16dp"
         android:contentDescription="@string/profile_picture"
         android:scaleType="centerCrop"
@@ -33,44 +33,69 @@
         android:textStyle="bold"
         style="@style/TEXT"/>
 
-    <!-- User's Bio -->
     <TextView
-        android:id="@+id/user_bio"
+        android:id="@+id/userEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/user_name"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="a@b.con"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        style="@style/TEXT"/>
+
+    <!-- User's Bio -->
+<!--    <TextView-->
+<!--        android:id="@+id/user_bio"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/user_name"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="This is the user bio. It's a short description about the user."-->
+<!--        android:textSize="16sp"-->
+<!--        android:background="@drawable/round_corners_gray"-->
+<!--        android:textColor="@color/black_div"-->
+<!--        android:padding="10dp"/>-->
+
+    <Button
+        android:id="@+id/btn_my_videos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userEmail"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="This is the user bio. It's a short description about the user."
-        android:textSize="16sp"
-        android:background="@drawable/round_corners_gray"
-        android:textColor="@color/black_div"
-        android:padding="10dp"/>
+        android:text="my videos"
+        android:backgroundTint="@color/crispy_orange"
+        android:textColor="@color/white"
+        style="@style/BUTTON"/>
 
     <!-- Edit Profile Button -->
-    <Button
-        android:id="@+id/btn_edit_profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_bio"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="@string/edit_profile"
-        android:backgroundTint="@color/crispy_orange"
-        android:textColor="@color/white"
-        style="@style/BUTTON"/>
+<!--    <Button-->
+<!--        android:id="@+id/btn_edit_profile"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/btn_my_videos"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:text="@string/edit_profile"-->
+<!--        android:backgroundTint="@color/crispy_orange"-->
+<!--        android:textColor="@color/white"-->
+<!--        style="@style/BUTTON"/>-->
 
+<!--    //todo enable in next release-->
     <!-- Settings Button -->
-    <Button
-        android:id="@+id/btn_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_edit_profile"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="@string/settings"
-        android:backgroundTint="@color/crispy_orange"
-        android:textColor="@color/white"
-        style="@style/BUTTON"/>
+<!--    <Button-->
+<!--        android:id="@+id/btn_settings"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/btn_my_videos"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="@string/settings"-->
+<!--        android:backgroundTint="@color/crispy_orange"-->
+<!--        android:textColor="@color/white"-->
+<!--        style="@style/BUTTON"/>-->
 
 </RelativeLayout>

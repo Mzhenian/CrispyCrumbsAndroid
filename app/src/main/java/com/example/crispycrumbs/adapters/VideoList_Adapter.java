@@ -1,7 +1,11 @@
 package com.example.crispycrumbs.adapters;
 
+import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,103 +18,133 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
 import java.util.ArrayList;
 
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
-
+    private static final String TAG = "VideoList_Adapter";
     private Context context;
-    private ArrayList<PreviewVideoCard> originalVideoList; // Original list of video items
-    private ArrayList<PreviewVideoCard> filteredVideoList; // List of filtered video items
+    protected ArrayList<PreviewVideoCard> originalVideoList;
+    protected ArrayList<PreviewVideoCard> filteredVideoList;
+    private final OnItemClickListener listener;
 
-    public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList) {
+    public interface OnItemClickListener {
+        void onItemClick(PreviewVideoCard video);
+    }
+
+    public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
         this.context = context;
         this.originalVideoList = videoArrayList;
-        // Initially, show all items by copying the original list
         this.filteredVideoList = new ArrayList<>(originalVideoList);
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item layout and create ViewHolder instance
-        View view = LayoutInflater.from(context).inflate(R.layout.video_pre_item, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.video_pre_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Bind data to the ViewHolder
-        PreviewVideoCard videoCard = filteredVideoList.get(position);
+        PreviewVideoCard video = filteredVideoList.get(position);
+        if (video == null) {
+            Log.e(TAG, "Video is null");
+            return;
+        }
+        holder.bind(video, listener);
 
-        holder.videoTitle.setText(videoCard.getTitle());
-        holder.videoUser.setText(videoCard.getUserId());
-        holder.videoViews.setText(String.valueOf(videoCard.getViews()));
-        holder.videoDate.setText(videoCard.getUploadDate());
+        holder.videoTitle.setText(video.getTitle());
+        holder.videoUser.setText(video.getUserId());
+        holder.videoViews.setText(String.valueOf(video.getViews()));
+        holder.videoDate.setText(video.getUploadDate());
 
-        // Load thumbnail using a resource ID
-        holder.videoThumbnail.setImageResource(videoCard.getThumbnailResId());
-//todo
-//        holder.profile_picture.setImageResource(DataManager.getInstance().getUserById(videoCard.getUserId()).getProfilePictureResId());
+        holder.videoThumbnail.setImageURI(getUriFromResOrFile(video.getThumbnail()));
+
+        // Fetch user information
+        UserItem user = getDataManager().getUserById(video.getUserId());
+        if (user != null) {
+            holder.profilePicture.setImageURI(getUriFromResOrFile(user.getProfilePhoto()));
+            holder.videoUser.setText(user.getUserName());
+        } else {
+            holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
+            holder.videoUser.setText("[deleted user]");
+            Log.e(TAG, "User not found");
+        }
 
         // Handle click events on items
         holder.itemView.setOnClickListener(v -> {
             // Pass data to VideoPlayerFragment using BundleF
             Bundle bundle = new Bundle();
-            bundle.putString("videoId", videoCard.getVideoId());
-            bundle.putString("videoTitle", videoCard.getTitle());
-            bundle.putString("videoDescription", videoCard.getUploadDate());
-            bundle.putString("videoPath", videoCard.getVideoFile());
+            bundle.putString("videoId", video.getVideoId());
+
 
             VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
             videoPlayerFragment.setArguments(bundle);
+
 
             // Replace current fragment with VideoPlayerFragment
             ((AppCompatActivity) context).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment_container, videoPlayerFragment)
-                    .addToBackStack(null) // Add to back stack for fragment navigation
                     .commit();
         });
     }
 
     @Override
     public int getItemCount() {
-        return filteredVideoList.size(); // Return the size of filtered list
+        return filteredVideoList.size();
     }
 
-    // ViewHolder class to hold and manage UI elements of each item
+    public void filter(String query) {
+        filteredVideoList.clear();
+        if (query.isEmpty()) {
+            filteredVideoList.addAll(originalVideoList);
+        } else {
+            for (PreviewVideoCard video : originalVideoList) {
+                if (video.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                    filteredVideoList.add(video);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView videoThumbnail, profile_picture;
+        ImageView videoThumbnail, profilePicture;
         TextView videoTitle, videoUser, videoViews, videoDate;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Initialize UI elements from the item layout
-            profile_picture = itemView.findViewById(R.id.profile_picture);
             videoThumbnail = itemView.findViewById(R.id.video_thumbnail);
+            profilePicture = itemView.findViewById(R.id.profile_picture);
             videoTitle = itemView.findViewById(R.id.video_title);
             videoUser = itemView.findViewById(R.id.user_name);
-            videoViews = itemView.findViewById(R.id.views);
-            videoDate = itemView.findViewById(R.id.date);
+            videoViews = itemView.findViewById(R.id.video_views);
+            videoDate = itemView.findViewById(R.id.video_date);
         }
-    }
 
-    // Filter method for SearchView
-    public void filter(String query) {
-        filteredVideoList.clear(); // Clear the current filtered list
-        if (query == null || query.trim().isEmpty()) {
-            filteredVideoList.addAll(originalVideoList); // Show all items if query is empty
-        } else {
-            String lowerCaseQuery = query.toLowerCase();
-            for (PreviewVideoCard video : originalVideoList) {
-                if (video.getTitle().toLowerCase().contains(lowerCaseQuery)) {
-                    filteredVideoList.add(video); // Add items matching the query to filtered list
-                }
+        public void bind(PreviewVideoCard video, final OnItemClickListener listener) {
+            videoTitle.setText(video.getTitle());
+            UserItem uploader = DataManager.getInstance().getUserById(video.getUserId());
+            if (uploader != null) {
+                profilePicture.setImageURI(getUriFromResOrFile(uploader.getProfilePhoto()));
+                videoUser.setText(uploader.getUserName());
+            } else {
+                profilePicture.setImageResource(R.drawable.default_profile_picture);
+                videoUser.setText("[deleted user]");
+                Log.e(TAG, "User not found");
             }
+            videoViews.setText(video.getViews() + " views");
+            videoDate.setText(video.getUploadDate());
+            videoThumbnail.setImageURI(getUriFromResOrFile(video.getThumbnail()));
+
+            itemView.setOnClickListener(v -> listener.onItemClick(video));
         }
-        notifyDataSetChanged(); // Notify adapter of data change
     }
 }

@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.Lists;
 
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.ui.MainPage;
 import com.google.gson.Gson;
@@ -9,11 +11,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 
 
 public class UserList  {
     private List<UserItem> users;
+    Map<String, String> userMap;
+    Dictionary<String, String> userDict;
 
     public List<UserItem> getUsers() {
         return users;
@@ -27,19 +33,8 @@ public class UserList  {
         this.users.add(user);
     }
 
-//    private int lastUserId() {
-//        int max = 0;
-//        for (UserItem user : MainPage.getDataManager().getUserList()) {
-//            if (user.getUserId() > max) {
-//                max = user.getUserId();
-//            }
-//        }
-//        return max;
-//    }
-
-
     public static boolean isEmailUnique(String email) {
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
+        for (UserItem user : getDataManager().getUserList()) {
             if (user.getEmail().equals(email)) {
                 return false;
             }
@@ -48,7 +43,7 @@ public class UserList  {
     }
 
     public static boolean isUsernameUnique(String username) {
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
+        for (UserItem user : getDataManager().getUserList()) {
             if (user.getUserName().equals(username)) {
                 return false;
             }
@@ -57,7 +52,7 @@ public class UserList  {
     }
 
     public static boolean isPhoneNumberUnique(String phoneNumber) {
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
+        for (UserItem user : getDataManager().getUserList()) {
             if (user.getPhoneNumber().equals(phoneNumber)) {
                 return false;
             }

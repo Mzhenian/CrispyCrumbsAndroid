@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.model;
 
+import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.ui.MainPage;
@@ -7,6 +9,8 @@ import com.example.crispycrumbs.ui.MainPage;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserLogic {
     private static UserLogic instance;
@@ -47,14 +51,19 @@ public class UserLogic {
             return "Passwords do not match";
         }
 
-        if (email != null && !email.isEmpty()) {
-//            String regexPattern = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
-//            EmailValidation.patternMatches(email, regexPattern);
-
-            if (!UserList.isEmailUnique(email)) {
-                return "Email is already in use (try to log in)";
-            }
+        if (email == null || email.isEmpty()) {
+            return  "missing email";
         }
+        String emailRegex = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        if(!matcher.matches()) {
+            return "invalid email syntax";
+        }
+        if (!UserList.isEmailUnique(email)) {
+            return "Email is already in use (try to log in)";
+        }
+
         if (username != null && !username.isEmpty()) {
             if (!UserList.isUsernameUnique(username)) {
                 return "Username is already in use (try to log in)";
@@ -81,14 +90,7 @@ public class UserLogic {
         } catch (ParseException e) {
             birthDate = null;
         }
-        //TODO add image validation
-//        if (profilePicPath != null && !profilePicPath.isEmpty()) {
-//            if (!profilePicPath.matches(".*\\.(jpg|png|jpeg)")) {
-//                return "Profile picture must be a jpg, jpeg, or png file";
-//            }
-//        }
 
-        //if there are no errors
         return null;
     }
 
@@ -101,7 +103,7 @@ public class UserLogic {
             return null;
         }
 
-        for (UserItem user : MainPage.getDataManager().getUserList()) {
+        for (UserItem user : getDataManager().getUserList()) {
             if (user == null) {
                 continue;
             }

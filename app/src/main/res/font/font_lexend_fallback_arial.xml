@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Use Lexend as the primary font -->
+    <font
+        android:font="@font/lexend_variable"
+        android:fontStyle="normal"
+        android:fontWeight="400" />
+    <!-- Use Ariel as the fallback font -->
+    <font
+        android:font="@font/arial"
+        android:fontStyle="normal"
+        android:fontWeight="400" />
+</font-family>

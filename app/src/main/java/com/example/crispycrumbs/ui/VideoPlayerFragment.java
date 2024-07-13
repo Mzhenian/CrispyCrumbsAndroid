@@ -1,160 +1,205 @@
 package com.example.crispycrumbs.ui;
 
+import static com.example.crispycrumbs.R.id.comment_section_container;
+import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
+
 import android.app.AlertDialog;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.example.crispycrumbs.data.CommentItem;
-import com.example.crispycrumbs.adapters.CommentSection_Adapter;
-import com.example.crispycrumbs.model.CustomMediaController;
-import com.example.crispycrumbs.model.DataManager;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.adapters.CommentSection_Adapter;
+import com.example.crispycrumbs.data.CommentItem;
+import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.model.DataManager;
 
 import java.util.ArrayList;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
-    private CustomMediaController mediaController;
-    private VideoView videoView;
-    private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
-    private int[] image = {R.drawable.small_logo};
-    private int currentPosition = 0;
-    private String videoId;
-
-    private RecyclerView recyclerView;
-    private CommentSection_Adapter adapter;
-
-    private ImageButton likeButton;
-    private ImageButton unlikeButton;
-    private boolean isLiked = false;
-    private boolean isUnliked = false;
-
+    private static final String TAG = "VideoPlayerFragment";
     private static final String KEY_POSITION = "position";
     private static final String KEY_COMMENTS = "comments";
+    private MediaController mediaController;
+    private VideoView videoView;
+    private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
+    private int currentPosition = 0;
+    private String videoId, uploaderId;
+    private PreviewVideoCard video;
+    private ImageView profilePicture;
+    private TextView userNameTextView;
+    private TextView description, descriptionButton;
+    private Button shareButton, commentButton;
+    private ConstraintLayout buttonBar, commentSectionContainer;
+    private RecyclerView recyclerView;
+    private CommentSection_Adapter adapter;
+    private ImageButton likeButton;
+    private ImageButton unlikeButton;
+    private TextView likesTextView;
+    private TextView views;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video_player, container, false);
+
+        //get video to to initialize
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            Toast.makeText(getContext(), "Please choose a video", Toast.LENGTH_SHORT).show();
+            if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                getParentFragmentManager().popBackStack();
+            } else {
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            }
+        }
+        videoId = bundle.getString("videoId");
+        video = DataManager.getInstance().getVideoById(videoId);
+        String videoFile = video.getVideoFile();
+        uploaderId = video.getUserId();
+        DataManager dataManager = DataManager.getInstance();
 
         recyclerView = view.findViewById(R.id.comment_section);
         likeButton = view.findViewById(R.id.like_button);
         unlikeButton = view.findViewById(R.id.unlike_button);
-        Button shareButton = view.findViewById(R.id.share_button);
+        likesTextView = view.findViewById(R.id.video_likes);
+        views = view.findViewById(R.id.video_views);
+        shareButton = view.findViewById(R.id.share_button);
         videoView = view.findViewById(R.id.video_view);
+        profilePicture = view.findViewById(R.id.profile_picture);
+        commentButton = view.findViewById(R.id.comment_button);
+        userNameTextView = view.findViewById(R.id.user_name);
+        commentItemArrayList = dataManager.getCommentsForVideo(videoId);
+        TextView titleTextView = view.findViewById(R.id.video_title);
+        TextView dateTextView = view.findViewById(R.id.video_date);
+        description = view.findViewById(R.id.txt_video_description);
+        buttonBar = view.findViewById(R.id.button_bar);
+        commentSectionContainer = view.findViewById(comment_section_container);
+        descriptionButton = view.findViewById(R.id.btn_video_description);
 
-        // Set up buttons
-        Button commentButton = view.findViewById(R.id.comment_button);
+        titleTextView.setText(video.getTitle());
+        dateTextView.setText(video.getUploadDate());
+        description.setText(video.getDescription());
+
+        profilePicture.setOnClickListener(v -> {
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(uploaderId)).commit();
+        });
         commentButton.setOnClickListener(v -> showAddCommentDialog());
-
         shareButton.setOnClickListener(v -> showShareMenu());
+        likeButton.setOnClickListener(v -> likeClick());
+        unlikeButton.setOnClickListener(v -> dislikeClick());
 
-        likeButton.setOnClickListener(v -> {
-            if (!isLiked) {
-                likeButton.setColorFilter(getResources().getColor(R.color.black_div));
-                if (isUnliked) {
-                    unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
-                    isUnliked = false;
-                }
-                isLiked = true;
-            } else {
-                likeButton.setColorFilter(getResources().getColor(R.color.off_white));
-                isLiked = false;
-            }
-        });
 
-        unlikeButton.setOnClickListener(v -> {
-            if (!isUnliked) {
-                unlikeButton.setColorFilter(getResources().getColor(R.color.black_div));
-                if (isLiked) {
-                    likeButton.setColorFilter(getResources().getColor(R.color.off_white));
-                    isLiked = false;
-                }
-                isUnliked = true;
-            } else {
-                unlikeButton.setColorFilter(getResources().getColor(R.color.off_white));
-                isUnliked = false;
-            }
-        });
+        initializeVideo(savedInstanceState);
 
-        // Receive the video data from the bundle
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            String videoTitle = bundle.getString("videoTitle");
-            String videoDescription = bundle.getString("videoDescription");
-            String videoFile = bundle.getString("videoPath");
-            videoId = bundle.getString("videoId");
-
-            // Fetch comments for the video from the DataManager
-            DataManager dataManager = DataManager.getInstance();
-            commentItemArrayList = dataManager.getCommentsForVideo(videoId);
-
-            // Set the video title in a TextView
-            TextView titleTextView = view.findViewById(R.id.video_title);
-            titleTextView.setText(videoTitle);
-
-            // Set the video description in a TextView
-            TextView descriptionTextView = view.findViewById(R.id.video_date);
-            descriptionTextView.setText(videoDescription);
-
-            // Load and play the video using the videoFile
-
-//            String videoPath = "file:///android_asset/" + videoFile;
-            int videoResId = getResources().getIdentifier(videoFile, "raw", getContext().getPackageName());
-            String videoPath = "android.resource://" + getContext().getPackageName() + "/" + videoResId;
-
-            videoView.setVideoURI(Uri.parse(videoPath));
-
-            //todo testme, if the controller is from the bottom video edge downwords, subtract the height of the controller too
-            //get the controller position
-
-//            int controllerBottom = view.getHeight() - view.findViewById(R.id.video_view).getHeight();
-
-            VideoView videoView = view.findViewById(R.id.video_view);
-            int controllerBottom = videoView.getTop() + videoView.getHeight();
-
-            // Initialize MediaController
-            mediaController = new CustomMediaController(getContext());
-            mediaController.setAnchorView(videoView);
-////            todo WIP v2
-//            mediaController.setAnchorView(videoView, controllerBottom);
-            videoView.setMediaController(mediaController);
-
-            // Restore video position if savedInstanceState is not null
-            if (savedInstanceState != null) {
-                currentPosition = savedInstanceState.getInt(KEY_POSITION, 0);
-                commentItemArrayList = (ArrayList<CommentItem>) savedInstanceState.getSerializable(KEY_COMMENTS);
-                videoView.seekTo(currentPosition);
-            }
-
-            videoView.start();
-
-            // Initialize RecyclerView and Adapter with comments
-            adapter = new CommentSection_Adapter(getContext(), commentItemArrayList, this);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        UserItem currentUser = LoggedInUser.getUser();
+        if (currentUser != null) {
+            descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
+            initializeComments();
+        } else {
+            descriptionButton.setVisibility(View.GONE);
+            initializeDescription();
         }
+
+        // Update user info for the video
+        UserItem uploader = dataManager.getUserById(uploaderId);
+        if (uploader != null) {
+            profilePicture.setImageURI(getUriFromResOrFile(uploader.getProfilePhoto()));
+            userNameTextView.setText(uploader.getUserName());
+        } else {
+            profilePicture.setImageResource(R.drawable.default_profile_picture);
+            userNameTextView.setText("[deleted user]");
+            Log.e(TAG, "User not found");
+        }
+
+        video.setViews(video.getViews() + 1);
+
+        updateLikesAndViewsCount();
+        updateLikeButtons();
 
         return view;
     }
 
+    private void initializeVideo(Bundle savedInstanceState) {
+        String videoFile = video.getVideoFile();
+        Uri videoUri = DataManager.getUriFromResOrFile(videoFile);
+        videoView.setVideoURI(videoUri);
+        videoView.start();
+
+//        mediaController = new CustomMediaController(getContext());
+        mediaController = new MediaController(getContext());
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
+
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt(KEY_POSITION, 0);
+            commentItemArrayList = savedInstanceState.getParcelableArrayList(KEY_COMMENTS);
+            videoView.seekTo(currentPosition);
+        }
+
+        videoView.start();
+    }
+
+    private void toggleDescriptionComments() {
+        if (description.getVisibility() == View.VISIBLE) {
+            descriptionButton.setText(getString(R.string.more));
+            initializeComments();
+        } else {
+            descriptionButton.setText(getString(R.string.less));
+            initializeDescription();
+        }
+    }
+
+    private void initializeDescription() {
+        description.setText(video.getDescription());
+
+        description.setVisibility(View.VISIBLE);
+        buttonBar.setVisibility(View.GONE);
+        commentSectionContainer.setVisibility(View.GONE);
+
+    }
+
+    private void initializeComments() {
+        UserItem currentUser = LoggedInUser.getUser();
+        if (currentUser == null) {
+            initializeDescription();
+        }
+        String currentUserId = currentUser.getUserId();
+        adapter = new CommentSection_Adapter(getContext(), commentItemArrayList, this, currentUserId);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        description.setVisibility(View.GONE);
+        buttonBar.setVisibility(View.VISIBLE);
+        commentSectionContainer.setVisibility(View.VISIBLE);
+    }
+
     private void showAddCommentDialog() {
+        UserItem currentUser = LoggedInUser.getUser();
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "Please log in to add a comment.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.add_comment_box, null);
@@ -168,22 +213,18 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         positiveButton.setOnClickListener(v -> {
             String content = inputContent.getText().toString();
-            String date = "Now"; // For simplicity, setting the date as "Now"
+            String date = "Now";
 
-            // Validate inputs
             if (!content.isEmpty()) {
-                // Add new comment to the list and notify adapter
-                CommentItem newComment = new CommentItem(R.drawable.small_logo, "DefaultUser", content, date);
+                CommentItem newComment = new CommentItem(R.drawable.small_logo, currentUser.getUserId(), currentUser.getUserName(), content, date);
                 commentItemArrayList.add(newComment);
                 adapter.notifyItemInserted(commentItemArrayList.size() - 1);
 
-                // Add comment to DataManager
                 DataManager dataManager = DataManager.getInstance();
                 dataManager.addCommentToVideo(videoId, newComment);
 
                 dialog.dismiss();
             } else {
-                // Handle empty inputs (show a message or do nothing)
                 Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -205,26 +246,22 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         Button positiveButton = dialogView.findViewById(R.id.positive_button);
         Button negativeButton = dialogView.findViewById(R.id.negative_button);
 
-        // Set existing comment text
         inputContent.setText(commentItemArrayList.get(position).getComment());
 
         positiveButton.setOnClickListener(v -> {
             String content = inputContent.getText().toString();
 
-            // Validate inputs
             if (!content.isEmpty()) {
-                // Update the comment and notify adapter
-                CommentItem updatedComment = new CommentItem(R.drawable.small_logo, "DefaultUser", content, commentItemArrayList.get(position).getDate());
+                UserItem currentUser = LoggedInUser.getUser();
+                CommentItem updatedComment = new CommentItem(R.drawable.small_logo, currentUser.getUserId(), currentUser.getUserName(), content, commentItemArrayList.get(position).getDate());
                 commentItemArrayList.set(position, updatedComment);
                 adapter.notifyItemChanged(position);
 
-                // Update comment in DataManager
                 DataManager dataManager = DataManager.getInstance();
                 dataManager.addCommentToVideo(videoId, updatedComment);
 
                 dialog.dismiss();
             } else {
-                // Handle empty inputs (show a message or do nothing)
                 Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -237,13 +274,20 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     @Override
     public void onPause() {
         super.onPause();
-        currentPosition = videoView.getCurrentPosition();
-        videoView.pause();
+        if (videoView != null && videoView.isPlaying()) {
+            currentPosition = videoView.getCurrentPosition();
+            videoView.pause();
+        }
     }
 
     @Override
     public void onResume() {
-        super.onResume();
+        try {
+            super.onResume();
+        } catch (ClassCastException e) {
+            // Log the exception and continue
+            Log.e("VideoPlayer", "Caught ClassCastException", e);
+        }
         videoView.seekTo(currentPosition);
         videoView.start();
     }
@@ -258,10 +302,9 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_POSITION, currentPosition);
-        outState.putSerializable(KEY_COMMENTS, commentItemArrayList);
+        outState.putParcelableArrayList(KEY_COMMENTS, commentItemArrayList);
     }
 
-    // Implement interface methods for edit and delete actions
     @Override
     public void onEditComment(int position) {
         showEditCommentDialog(position);
@@ -269,12 +312,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public void onDeleteComment(int position) {
-        // Remove the comment from the adapter
         adapter.removeComment(position);
-
-        // Update DataManager
-       // DataManager dataManager = DataManager.getInstance();
-        //dataManager.removeCommentFromVideo(videoId, position);
     }
 
     private void showShareMenu() {
@@ -311,5 +349,67 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         });
 
         dialog.show();
+    }
+
+    private void updateLikesAndViewsCount() {
+        if (video != null) {
+            likesTextView.setText(DataManager.getInstance().getLikesCount(videoId) + " likes");
+            views.setText(video.getViews() + " views");
+        }
+    }
+
+    private void likeClick() {
+        updateLikeButtons(MainPage.getDataManager().likeClick(videoId));
+    }
+
+    private void dislikeClick() {
+        updateLikeButtons(MainPage.getDataManager().dislikeClick(videoId));
+    }
+
+    private void updateLikeButtons(int likeDislike) {
+        if (likeDislike == DataManager.LIKE) {
+            likeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
+//            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange_light));
+        } else {
+            likeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
+//            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange));
+        }
+        if (likeDislike == DataManager.DISLIKE) {
+            unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
+//            unlikeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange_light));
+        } else {
+            unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
+//            unlikeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange));
+        }
+        updateLikesAndViewsCount();
+    }
+
+    private void updateLikeButtons() {
+        int likeDislike = MainPage.getDataManager().getLikeDislike(videoId);
+        updateLikeButtons(likeDislike);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ViewGroup.LayoutParams params = videoView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            videoView.setLayoutParams(params);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            ViewGroup.LayoutParams params = videoView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT; // or whatever size you need
+            videoView.setLayoutParams(params);
+        }
+    }
+
+    public void hideMediaController() {
+        if (mediaController != null) {
+            mediaController.hide();
+        }
     }
 }

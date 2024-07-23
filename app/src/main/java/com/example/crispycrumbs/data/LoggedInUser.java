@@ -2,13 +2,9 @@ package com.example.crispycrumbs.data;
 
 import static com.example.crispycrumbs.ui.MainPage.getInstance;
 
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.ui.MainPage;
-
-import java.io.Serializable;
 
 public class LoggedInUser {
     private static UserItem loggedInUser = null;
@@ -17,6 +13,7 @@ public class LoggedInUser {
     public static UserItem getUser() {
         return loggedInUser;
     }
+
     public static void SetLoggedInUser(UserItem userItem) {
         LoggedInUser.loggedInUser = userItem;
 
@@ -26,6 +23,7 @@ public class LoggedInUser {
             getInstance().updateNavHeader();
         }
     }
+
     public static void LogOut() {
         LoggedInUser.loggedInUser = null;
         TextView user_name = getInstance().findViewById(R.id.user_name);
@@ -38,8 +36,9 @@ public class LoggedInUser {
             user_email.setText("");
         }
 
-    };
-    public static  void  removeVideo(PreviewVideoCard videoItem) {
+    }
+
+    public static void removeVideo(PreviewVideoCard videoItem) {
         loggedInUser.delUploadedVideo(videoItem.getVideoId());
     }
 }

@@ -14,7 +14,7 @@ import android.widget.SearchView;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.adapters.VideoList_Adapter;
+import com.example.crispycrumbs.adapter.VideoList_Adapter;
 
 import java.util.ArrayList;
 

@@ -4,7 +4,6 @@ import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.MainPage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

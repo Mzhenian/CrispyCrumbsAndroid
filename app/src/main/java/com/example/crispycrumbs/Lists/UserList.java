@@ -3,14 +3,7 @@ package com.example.crispycrumbs.Lists;
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.MainPage;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.adapters;
+package com.example.crispycrumbs.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.LoggedInUser;
@@ -14,18 +13,13 @@ import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.ui.EditVideoFragment;
 import com.example.crispycrumbs.ui.MainPage;
-import com.example.crispycrumbs.ui.ProfileFragment;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
 
 import java.util.ArrayList;
 
-public class PlayList_Adapter extends VideoList_Adapter  {
+public class PlayList_Adapter extends VideoList_Adapter {
     UserItem user;
 //    private final VideoList_Adapter.OnItemClickListener listener;
-
-    public interface OnItemClickListener {
-        void onItemClick(PreviewVideoCard videoCard);
-    }
 
     public PlayList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, VideoList_Adapter.OnItemClickListener listener, UserItem user) {
         super(context, videoArrayList, listener);
@@ -50,7 +44,7 @@ public class PlayList_Adapter extends VideoList_Adapter  {
                 EditVideoFragment editVideoFragment = new EditVideoFragment();
                 editVideoFragment.setArguments(bundle);
 
-                ((AppCompatActivity) MainPage.getInstance()).getSupportFragmentManager()
+                MainPage.getInstance().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, editVideoFragment)
                         .addToBackStack(null)
@@ -69,12 +63,16 @@ public class PlayList_Adapter extends VideoList_Adapter  {
                 VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
                 videoPlayerFragment.setArguments(bundle);
 
-                ((AppCompatActivity) MainPage.getInstance()).getSupportFragmentManager()
+                MainPage.getInstance().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.fragment_container, videoPlayerFragment)
                         .addToBackStack(null)
                         .commit();
             });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(PreviewVideoCard videoCard);
     }
 }

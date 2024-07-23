@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.adapters;
+package com.example.crispycrumbs.adapter;
 
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
@@ -16,8 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.ui.VideoPlayerFragment;
@@ -26,14 +26,10 @@ import java.util.ArrayList;
 
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
     private static final String TAG = "VideoList_Adapter";
-    private Context context;
+    private final Context context;
+    private final OnItemClickListener listener;
     protected ArrayList<PreviewVideoCard> originalVideoList;
     protected ArrayList<PreviewVideoCard> filteredVideoList;
-    private final OnItemClickListener listener;
-
-    public interface OnItemClickListener {
-        void onItemClick(PreviewVideoCard video);
-    }
 
     public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
         this.context = context;
@@ -113,6 +109,10 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             }
         }
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(PreviewVideoCard video);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

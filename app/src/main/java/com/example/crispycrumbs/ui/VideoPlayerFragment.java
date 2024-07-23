@@ -1,9 +1,11 @@
 package com.example.crispycrumbs.ui;
 
+import static android.content.Intent.getIntent;
 import static com.example.crispycrumbs.R.id.comment_section_container;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.adapters.CommentSection_Adapter;
+import com.example.crispycrumbs.adapter.CommentSection_Adapter;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;

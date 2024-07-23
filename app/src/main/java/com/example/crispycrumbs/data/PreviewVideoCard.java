@@ -4,11 +4,13 @@ import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
 import com.example.crispycrumbs.ui.MainPage;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class PreviewVideoCard {
-    private String videoId;
+public class PreviewVideoCard implements Serializable {
+    private String videoId; // todo migrate to _id
+    private final String _id;
     private String title;
     private String thumbnail;
     private String profilePicture;

@@ -2,7 +2,7 @@ package com.example.crispycrumbs.ui;
 
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
-import com.example.crispycrumbs.adapters.PlayList_Adapter;
+import com.example.crispycrumbs.adapter.PlayList_Adapter;
 import com.example.crispycrumbs.data.LoggedInUser;
 import android.os.Bundle;
 import android.util.Log;

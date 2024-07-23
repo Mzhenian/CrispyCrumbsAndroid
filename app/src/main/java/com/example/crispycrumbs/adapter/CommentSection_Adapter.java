@@ -1,7 +1,6 @@
-package com.example.crispycrumbs.adapters;
+package com.example.crispycrumbs.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;

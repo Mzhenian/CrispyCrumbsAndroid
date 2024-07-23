@@ -3,12 +3,26 @@ package com.example.crispycrumbs.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class CommentItem implements Parcelable {
-    private int avatarResId;
-    private String userId;
-    private String userName;
+import java.io.Serializable;
+
+public class CommentItem implements Serializable,  Parcelable  {
+    public static final Creator<CommentItem> CREATOR = new Creator<CommentItem>() {
+        @Override
+        public CommentItem createFromParcel(Parcel in) {
+            return new CommentItem(in);
+        }
+
+        @Override
+        public CommentItem[] newArray(int size) {
+            return new CommentItem[size];
+        }
+    };
+    private final int avatarResId;
+    private final String userId; //todo migrate userId to _id
+    private  String _id;
+    private final String userName;
+    private final String date;
     private String comment;
-    private String date;
 
     public CommentItem(int avatarResId, String userId, String userName, String comment, String date) {
         this.avatarResId = avatarResId;
@@ -25,18 +39,6 @@ public class CommentItem implements Parcelable {
         comment = in.readString();
         date = in.readString();
     }
-
-    public static final Creator<CommentItem> CREATOR = new Creator<CommentItem>() {
-        @Override
-        public CommentItem createFromParcel(Parcel in) {
-            return new CommentItem(in);
-        }
-
-        @Override
-        public CommentItem[] newArray(int size) {
-            return new CommentItem[size];
-        }
-    };
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -68,11 +70,11 @@ public class CommentItem implements Parcelable {
         return comment;
     }
 
-    public String getDate() {
-        return date;
-    }
-
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getDate() {
+        return date;
     }
 }

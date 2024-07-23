@@ -2,10 +2,7 @@ package com.example.crispycrumbs.data;
 
 import static com.example.crispycrumbs.ui.MainPage.getDataManager;
 
-import android.media.Image;
-
 import com.example.crispycrumbs.model.UserLogic;
-import com.example.crispycrumbs.ui.MainPage;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,7 +10,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UserItem implements Serializable {
-    private String userId;
+    private final String userId; // todo migrate to _id
+    private String _id;
+    private final Set<String> videosIds = new HashSet<>();
+    private final Set<String> followerIds = new HashSet<>();
+    private final Set<String> followingIds = new HashSet<>();
+    private final Set<String> likedVideoIds = new HashSet<>();
+    private final Set<String> dislikedVideoIds = new HashSet<>();
     private String userName;
     private String email;
     private String password;
@@ -22,11 +25,6 @@ public class UserItem implements Serializable {
     private Date dateOfBirth;
     private String country;
     private String profilePhoto; // path to the profile picture
-    private Set<String> videosIds = new HashSet<>();
-    private final Set<String> followerIds = new HashSet<>();
-    private final Set<String> followingIds = new HashSet<>();
-    private final Set<String> likedVideoIds = new HashSet<>();
-    private final Set<String> dislikedVideoIds = new HashSet<>();
 
     public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {
         this.userName = userName;
@@ -113,11 +111,13 @@ public class UserItem implements Serializable {
     public Boolean getIsFollowing(UserItem user) {
         return followingIds.contains(user.getUserId());
     }
+
     //adds a new
     public void addFallow(UserItem user) {
         followingIds.add(user.getUserId());
         user.followerIds.add(this.getUserId());
     }
+
     public void addVideo(String videoId) {
         videosIds.add(videoId);
     }
@@ -162,6 +162,7 @@ public class UserItem implements Serializable {
     public Integer getUploadedVideosCount() {
         return videosIds.size();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -169,6 +170,7 @@ public class UserItem implements Serializable {
         UserItem userItem = (UserItem) o;
         return userId.equals(userItem.userId);
     }
+
     public Boolean checkPassword(String password) {
         return this.password.equals(password);
     }
@@ -176,6 +178,7 @@ public class UserItem implements Serializable {
     public String[] getFollowerIds() {
         return followerIds.toArray(new String[0]);
     }
+
     public String[] getFollowingIds() {
         return followingIds.toArray(new String[0]);
     }

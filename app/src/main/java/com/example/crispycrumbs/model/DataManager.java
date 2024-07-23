@@ -25,20 +25,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataManager {
-    private static final String TAG = "DataManager";
     public static final String PACKAGE_NAME = MainPage.getInstance().getPackageName();
     public static final int NO_LIKE_DISLIKE = 0, LIKE = 1, DISLIKE = -1;
+    private static final String TAG = "DataManager";
     private static DataManager instance;
-    private VideoList videoList;
-    private VideoList personalVideoList;
-    private Map<String, ArrayList<CommentItem>> commentsMap;
-    private ArrayList<UserItem> UserList;
+    private final VideoList videoList;
+    private final Map<String, ArrayList<CommentItem>> commentsMap;
+    private final ArrayList<UserItem> UserList;
+    private final Map<String, Integer> likesMap;
+    private final Map<String, Integer> dislikesMap;
     String lastUserId;
     String lastVideoId;
-    private Map<String, Integer> likesMap;
-    private Map<String, Integer> dislikesMap;
-
     int nextUserId;
+    private VideoList personalVideoList;
 
     private DataManager() {
         videoList = new VideoList();
@@ -56,6 +55,20 @@ public class DataManager {
             instance = new DataManager();
         }
         return instance;
+    }
+
+    public static Uri getUriFromResOrFile(String path) {
+        try {
+            int resId = MainPage.getInstance().getResources().getIdentifier(path, "raw", PACKAGE_NAME);
+            if (resId != 0) {
+                return Uri.parse("android.resource://" + PACKAGE_NAME + "/" + resId);
+            } else {
+                return Uri.parse(path);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to parse URI: " + path, e);
+            return null;
+        }
     }
 
     public ArrayList<PreviewVideoCard> getVideoList() {
@@ -78,6 +91,7 @@ public class DataManager {
         }
         return null;
     }
+
     public PreviewVideoCard getVideoById(String videoId) {
         for (PreviewVideoCard video : videoList.getVideos()) {
             if (video.getVideoId().equals(videoId)) {
@@ -217,6 +231,7 @@ public class DataManager {
         }
         return last;
     }
+
     public String getFileExtension(Uri uri) {
         ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -224,20 +239,7 @@ public class DataManager {
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
-    public static Uri getUriFromResOrFile(String path) {
-        try {
-            int resId = MainPage.getInstance().getResources().getIdentifier(path, "raw",  PACKAGE_NAME);
-            if (resId != 0) {
-                return Uri.parse("android.resource://" + PACKAGE_NAME + "/" + resId);
-            } else {
-                return Uri.parse(path);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to parse URI: " + path, e);
-            return null;
-        }
-    }
-    public  void deleteVideo(PreviewVideoCard video) {
+    public void deleteVideo(PreviewVideoCard video) {
         videoList.getVideos().remove(video);
     }
 
@@ -249,8 +251,8 @@ public class DataManager {
         if (user.hasLiked(videoId)) {
             user.removeLike(videoId);
 
-            int newLikes = likesMap.get(videoId) -1;
-            likesMap.put(videoId,newLikes);
+            int newLikes = likesMap.get(videoId) - 1;
+            likesMap.put(videoId, newLikes);
             getVideoById(videoId).setLikes(newLikes);
 
             return NO_LIKE_DISLIKE;
@@ -260,15 +262,15 @@ public class DataManager {
 
             int newLikes = likesMap.get(videoId) + 1;
             int newDisLikes = dislikesMap.get(videoId) - 1;
-            likesMap.put(videoId,newLikes);
-            dislikesMap.put(videoId,newDisLikes);
+            likesMap.put(videoId, newLikes);
+            dislikesMap.put(videoId, newDisLikes);
             getVideoById(videoId).setLikes(newLikes);
             getVideoById(videoId).setDislikes(newDisLikes);
             return LIKE;
         } else { //didn't like or dislike
             user.likeVideo(videoId);
             int newLikes = likesMap.get(videoId) + 1;
-            likesMap.put(videoId,newLikes);
+            likesMap.put(videoId, newLikes);
             getVideoById(videoId).setLikes(newLikes);
             return LIKE;
         }
@@ -282,8 +284,8 @@ public class DataManager {
         if (user.hasDisliked(videoId)) {
             user.removeDislike(videoId);
 
-            int newDisLikes = dislikesMap.get(videoId) -1;
-            dislikesMap.put(videoId,newDisLikes);
+            int newDisLikes = dislikesMap.get(videoId) - 1;
+            dislikesMap.put(videoId, newDisLikes);
             getVideoById(videoId).setDislikes(newDisLikes);
 
             return NO_LIKE_DISLIKE;
@@ -293,20 +295,21 @@ public class DataManager {
 
             int newDisLikes = dislikesMap.get(videoId) + 1;
             int newLikes = likesMap.get(videoId) - 1;
-            dislikesMap.put(videoId,newDisLikes);
-            likesMap.put(videoId,newLikes);
+            dislikesMap.put(videoId, newDisLikes);
+            likesMap.put(videoId, newLikes);
             getVideoById(videoId).setDislikes(newDisLikes);
             getVideoById(videoId).setLikes(newLikes);
             return DISLIKE;
         } else { //didn't like or dislike
             user.dislikeVideo(videoId);
             int newDisLikes = dislikesMap.get(videoId) + 1;
-            dislikesMap.put(videoId,newDisLikes);
+            dislikesMap.put(videoId, newDisLikes);
             getVideoById(videoId).setDislikes(newDisLikes);
             return DISLIKE;
         }
     }
-    public int getLikeDislike (String videoId) {
+
+    public int getLikeDislike(String videoId) {
         UserItem user = LoggedInUser.getUser();
         if (user == null) {
             return NO_LIKE_DISLIKE;

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class PreviewVideoCard implements Serializable {
     private String videoId; // todo migrate to _id
-    private final String _id;
+    private String _id;
     private String title;
     private String thumbnail;
     private String profilePicture;

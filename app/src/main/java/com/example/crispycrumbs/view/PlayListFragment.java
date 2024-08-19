@@ -1,6 +1,6 @@
-package com.example.crispycrumbs.ui;
+package com.example.crispycrumbs.view;
 
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import com.example.crispycrumbs.adapter.PlayList_Adapter;
 import com.example.crispycrumbs.data.LoggedInUser;

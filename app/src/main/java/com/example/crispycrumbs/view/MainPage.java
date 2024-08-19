@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.ui;
+package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;

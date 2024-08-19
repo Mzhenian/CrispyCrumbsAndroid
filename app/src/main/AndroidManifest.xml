@@ -22,7 +22,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
 
-        <activity android:name=".ui.VideoPlayerFragment"
+        <activity android:name=".view.VideoPlayerFragment"
             android:screenOrientation="fullSensor"
             android:configChanges="orientation"
             android:exported="true">
@@ -39,7 +39,7 @@
         </provider>
 
         <activity
-            android:name=".ui.MainPage"
+            android:name=".view.MainPage"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

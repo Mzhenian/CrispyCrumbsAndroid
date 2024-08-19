@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     tools:openDrawer="start"
-    tools:context=".ui.MainPage">
+    tools:context=".view.MainPage">
     <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"

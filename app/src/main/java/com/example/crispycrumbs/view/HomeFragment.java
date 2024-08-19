@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.ui;
+package com.example.crispycrumbs.view;
 
 import android.os.Bundle;
 import android.util.Log;

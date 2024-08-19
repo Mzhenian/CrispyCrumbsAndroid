@@ -1,9 +1,9 @@
-package com.example.crispycrumbs.ui;
+package com.example.crispycrumbs.view;
 
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import android.app.AlertDialog;
 import android.content.ContentUris;

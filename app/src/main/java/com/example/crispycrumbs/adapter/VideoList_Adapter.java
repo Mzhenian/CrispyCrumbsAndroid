@@ -1,7 +1,7 @@
 package com.example.crispycrumbs.adapter;
 
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,7 +20,7 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.ui.VideoPlayerFragment;
+import com.example.crispycrumbs.view.VideoPlayerFragment;
 
 import java.util.ArrayList;
 

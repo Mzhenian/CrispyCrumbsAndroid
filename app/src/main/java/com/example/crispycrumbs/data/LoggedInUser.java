@@ -1,6 +1,6 @@
 package com.example.crispycrumbs.data;
 
-import static com.example.crispycrumbs.ui.MainPage.getInstance;
+import static com.example.crispycrumbs.view.MainPage.getInstance;
 
 import android.widget.TextView;
 

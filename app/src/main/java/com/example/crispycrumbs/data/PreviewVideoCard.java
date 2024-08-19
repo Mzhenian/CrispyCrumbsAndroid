@@ -1,8 +1,8 @@
 package com.example.crispycrumbs.data;
 
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
-import com.example.crispycrumbs.ui.MainPage;
+import com.example.crispycrumbs.view.MainPage;
 
 import java.io.Serializable;
 import java.time.LocalDate;

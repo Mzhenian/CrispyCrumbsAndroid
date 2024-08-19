@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.ui;
+package com.example.crispycrumbs.view;
 
 import android.app.Activity;
 import android.content.Intent;

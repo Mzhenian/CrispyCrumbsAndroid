@@ -8,11 +8,12 @@ import android.webkit.MimeTypeMap;
 
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.Lists.VideoList;
+import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.MainPage;
+import com.example.crispycrumbs.view.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -330,5 +331,10 @@ public class DataManager {
     public int getDislikesCount(String videoId) {
         return dislikesMap.getOrDefault(videoId, 0);
     }
+
+    public static String getDefaultProfilePhoto() {
+        return Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_profile_picture).toString();
+    }
 }
+
 

@@ -1,6 +1,6 @@
 package com.example.crispycrumbs.Lists;
 
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import com.example.crispycrumbs.data.UserItem;
 

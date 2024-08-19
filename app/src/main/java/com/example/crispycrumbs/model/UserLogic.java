@@ -1,6 +1,6 @@
 package com.example.crispycrumbs.model;
 
-import static com.example.crispycrumbs.ui.MainPage.getDataManager;
+import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import com.example.crispycrumbs.Lists.UserList;
 import com.example.crispycrumbs.data.UserItem;

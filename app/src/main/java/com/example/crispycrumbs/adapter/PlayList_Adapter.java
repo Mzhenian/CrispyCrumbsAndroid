@@ -11,9 +11,9 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.LoggedInUser;
 import com.example.crispycrumbs.data.PreviewVideoCard;
 import com.example.crispycrumbs.data.UserItem;
-import com.example.crispycrumbs.ui.EditVideoFragment;
-import com.example.crispycrumbs.ui.MainPage;
-import com.example.crispycrumbs.ui.VideoPlayerFragment;
+import com.example.crispycrumbs.view.EditVideoFragment;
+import com.example.crispycrumbs.view.MainPage;
+import com.example.crispycrumbs.view.VideoPlayerFragment;
 
 import java.util.ArrayList;
 

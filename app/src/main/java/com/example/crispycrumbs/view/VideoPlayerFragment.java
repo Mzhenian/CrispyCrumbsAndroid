@@ -1,11 +1,9 @@
-package com.example.crispycrumbs.ui;
+package com.example.crispycrumbs.view;
 
-import static android.content.Intent.getIntent;
 import static com.example.crispycrumbs.R.id.comment_section_container;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;

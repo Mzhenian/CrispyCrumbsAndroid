@@ -16,8 +16,8 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.data.CommentItem;
 import com.example.crispycrumbs.data.UserItem;
 import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.ui.MainPage;
-import com.example.crispycrumbs.ui.ProfileFragment;
+import com.example.crispycrumbs.view.MainPage;
+import com.example.crispycrumbs.view.ProfileFragment;
 
 import java.util.ArrayList;
 

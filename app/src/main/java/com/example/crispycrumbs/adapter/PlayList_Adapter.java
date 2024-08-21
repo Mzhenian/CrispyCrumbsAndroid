@@ -8,9 +8,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.PreviewVideoCard;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.view.EditVideoFragment;
 import com.example.crispycrumbs.view.MainPage;
 import com.example.crispycrumbs.view.VideoPlayerFragment;

@@ -25,3 +25,4 @@ template*.*
 .cxx
 local.properties
 /app/build
+/app/src/main/java/com/example/crispycrumbs/ignore/

@@ -17,8 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.PreviewVideoCard;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.view.VideoPlayerFragment;
 

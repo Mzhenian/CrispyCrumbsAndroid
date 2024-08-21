@@ -26,8 +26,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
 import com.google.android.material.navigation.NavigationView;
@@ -146,7 +146,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         } else if (currentFragment instanceof HomeFragment) {
             //dropDB_Changes
             dataManager = null;
-            LoggedInUser.LogOut();
+            LoggedInUser.logOut();
 
             Toast.makeText(this, "goodbye", Toast.LENGTH_SHORT).show();
             finish(); // Close the app
@@ -176,7 +176,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         } else if (itemId == R.id.nav_login) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_logout) {
-            LoggedInUser.LogOut();
+            LoggedInUser.logOut();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
             updateNavigationMenu();
         } else if (itemId == R.id.nav_signup) {
@@ -256,7 +256,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore the state of the LoggedInUser
-        LoggedInUser.SetLoggedInUser((UserItem) savedInstanceState.getSerializable("LoggedInUser"));
+        LoggedInUser.setLoggedInUser((UserItem) savedInstanceState.getSerializable("LoggedInUser"));
     }
 
 }

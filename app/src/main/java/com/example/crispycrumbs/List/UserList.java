@@ -1,8 +1,8 @@
-package com.example.crispycrumbs.Lists;
+package com.example.crispycrumbs.List;
 
 import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.dataUnit.UserItem;
 
 import java.util.Dictionary;
 import java.util.List;

@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 
 import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
 

@@ -1,8 +1,9 @@
-package com.example.crispycrumbs.data;
+package com.example.crispycrumbs.dataUnit;
 
 import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import com.example.crispycrumbs.model.UserLogic;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,20 +11,33 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UserItem implements Serializable {
-    private final String userId; // todo migrate to _id
-    private String _id;
+    @SerializedName("_id")
+    private final String userId;
+    // matching @SerializedName
     private final Set<String> videosIds = new HashSet<>();
+    @SerializedName("followers")
     private final Set<String> followerIds = new HashSet<>();
+    @SerializedName("following")
     private final Set<String> followingIds = new HashSet<>();
+    // matching @SerializedName()
     private final Set<String> likedVideoIds = new HashSet<>();
+    // matching @SerializedName()
     private final Set<String> dislikedVideoIds = new HashSet<>();
+    // matching @SerializedName
     private String userName;
+    // matching @SerializedName
     private String email;
+    // matching @SerializedName
     private String password;
+    @SerializedName("fullName")
     private String displayedName;
+    // matching @SerializedName
     private String phoneNumber;
+    @SerializedName("birthday")
     private Date dateOfBirth;
+    // matching @SerializedName
     private String country;
+    // matching @SerializedName
     private String profilePhoto; // path to the profile picture
 
     public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {

@@ -1,6 +1,6 @@
-package com.example.crispycrumbs.Lists;
+package com.example.crispycrumbs.List;
 
-import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 
 import java.util.ArrayList;
 

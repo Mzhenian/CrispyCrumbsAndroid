@@ -39,9 +39,8 @@ android {
 dependencies {
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation(libs.gson.v2101)
+    implementation(libs.gson)
     implementation(libs.appcompat)
-//    implementation("libs.appcompat:appcompat:1.1.0")
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)

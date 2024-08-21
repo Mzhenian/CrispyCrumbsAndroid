@@ -3,7 +3,7 @@ package com.example.crispycrumbs.view;
 import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
 import com.example.crispycrumbs.adapter.PlayList_Adapter;
-import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.fragment.app.Fragment;
@@ -16,10 +16,10 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 
 
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentPlaylistBinding;
 import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 
 import java.util.ArrayList;

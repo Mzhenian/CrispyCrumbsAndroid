@@ -13,8 +13,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.CommentItem;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.view.MainPage;
 import com.example.crispycrumbs.view.ProfileFragment;

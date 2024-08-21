@@ -3,8 +3,8 @@ package com.example.crispycrumbs.viewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.UserItem;
 
 public class ProfileViewModel extends ViewModel {
     private MutableLiveData<UserItem> user;

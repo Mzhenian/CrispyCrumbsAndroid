@@ -2,7 +2,7 @@
   "version": "0.1",
   "videos": [
     {
-      "videoId": "1",
+      "_id": "1",
       "videoFile": "raw/v1",
       "thumbnail": "drawable/v1",
       "title": "השניצל שיעשה היסטוריה  השפים טועמים את המנה הכי ישראלית שיש",
@@ -31,7 +31,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "2",
+      "_id": "2",
       "videoFile": "raw/v2",
       "thumbnail": "drawable/v2",
       "title": "כאן סקרנים _ איך נולד השניצל הישראלי",
@@ -47,7 +47,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "3",
+      "_id": "3",
       "videoFile": "raw/v3",
       "thumbnail": "drawable/v3",
       "title": "טירוף השניצל בחלה _ איפה הכי טעים, מה המחירים ומי המנצח ב_מדד הקריספיות",
@@ -63,7 +63,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "4",
+      "_id": "4",
       "videoFile": "raw/v4",
       "thumbnail": "drawable/v4",
       "title": "שניצל ביסלי כשר לפסח הכי טעים אבר #לאיודעת חלק 5",
@@ -77,7 +77,7 @@
       "comments": []
     },
     {
-      "videoId": "5",
+      "_id": "5",
       "videoFile": "raw/v5",
       "thumbnail": "drawable/v5",
       "title": "Schnitzel",
@@ -93,7 +93,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "6",
+      "_id": "6",
       "videoFile": "raw/v6",
       "thumbnail": "drawable/v6",
       "title": "שניצל זה טעים. (אנימציה)",
@@ -109,7 +109,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "7",
+      "_id": "7",
       "videoFile": "raw/v7",
       "thumbnail": "drawable/v7",
       "title": "פרק 1- שניצל מושלם",
@@ -125,7 +125,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "8",
+      "_id": "8",
       "videoFile": "raw/v8",
       "thumbnail": "drawable/v8",
       "title": "טיפ השבוע - איך לטגן שניצל מושלם",
@@ -141,7 +141,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "9",
+      "_id": "9",
       "videoFile": "raw/v9",
       "thumbnail": "drawable/v9",
       "title": "שניצל",
@@ -157,7 +157,7 @@
       "dislikedBy": ["3"]
     },
     {
-      "videoId": "10",
+      "_id": "10",
       "videoFile": "raw/v10",
       "thumbnail": "drawable/v10",
       "title": "טונה - שניצלים",

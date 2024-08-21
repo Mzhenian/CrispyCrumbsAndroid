@@ -14,11 +14,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.crispycrumbs.data.LoggedInUser;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.serverAPI.ServerAPI;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
+import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
 
 public class LoginFragment extends Fragment {
     View view;
@@ -53,19 +56,31 @@ public class LoginFragment extends Fragment {
 
         return view;
     }
+    //with server
     void loginAttempt() {
-        UserItem user = UserLogic.ValidateLogin(userName.getText().toString(), password.getText().toString());
-        if (user != null) {
-            LoggedInUser.SetLoggedInUser(user);
+        ServerAPI serverAPI = ServerAPI.getInstance();
+        serverAPI.login(userName.getText().toString(), password.getText().toString(), false, new LoginCallback() {
+            @Override
+            public void onSuccess(LoginResponse loginResponse) {
+                LoggedInUser.setLoggedInUser(loginResponse.getUser());
+                LoggedInUser.setToken(loginResponse.getToken());
 
-            Toast.makeText(getContext(), "welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "welcome back " + LoggedInUser.getUser().getDisplayedName(), Toast.LENGTH_SHORT).show();
 
-            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-            HomeFragment homeFragment = new HomeFragment();
-            transaction.replace(R.id.fragment_container, homeFragment);
-            transaction.commit();
-        } else {
-            Toast.makeText(getContext(), "Username or password is incorrect", Toast.LENGTH_SHORT).show();
-        }
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                HomeFragment homeFragment = new HomeFragment();
+                transaction.replace(R.id.fragment_container, homeFragment);
+                transaction.commit();
+            }
+
+            @Override
+            public void onFailure(Throwable t, int statusCode) {
+                if (statusCode == 400) {
+                    Toast.makeText(getContext(), "Username or password is incorrect", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Login failed: " + (-1  == statusCode ? "" : statusCode) + " " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 }

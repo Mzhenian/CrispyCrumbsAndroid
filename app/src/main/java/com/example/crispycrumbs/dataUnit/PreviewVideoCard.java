@@ -1,27 +1,49 @@
-package com.example.crispycrumbs.data;
+package com.example.crispycrumbs.dataUnit;
 
-import static com.example.crispycrumbs.view.MainPage.getDataManager;
-
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.view.MainPage;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class PreviewVideoCard implements Serializable {
-    private String videoId; // todo migrate to _id
-    private String _id;
+    @SerializedName("_id")
+    private String videoId;
+    // matching @SerializedName()
     private String title;
+    // matching @SerializedName()
     private String thumbnail;
-    private String profilePicture;
+    // todo remove
+//    @SerializedName()
+//    private String profilePicture;
+    // matching @SerializedName()
     private String videoFile;
+    // matching @SerializedName()
     private String userId;
+    // matching @SerializedName()
     private String description;
+    // matching @SerializedName()
     private int views;
+    // matching @SerializedName()
     private String uploadDate;
+    // matching @SerializedName()
     private ArrayList<CommentItem> comments;
+    // matching @SerializedName()
     private int likes;
+    // matching @SerializedName()
     private int dislikes;
+     @SerializedName("tags")
+     private ArrayList<String> tags;
+     @SerializedName("category")
+    private String category;
+     @SerializedName("likedBy")
+    private ArrayList<String> likedBy;
+     @SerializedName("dislikedBy")
+    private ArrayList<String> dislikedBy;
+//     @SerializedName("__v")
+
 
     public PreviewVideoCard(String videoId, String title, String thumbnail, String videoFile, String description) {
         this.videoId = videoId;
@@ -33,7 +55,8 @@ public class PreviewVideoCard implements Serializable {
         this.userId = LoggedInUser.getUser().getUserId();
         this.comments = new ArrayList<>();
         this.views = 0;
-        this.profilePicture = getDataManager().getUserById(userId).getProfilePhoto();
+        //todo remove
+//        this.profilePicture = getDataManager().getUserById(userId).getProfilePhoto();
         this.uploadDate = LocalDate.now().toString();
     }
 

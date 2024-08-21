@@ -28,10 +28,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.CommentSection_Adapter;
-import com.example.crispycrumbs.data.CommentItem;
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.PreviewVideoCard;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 
 import java.util.ArrayList;

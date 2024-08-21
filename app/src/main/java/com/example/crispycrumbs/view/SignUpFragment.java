@@ -19,8 +19,8 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.UserItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
@@ -67,7 +67,7 @@ public class SignUpFragment extends Fragment {
 //                currentPhotoPath != null ? currentPhotoPath : "android.resource://" + getContext().getPackageName() + "/" + R.drawable.default_profile_picture;
                 UserItem newUser = dataManager.createUser(view.getContext(), binding.etUsername.getText().toString(), binding.etPassword.getText().toString(), binding.etDisplayName.getText().toString(), binding.etEmailAddress.getText().toString(), binding.etPhoneNumber.getText().toString(), new Date(), null, profilePicPath);
                 dataManager.addUser(newUser);
-                LoggedInUser.SetLoggedInUser(newUser);
+                LoggedInUser.setLoggedInUser(newUser);
                 loadingProgressBar.setVisibility(View.GONE);
                 Toast.makeText(view.getContext(), "Sign Up Successful, welcome " + newUser.getDisplayedName(), Toast.LENGTH_SHORT).show();
 

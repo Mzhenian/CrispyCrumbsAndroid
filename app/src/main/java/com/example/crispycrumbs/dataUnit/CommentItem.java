@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.data;
+package com.example.crispycrumbs.dataUnit;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,12 +17,19 @@ public class CommentItem implements Serializable,  Parcelable  {
             return new CommentItem[size];
         }
     };
+    // not returned by the server
     private final int avatarResId;
-    private final String userId; //todo migrate userId to _id
-    private  String _id;
+    // matching @SerializedName()
+    private final String userId;
+    // unused
+    // @SerializedName("commentId")
     private final String userName;
+    // matching @SerializedName()
     private final String date;
+    // matching @SerializedName()
     private String comment;
+    // unused
+//    @SerializedName("_id")
 
     public CommentItem(int avatarResId, String userId, String userName, String comment, String date) {
         this.avatarResId = avatarResId;

@@ -32,8 +32,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.data.LoggedInUser;
-import com.example.crispycrumbs.data.PreviewVideoCard;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.databinding.FragmentUploadVideoBinding;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;

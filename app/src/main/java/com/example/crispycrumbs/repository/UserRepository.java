@@ -1,5 +1,6 @@
 package com.example.crispycrumbs.repository;
 
+
 import androidx.lifecycle.LiveData;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
@@ -8,6 +9,12 @@ import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserRepository {
     private UserDao userDao;
@@ -20,11 +27,23 @@ public class UserRepository {
     }
 
     public LiveData<UserItem> getUser(String userId) {
-        // Fetch from Room (offline)
         LiveData<UserItem> user = userDao.getUserById(userId);
 
-        // You might want to add logic here to fetch from the network if needed
-        // For example, if the user is not found locally, fetch from the server and save in Room
+        executor.execute(() -> {
+            serverAPI.getUser(userId).enqueue(new Callback<UserItem>() {
+                @Override
+                public void onResponse(Call<UserItem> call, Response<UserItem> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        executor.execute(() -> userDao.insertUser(response.body()));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserItem> call, Throwable t) {
+                    // Handle error
+                }
+            });
+        });
 
         return user;
     }

@@ -1,17 +1,26 @@
 package com.example.crispycrumbs.viewModel;
 
+import android.app.Application;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
+
 import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.localDB.AppDB;
+import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.repository.CommentRepository;
+
 import java.util.List;
 
-public class CommentViewModel extends ViewModel {
+public class CommentViewModel extends AndroidViewModel {
     private CommentRepository commentRepository;
     private LiveData<List<CommentItem>> comments;
 
-    public CommentViewModel() {
-        commentRepository = new CommentRepository(); // Initialize your repository
+    // Constructor now accepts Application context
+    public CommentViewModel(Application application) {
+        super(application);
+        // Initialize the repository with the AppDatabase instance
+        AppDB db = AppDB.getDatabase(application);
+        commentRepository = new CommentRepository(db);
     }
 
     public LiveData<List<CommentItem>> getComments(String videoId) {
@@ -29,4 +38,3 @@ public class CommentViewModel extends ViewModel {
         commentRepository.updateComment(comment);
     }
 }
-

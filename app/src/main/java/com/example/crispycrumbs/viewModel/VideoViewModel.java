@@ -1,18 +1,23 @@
 package com.example.crispycrumbs.viewModel;
 
+import android.app.Application;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.localDB.AppDB;
+import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.repository.VideoRepository;
 import java.util.List;
 
-public class VideoViewModel extends ViewModel {
+public class VideoViewModel extends AndroidViewModel {
     private VideoRepository videoRepository;
     private LiveData<List<PreviewVideoCard>> allVideos;
     private LiveData<PreviewVideoCard> video;
 
-    public VideoViewModel() {
-        videoRepository = new VideoRepository(); // Initialize your repository
+    public VideoViewModel(Application application) {
+        super(application);
+        AppDB db = AppDB.getDatabase(application);
+        videoRepository = new VideoRepository(db); // Initialize the repository with AppDatabase
     }
 
     public LiveData<List<PreviewVideoCard>> getAllVideos() {
@@ -37,4 +42,3 @@ public class VideoViewModel extends ViewModel {
         videoRepository.updateVideo(video);
     }
 }
-

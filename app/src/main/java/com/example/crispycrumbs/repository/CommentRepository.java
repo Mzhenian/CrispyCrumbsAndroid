@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class CommentRepository {
     private CommentDao commentDao;
     private ServerAPInterface serverAPI;
@@ -21,9 +27,31 @@ public class CommentRepository {
     }
 
     public LiveData<List<CommentItem>> getCommentsForVideo(String videoId) {
-        // Fetch comments for a particular video
-        return commentDao.getAllComments(); // Adjust this query if filtering by videoId
+        LiveData<List<CommentItem>> comments = commentDao.getCommentsForVideo(videoId);
+
+        executor.execute(() -> {
+            serverAPI.getCommentsForVideo(videoId).enqueue(new Callback<List<CommentItem>>() {
+                @Override
+                public void onResponse(Call<List<CommentItem>> call, Response<List<CommentItem>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        executor.execute(() -> {
+                            for (CommentItem comment : response.body()) {
+                                commentDao.insertComment(comment);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<CommentItem>> call, Throwable t) {
+                    // Handle error
+                }
+            });
+        });
+
+        return comments;
     }
+
 
     public void insertComment(CommentItem comment) {
         executor.execute(() -> commentDao.insertComment(comment));

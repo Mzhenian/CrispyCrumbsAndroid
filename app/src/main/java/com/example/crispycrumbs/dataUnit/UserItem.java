@@ -2,6 +2,11 @@ package com.example.crispycrumbs.dataUnit;
 
 import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.crispycrumbs.localDB.SetTypeConverter;
 import com.example.crispycrumbs.model.UserLogic;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,34 +15,38 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity(tableName = "users")
 public class UserItem implements Serializable {
+    @PrimaryKey
     @SerializedName("_id")
     private final String userId;
-    // matching @SerializedName
+
+    @TypeConverters(SetTypeConverter.class)
     private final Set<String> videosIds = new HashSet<>();
+
+    @TypeConverters(SetTypeConverter.class)
     @SerializedName("followers")
     private final Set<String> followerIds = new HashSet<>();
+
+    @TypeConverters(SetTypeConverter.class)
     @SerializedName("following")
     private final Set<String> followingIds = new HashSet<>();
-    // matching @SerializedName()
+
+    @TypeConverters(SetTypeConverter.class)
     private final Set<String> likedVideoIds = new HashSet<>();
-    // matching @SerializedName()
+
+    @TypeConverters(SetTypeConverter.class)
     private final Set<String> dislikedVideoIds = new HashSet<>();
-    // matching @SerializedName
+
     private String userName;
-    // matching @SerializedName
     private String email;
-    // matching @SerializedName
     private String password;
     @SerializedName("fullName")
     private String displayedName;
-    // matching @SerializedName
     private String phoneNumber;
     @SerializedName("birthday")
     private Date dateOfBirth;
-    // matching @SerializedName
     private String country;
-    // matching @SerializedName
     private String profilePhoto; // path to the profile picture
 
     public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {

@@ -1,6 +1,12 @@
 package com.example.crispycrumbs.dataUnit;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.crispycrumbs.localDB.CommentItemTypeConverter;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.localDB.StringListTypeConverter;
 import com.example.crispycrumbs.view.MainPage;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,39 +14,35 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+@Entity(tableName = "videos")
 public class PreviewVideoCard implements Serializable {
+    @PrimaryKey
     @SerializedName("_id")
     private String videoId;
-    // matching @SerializedName()
+
     private String title;
-    // matching @SerializedName()
     private String thumbnail;
-    // todo remove
-//    @SerializedName()
-//    private String profilePicture;
-    // matching @SerializedName()
     private String videoFile;
-    // matching @SerializedName()
     private String userId;
-    // matching @SerializedName()
     private String description;
-    // matching @SerializedName()
     private int views;
-    // matching @SerializedName()
     private String uploadDate;
-    // matching @SerializedName()
+
+    @TypeConverters(CommentItemTypeConverter.class)
     private ArrayList<CommentItem> comments;
-    // matching @SerializedName()
+
     private int likes;
-    // matching @SerializedName()
     private int dislikes;
-     @SerializedName("tags")
-     private ArrayList<String> tags;
-     @SerializedName("category")
+
+    @TypeConverters(StringListTypeConverter.class)
+    private ArrayList<String> tags;
+
     private String category;
-     @SerializedName("likedBy")
+
+    @TypeConverters(StringListTypeConverter.class)
     private ArrayList<String> likedBy;
-     @SerializedName("dislikedBy")
+
+    @TypeConverters(StringListTypeConverter.class)
     private ArrayList<String> dislikedBy;
 //     @SerializedName("__v")
 

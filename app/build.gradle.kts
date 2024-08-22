@@ -50,11 +50,14 @@ dependencies {
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
     implementation(libs.preference)
+    implementation(libs.room.common)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.gson)
+    annotationProcessor(libs.room.compiler)
 
 
 }

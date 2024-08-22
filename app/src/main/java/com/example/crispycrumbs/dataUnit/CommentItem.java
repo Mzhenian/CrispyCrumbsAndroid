@@ -1,5 +1,8 @@
 package com.example.crispycrumbs.dataUnit;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import com.google.gson.annotations.SerializedName;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,19 +20,14 @@ public class CommentItem implements Serializable,  Parcelable  {
             return new CommentItem[size];
         }
     };
-    // not returned by the server
-    private final int avatarResId;
-    // matching @SerializedName()
-    private final String userId;
-    // unused
-    // @SerializedName("commentId")
-    private final String userName;
-    // matching @SerializedName()
-    private final String date;
-    // matching @SerializedName()
+    @PrimaryKey(autoGenerate = true)
+    private int id;  // Room requires a primary key
+
+    private int avatarResId;
+    private String userId;
+    private String userName;
+    private String date;
     private String comment;
-    // unused
-//    @SerializedName("_id")
 
     public CommentItem(int avatarResId, String userId, String userName, String comment, String date) {
         this.avatarResId = avatarResId;

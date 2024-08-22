@@ -38,7 +38,7 @@ public class VideoViewModel extends AndroidViewModel {
         videoRepository.insertVideo(video);
     }
 
-    public void updateVideo(PreviewVideoCard video) {
-        videoRepository.updateVideo(video);
-    }
+//    public void updateVideo(PreviewVideoCard video) {
+//        videoRepository.updateVideo(video);
+//    }
 }

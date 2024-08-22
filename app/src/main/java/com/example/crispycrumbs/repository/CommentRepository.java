@@ -57,9 +57,9 @@ public class CommentRepository {
         executor.execute(() -> commentDao.insertComment(comment));
     }
 
-    public void updateComment(CommentItem comment) {
-        executor.execute(() -> commentDao.updateComment(comment));
-    }
+//    public void updateComment(CommentItem comment) {
+//        executor.execute(() -> commentDao.updateComment(comment));
+//    }
 
     // Methods for fetching and syncing comments with the server can be added here
 }

@@ -1,39 +1,54 @@
 package com.example.crispycrumbs.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
-import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
+import com.example.crispycrumbs.view.MainPage;
+import com.example.crispycrumbs.view.VideoPlayerFragment;
+import com.example.crispycrumbs.viewModel.VideoViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemClickListener {
 
     private static final String TAG = "HomeFragment";
     private VideoList_Adapter adapter;
+    private VideoViewModel videoViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
 
-        DataManager dataManager = DataManager.getInstance();
-        ArrayList<PreviewVideoCard> videoList = dataManager.getVideoList();
-        adapter = new VideoList_Adapter(getContext(), videoList, this);
-
+        adapter = new VideoList_Adapter(getContext(), new ArrayList<>(), this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
+
+        // Observe the video list LiveData from ViewModel
+        videoViewModel.getAllVideos().observe(getViewLifecycleOwner(), new Observer<List<PreviewVideoCard>>() {
+            @Override
+            public void onChanged(List<PreviewVideoCard> videoList) {
+                // Update the adapter with the new video list
+                adapter.updateVideoList(videoList);
+            }
+        });
 
         SearchView searchBar = view.findViewById(R.id.search_bar);
         customizeSearchViewIcon(searchBar);

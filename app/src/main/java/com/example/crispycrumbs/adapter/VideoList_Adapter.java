@@ -23,6 +23,7 @@ import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.view.VideoPlayerFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
     private static final String TAG = "VideoList_Adapter";
@@ -110,6 +111,16 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
         }
         notifyDataSetChanged();
     }
+
+    // New update method to update the video list
+    public void updateVideoList(List<PreviewVideoCard> newVideoList) {
+        originalVideoList.clear();
+        originalVideoList.addAll(newVideoList);
+        filteredVideoList.clear();
+        filteredVideoList.addAll(newVideoList);
+        notifyDataSetChanged();
+    }
+
 
     public interface OnItemClickListener {
         void onItemClick(PreviewVideoCard video);

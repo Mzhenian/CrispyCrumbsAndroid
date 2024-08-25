@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DataManager {
@@ -72,11 +73,11 @@ public class DataManager {
         }
     }
 
-    public ArrayList<PreviewVideoCard> getVideoList() {
+    public List<PreviewVideoCard> getVideoList() {
         return videoList.getVideos();
     }
 
-    public ArrayList<PreviewVideoCard> getpersonalVideoList() {
+    public List<PreviewVideoCard> getpersonalVideoList() {
         return personalVideoList.getVideos();
     }
 

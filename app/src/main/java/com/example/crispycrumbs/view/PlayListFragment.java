@@ -23,6 +23,7 @@ import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlayListFragment extends Fragment {
 
@@ -53,7 +54,7 @@ public class PlayListFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
 
         // Initialize the adapter with the context and video list
-        ArrayList<PreviewVideoCard> subVideoList;
+        List<PreviewVideoCard> subVideoList;
         if (user != null) {
             subVideoList = getSubVideoList(user);
             adapter = new PlayList_Adapter(getContext(), subVideoList, null, user);
@@ -93,10 +94,10 @@ public class PlayListFragment extends Fragment {
 
         return view; // Return the created view
     }
-    public ArrayList<PreviewVideoCard> getSubVideoList() {
+    public List<PreviewVideoCard> getSubVideoList() {
         DataManager dataManager = DataManager.getInstance();
-        ArrayList<PreviewVideoCard> originalVideoList = dataManager.getVideoList();
-        ArrayList<PreviewVideoCard> filteredVideoList = new ArrayList<>();
+        List<PreviewVideoCard> originalVideoList = dataManager.getVideoList();
+        List<PreviewVideoCard> filteredVideoList = new ArrayList<>();
 
         for (String videoId : LoggedInUser.getUser().getUploadedVideos()) {
                     filteredVideoList.add( getDataManager().getVideoById(videoId));
@@ -104,10 +105,10 @@ public class PlayListFragment extends Fragment {
 //        notifyDataSetChanged(); // Notify adapter of data change
         return filteredVideoList;
     }
-    public ArrayList<PreviewVideoCard> getSubVideoList(UserItem user) {
+    public List<PreviewVideoCard> getSubVideoList(UserItem user) {
         DataManager dataManager = DataManager.getInstance();
-        ArrayList<PreviewVideoCard> originalVideoList = dataManager.getVideoList();
-        ArrayList<PreviewVideoCard> filteredVideoList = new ArrayList<>();
+        List<PreviewVideoCard> originalVideoList = dataManager.getVideoList();
+        List<PreviewVideoCard> filteredVideoList = new ArrayList<>();
 
         for (String videoId :user.getUploadedVideos()) {
             filteredVideoList.add( getDataManager().getVideoById(videoId));

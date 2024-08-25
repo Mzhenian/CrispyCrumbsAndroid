@@ -2,11 +2,13 @@ package com.example.crispycrumbs.dataUnit;
 
 import static com.example.crispycrumbs.view.MainPage.getDataManager;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.crispycrumbs.localDB.SetTypeConverter;
+import com.example.crispycrumbs.converters.DateConverter;
+import com.example.crispycrumbs.converters.SetTypeConverter;
 import com.example.crispycrumbs.model.UserLogic;
 import com.google.gson.annotations.SerializedName;
 
@@ -19,24 +21,25 @@ import java.util.Set;
 public class UserItem implements Serializable {
     @PrimaryKey
     @SerializedName("_id")
-    private final String userId;
+    @NonNull
+    private  String userId;
 
     @TypeConverters(SetTypeConverter.class)
-    private final Set<String> videosIds = new HashSet<>();
+    private  Set<String> videosIds = new HashSet<>();
 
     @TypeConverters(SetTypeConverter.class)
     @SerializedName("followers")
-    private final Set<String> followerIds = new HashSet<>();
+    private  Set<String> followerIds = new HashSet<>();
 
     @TypeConverters(SetTypeConverter.class)
     @SerializedName("following")
-    private final Set<String> followingIds = new HashSet<>();
+    private  Set<String> followingIds = new HashSet<>();
 
     @TypeConverters(SetTypeConverter.class)
-    private final Set<String> likedVideoIds = new HashSet<>();
+    private  Set<String> likedVideoIds = new HashSet<>();
 
     @TypeConverters(SetTypeConverter.class)
-    private final Set<String> dislikedVideoIds = new HashSet<>();
+    private  Set<String> dislikedVideoIds = new HashSet<>();
 
     private String userName;
     private String email;
@@ -45,6 +48,7 @@ public class UserItem implements Serializable {
     private String displayedName;
     private String phoneNumber;
     @SerializedName("birthday")
+    @TypeConverters(DateConverter.class)
     private Date dateOfBirth;
     private String country;
     private String profilePhoto; // path to the profile picture
@@ -198,14 +202,6 @@ public class UserItem implements Serializable {
         return this.password.equals(password);
     }
 
-    public String[] getFollowerIds() {
-        return followerIds.toArray(new String[0]);
-    }
-
-    public String[] getFollowingIds() {
-        return followingIds.toArray(new String[0]);
-    }
-
     public void likeVideo(String videoId) {
         likedVideoIds.add(videoId);
     }
@@ -228,5 +224,57 @@ public class UserItem implements Serializable {
 
     public boolean hasDisliked(String videoId) {
         return dislikedVideoIds.contains(videoId);
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setUserId(@NonNull String userId) {
+        this.userId = userId;
+    }
+
+    public void setVideosIds(Set<String> videosIds) {
+        this.videosIds = videosIds;
+    }
+
+    public void setFollowerIds(Set<String> followerIds) {
+        this.followerIds = followerIds;
+    }
+
+    public void setFollowingIds(Set<String> followingIds) {
+        this.followingIds = followingIds;
+    }
+
+    public void setLikedVideoIds(Set<String> likedVideoIds) {
+        this.likedVideoIds = likedVideoIds;
+    }
+
+    public void setDislikedVideoIds(Set<String> dislikedVideoIds) {
+        this.dislikedVideoIds = dislikedVideoIds;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public Set<String> getFollowerIds() {
+        return followerIds;
+    }
+
+    public Set<String> getFollowingIds() {
+        return followingIds;
+    }
+
+    public Set<String> getVideosIds() {
+        return videosIds;
+    }
+
+    public Set<String> getLikedVideoIds() {
+        return likedVideoIds;
+    }
+
+    public Set<String> getDislikedVideoIds() {
+        return dislikedVideoIds;
     }
 }

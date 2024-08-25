@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.localDB;
+package com.example.crispycrumbs.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -13,9 +13,6 @@ import java.util.List;
 public interface CommentDao {
     @Insert
     void insertComment(CommentItem comment);
-
-    @Query("SELECT * FROM comments WHERE videoId = :videoId")
-    LiveData<List<CommentItem>> getCommentsForVideo(String videoId);
 
     @Query("SELECT * FROM comments")
     LiveData<List<CommentItem>> getAllComments();

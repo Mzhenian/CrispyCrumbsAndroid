@@ -1,12 +1,13 @@
 package com.example.crispycrumbs.dataUnit;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.crispycrumbs.localDB.CommentItemTypeConverter;
+import com.example.crispycrumbs.converters.CommentItemTypeConverter;
 import com.example.crispycrumbs.localDB.LoggedInUser;
-import com.example.crispycrumbs.localDB.StringListTypeConverter;
+import com.example.crispycrumbs.converters.StringListTypeConverter;
 import com.example.crispycrumbs.view.MainPage;
 import com.google.gson.annotations.SerializedName;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class PreviewVideoCard implements Serializable {
     @PrimaryKey
     @SerializedName("_id")
+    @NonNull
     private String videoId;
 
     private String title;
@@ -153,5 +155,41 @@ public class PreviewVideoCard implements Serializable {
 
     public void setUploader(UserItem uploader) {
         this.userId = uploader.getUserId();
+    }
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public ArrayList<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public ArrayList<String> getDislikedBy() {
+        return dislikedBy;
+    }
+
+    public void setComments(ArrayList<CommentItem> comments) {
+        this.comments = comments;
+    }
+
+    public void setTags(ArrayList<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setLikedBy(ArrayList<String> likedBy) {
+        this.likedBy = likedBy;
+    }
+
+    public void setDislikedBy(ArrayList<String> dislikedBy) {
+        this.dislikedBy = dislikedBy;
     }
 }

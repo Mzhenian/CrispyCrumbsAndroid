@@ -16,12 +16,13 @@ import com.example.crispycrumbs.view.MainPage;
 import com.example.crispycrumbs.view.VideoPlayerFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlayList_Adapter extends VideoList_Adapter {
     UserItem user;
 //    private final VideoList_Adapter.OnItemClickListener listener;
 
-    public PlayList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, VideoList_Adapter.OnItemClickListener listener, UserItem user) {
+    public PlayList_Adapter(Context context, List<PreviewVideoCard> videoArrayList, VideoList_Adapter.OnItemClickListener listener, UserItem user) {
         super(context, videoArrayList, listener);
         this.user = user;
     }

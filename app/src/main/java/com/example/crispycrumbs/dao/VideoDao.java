@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.localDB;
+package com.example.crispycrumbs.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

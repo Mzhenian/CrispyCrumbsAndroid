@@ -3,6 +3,8 @@ package com.example.crispycrumbs.viewModel;
 import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.crispycrumbs.List.VideoList;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.AppDB;
@@ -22,7 +24,7 @@ public class VideoViewModel extends AndroidViewModel {
 
     public LiveData<List<PreviewVideoCard>> getAllVideos() {
         if (allVideos == null) {
-            allVideos = videoRepository.getAllVideos();
+            allVideos = videoRepository.getMostViewedVideos();
         }
         return allVideos;
     }

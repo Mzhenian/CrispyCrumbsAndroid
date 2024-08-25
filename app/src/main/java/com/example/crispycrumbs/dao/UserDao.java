@@ -1,4 +1,4 @@
-package com.example.crispycrumbs.localDB;
+package com.example.crispycrumbs.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -23,5 +23,8 @@ public interface UserDao {
 
     @Query("SELECT * FROM users")
     LiveData<List<UserItem>> getAllUsers();
+
+    @Query("SELECT * FROM users WHERE userId = :userId LIMIT 1")
+    UserItem getUserByIdSync(String userId);
 }
 

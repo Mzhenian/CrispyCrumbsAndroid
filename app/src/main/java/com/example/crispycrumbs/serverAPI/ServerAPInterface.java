@@ -1,10 +1,11 @@
 package com.example.crispycrumbs.serverAPI;
 
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,14 +19,14 @@ public interface ServerAPInterface {
     Call<LoginResponse> login(@Body LoginRequest loginRequest);
 
     @GET("users/{id}")
-    Call<UserItem> getUser(@Path("id") String id);
+    Call<UserResponse> getUser(@Path("id") String id);
 
     // Video endpoints
     @GET("videos")
-    Call<List<PreviewVideoCard>> getAllVideos();
+    Call<VideoResponse> getAllVideos();
 
     @GET("videos/{id}")
-    Call<PreviewVideoCard> getVideoById(@Path("id") String videoId);
+    Call<VideoResponse> getVideoById(@Path("id") String videoId);
 
     // Comment endpoints
     @GET("videos/{videoId}/comments")

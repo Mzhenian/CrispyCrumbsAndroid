@@ -8,6 +8,7 @@ import android.os.Parcelable;
 
 import java.io.Serializable;
 
+@Entity(tableName = "comments")
 public class CommentItem implements Serializable,  Parcelable  {
     public static final Creator<CommentItem> CREATOR = new Creator<CommentItem>() {
         @Override
@@ -81,5 +82,13 @@ public class CommentItem implements Serializable,  Parcelable  {
 
     public String getDate() {
         return date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

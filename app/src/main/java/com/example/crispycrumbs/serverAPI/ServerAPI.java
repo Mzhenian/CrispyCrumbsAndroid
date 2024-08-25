@@ -1,12 +1,10 @@
 package com.example.crispycrumbs.serverAPI;
 
-import android.util.Log;
-
 import com.example.crispycrumbs.dataUnit.CommentItem;
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
-import com.example.crispycrumbs.dataUnit.UserItem;
+
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
 
 import java.util.List;
@@ -22,7 +20,7 @@ public class ServerAPI {
 
     private Retrofit retrofit = null;
     private ServerAPInterface serverAPInterface = null;
-    private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
+    private String IP = "192.168.38.220"; // Default IP, assuming the server is running on the same machine as the emulator
 
     private void buildRetrofit() {
         if (null == retrofit || !retrofit.baseUrl().toString().equals("http://" + IP + ":1324/api/")) {
@@ -73,13 +71,13 @@ public class ServerAPI {
     }
 
     // Additional methods for video and comment interactions
-    public void getAllVideos(Callback<List<PreviewVideoCard>> callback) {
-        Call<List<PreviewVideoCard>> call = serverAPInterface.getAllVideos();
+    public void getAllVideos(Callback<VideoResponse> callback) {
+        Call<VideoResponse> call = serverAPInterface.getAllVideos();
         call.enqueue(callback);
     }
 
-    public void getVideoById(String videoId, Callback<PreviewVideoCard> callback) {
-        Call<PreviewVideoCard> call = serverAPInterface.getVideoById(videoId);
+    public void getVideoById(String videoId, Callback<VideoResponse> callback) {
+        Call<VideoResponse> call = serverAPInterface.getVideoById(videoId);
         call.enqueue(callback);
     }
 

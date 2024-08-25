@@ -29,10 +29,10 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     private static final String TAG = "VideoList_Adapter";
     private final Context context;
     private final OnItemClickListener listener;
-    protected ArrayList<PreviewVideoCard> originalVideoList;
-    protected ArrayList<PreviewVideoCard> filteredVideoList;
+    protected List<PreviewVideoCard> originalVideoList;
+    protected List<PreviewVideoCard> filteredVideoList;
 
-    public VideoList_Adapter(Context context, ArrayList<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
+    public VideoList_Adapter(Context context, List<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
         this.context = context;
         this.originalVideoList = videoArrayList;
         this.filteredVideoList = new ArrayList<>(originalVideoList);

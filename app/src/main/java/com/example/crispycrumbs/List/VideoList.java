@@ -3,21 +3,22 @@ package com.example.crispycrumbs.List;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VideoList  {
-    private ArrayList<PreviewVideoCard> videos;
+    private List<PreviewVideoCard> videos;
 
-    public ArrayList<PreviewVideoCard> getVideos() {
+    public List<PreviewVideoCard> getVideos() {
         return videos;
     }
 
     public VideoList() {
         setVideos(new ArrayList<>());
     }
-    public VideoList(ArrayList<PreviewVideoCard> videos) {
+    public VideoList(List<PreviewVideoCard> videos) {
         setVideos(videos);
     }
-    public void setVideos(ArrayList<PreviewVideoCard> videos) {
+    public void setVideos(List<PreviewVideoCard> videos) {
         this.videos = videos;
     }
 

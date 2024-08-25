@@ -7,6 +7,12 @@ import androidx.room.TypeConverters;
 
 import android.content.Context;
 
+import com.example.crispycrumbs.converters.CommentItemTypeConverter;
+import com.example.crispycrumbs.converters.SetTypeConverter;
+import com.example.crispycrumbs.converters.StringListTypeConverter;
+import com.example.crispycrumbs.dao.CommentDao;
+import com.example.crispycrumbs.dao.UserDao;
+import com.example.crispycrumbs.dao.VideoDao;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;

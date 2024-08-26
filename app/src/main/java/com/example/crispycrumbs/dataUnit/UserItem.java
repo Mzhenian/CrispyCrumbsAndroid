@@ -67,6 +67,7 @@ public class UserItem implements Serializable {
         this.userId = UserLogic.nextId(lastUserId);
     }
 
+
     public String getUserId() {
         return userId;
     }

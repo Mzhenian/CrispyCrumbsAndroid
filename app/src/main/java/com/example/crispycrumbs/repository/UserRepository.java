@@ -1,5 +1,7 @@
 package com.example.crispycrumbs.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -8,6 +10,7 @@ import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.dao.UserDao;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -29,7 +32,7 @@ public class UserRepository {
     public LiveData<UserItem> getUser(String userId) {
         MutableLiveData<UserItem> userLiveData = new MutableLiveData<>();
 
-        // Fetch user from local database first
+        // Fetch the user from Room
         executor.execute(() -> {
             UserItem localUser = userDao.getUserByIdSync(userId);
             if (localUser != null) {
@@ -37,27 +40,29 @@ public class UserRepository {
             }
         });
 
-        // Fetch user from the server and update Room and LiveData
-        serverAPI.getUser(userId).enqueue(new Callback<ApiResponse<UserItem>>() {
+        // Fetch the user from the server and update Room and LiveData
+        serverAPI.getUser(userId).enqueue(new Callback<UserResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse<UserItem>> call, Response<ApiResponse<UserItem>> response) {
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    UserItem user = response.body().getData();
-                    userLiveData.postValue(user);
+                    UserItem userItem = response.body().toUserItem();
+                    userLiveData.postValue(userItem);
 
-                    // Insert user into Room database
-                    executor.execute(() -> userDao.insertUser(user));
+                    // Update Room database with the new data
+                    executor.execute(() -> userDao.insertUser(userItem));
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<UserItem>> call, Throwable t) {
-                // Handle error
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Log.e("UserRepository", "Failed to fetch user from server", t);
             }
         });
 
         return userLiveData;
     }
+
+
 
     public void insertUser(UserItem user) {
         executor.execute(() -> userDao.insertUser(user));

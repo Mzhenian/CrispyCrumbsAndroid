@@ -2,6 +2,7 @@ package com.example.crispycrumbs.serverAPI;
 
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
@@ -34,4 +35,14 @@ public interface ServerAPInterface {
 
     @POST("videos/{videoId}/comments")
     Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
+
+    @POST("videos/{id}/incrementViews")
+    Call<ApiResponse<Void>> incrementVideoViews(@Path("id") String videoId);
+
+    @POST("videos/{id}/like")
+    Call<ApiResponse<Void>> likeVideo(@Path("id") String videoId);
+
+    @POST("videos/{id}/dislike")
+    Call<ApiResponse<Void>> dislikeVideo(@Path("id") String videoId);
+
 }

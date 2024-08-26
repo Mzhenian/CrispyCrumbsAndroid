@@ -12,6 +12,7 @@ import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.dao.VideoDao;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoResponse;
 
 import java.util.List;
@@ -161,8 +162,6 @@ public class VideoRepository {
 
         return videoLiveData;
     }
-
-
 
     public void insertComment(CommentItem comment, String videoId) {
         executor.execute(() -> {

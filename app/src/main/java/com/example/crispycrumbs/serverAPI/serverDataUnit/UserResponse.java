@@ -1,6 +1,10 @@
 package com.example.crispycrumbs.serverAPI.serverDataUnit;
 
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 public class UserResponse {
@@ -40,6 +44,30 @@ public class UserResponse {
 
     @SerializedName("likedVideoIds")
     private List<String> likedVideoIds;
+
+
+    public UserItem toUserItem() {
+        UserItem userItem = new UserItem(
+                userName,
+                "temp",
+                fullName,
+                email,
+                phoneNumber,
+                new Date(), // You'll need to manage date if it's part of your UserItem
+                "country",
+                profilePhoto
+        );
+
+        userItem.setUserId(userId);
+        userItem.setVideosIds(new HashSet<>(videosIds));
+        userItem.setFollowerIds(new HashSet<>(followers));
+        userItem.setFollowingIds(new HashSet<>(following));
+        userItem.setLikedVideoIds(new HashSet<>(likedVideoIds));
+        userItem.setDislikedVideoIds(new HashSet<>(dislikedVideoIds));
+
+        return userItem;
+    }
+
 
     // Getters and Setters
     public List<String> getDislikedVideoIds() {

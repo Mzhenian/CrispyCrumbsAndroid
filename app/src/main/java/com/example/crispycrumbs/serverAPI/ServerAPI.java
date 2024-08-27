@@ -49,6 +49,11 @@ public class ServerAPI {
         return serverAPInterface;
     }
 
+    // Method to dynamically construct URLs based on the current IP
+    public String constructUrl(String path) {
+        return "http://" + IP + ":1324/api/db/" + path;
+    }
+
     public void login(String userName, String password, boolean rememberMe, LoginCallback callback) {
         LoginRequest loginRequest = new LoginRequest(userName, password, rememberMe);
         Call<LoginResponse> call = serverAPInterface.login(loginRequest);

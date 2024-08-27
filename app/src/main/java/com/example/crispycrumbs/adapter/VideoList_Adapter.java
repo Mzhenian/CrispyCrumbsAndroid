@@ -1,8 +1,5 @@
 package com.example.crispycrumbs.adapter;
 
-import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
-import static com.example.crispycrumbs.view.MainPage.getDataManager;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,13 +11,24 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
-import com.example.crispycrumbs.model.DataManager;
+import com.example.crispycrumbs.serverAPI.ServerAPI;
+import com.example.crispycrumbs.view.MainPage;
 import com.example.crispycrumbs.view.VideoPlayerFragment;
+import com.example.crispycrumbs.viewModel.UserViewModel;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +39,14 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     private final OnItemClickListener listener;
     protected List<PreviewVideoCard> originalVideoList;
     protected List<PreviewVideoCard> filteredVideoList;
+    private final UserViewModel userViewModel;
 
     public VideoList_Adapter(Context context, List<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
         this.context = context;
         this.originalVideoList = videoArrayList;
         this.filteredVideoList = new ArrayList<>(originalVideoList);
         this.listener = listener;
+        this.userViewModel = new ViewModelProvider((AppCompatActivity) context).get(UserViewModel.class);
     }
 
     @NonNull
@@ -44,7 +54,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.video_pre_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, listener);
     }
 
     @Override
@@ -54,43 +64,8 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             Log.e(TAG, "Video is null");
             return;
         }
-        holder.bind(video, listener);
 
-        holder.videoTitle.setText(video.getTitle());
-        holder.videoUser.setText(video.getUserId());
-        holder.videoViews.setText(String.valueOf(video.getViews()));
-        holder.videoDate.setText(video.getUploadDate());
-
-        holder.videoThumbnail.setImageURI(getUriFromResOrFile(video.getThumbnail()));
-
-        // Fetch user information
-        UserItem user = getDataManager().getUserById(video.getUserId());
-        if (user != null) {
-            holder.profilePicture.setImageURI(getUriFromResOrFile(user.getProfilePhoto()));
-            holder.videoUser.setText(user.getUserName());
-        } else {
-            holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
-            holder.videoUser.setText("[deleted user]");
-            Log.e(TAG, "User not found");
-        }
-
-        // Handle click events on items
-        holder.itemView.setOnClickListener(v -> {
-            // Pass data to VideoPlayerFragment using BundleF
-            Bundle bundle = new Bundle();
-            bundle.putString("videoId", video.getVideoId());
-
-
-            VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
-            videoPlayerFragment.setArguments(bundle);
-
-
-            // Replace current fragment with VideoPlayerFragment
-            ((AppCompatActivity) context).getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, videoPlayerFragment)
-                    .commit();
-        });
+        holder.bind(video, userViewModel);
     }
 
     @Override
@@ -112,7 +87,6 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
         notifyDataSetChanged();
     }
 
-    // New update method to update the video list
     public void updateVideoList(List<PreviewVideoCard> newVideoList) {
         originalVideoList.clear();
         originalVideoList.addAll(newVideoList);
@@ -121,7 +95,6 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
         notifyDataSetChanged();
     }
 
-
     public interface OnItemClickListener {
         void onItemClick(PreviewVideoCard video);
     }
@@ -129,8 +102,9 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView videoThumbnail, profilePicture;
         TextView videoTitle, videoUser, videoViews, videoDate;
+        private Observer<UserItem> userObserver;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             videoThumbnail = itemView.findViewById(R.id.video_thumbnail);
             profilePicture = itemView.findViewById(R.id.profile_picture);
@@ -138,24 +112,66 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             videoUser = itemView.findViewById(R.id.user_name);
             videoViews = itemView.findViewById(R.id.video_views);
             videoDate = itemView.findViewById(R.id.video_date);
+
+            itemView.setOnClickListener(v -> listener.onItemClick((PreviewVideoCard) v.getTag()));
         }
 
-        public void bind(PreviewVideoCard video, final OnItemClickListener listener) {
+        public void bind(PreviewVideoCard video, UserViewModel userViewModel) {
+            // Set video data
             videoTitle.setText(video.getTitle());
-            UserItem uploader = DataManager.getInstance().getUserById(video.getUserId());
-            if (uploader != null) {
-                profilePicture.setImageURI(getUriFromResOrFile(uploader.getProfilePhoto()));
-                videoUser.setText(uploader.getUserName());
-            } else {
-                profilePicture.setImageResource(R.drawable.default_profile_picture);
-                videoUser.setText("[deleted user]");
-                Log.e(TAG, "User not found");
-            }
             videoViews.setText(video.getViews() + " views");
-            videoDate.setText(video.getUploadDate());
-            videoThumbnail.setImageURI(getUriFromResOrFile(video.getThumbnail()));
 
-            itemView.setOnClickListener(v -> listener.onItemClick(video));
+            // Format and set the video date
+            String formattedDate = formatDateString(video.getUploadDate());
+            videoDate.setText(formattedDate);
+
+            // Load thumbnail using Glide
+            String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
+            Glide.with(itemView.getContext())
+                    .load(thumbnailUrl)
+                    .placeholder(R.drawable.default_user_pic)
+                    .into(videoThumbnail);
+
+            // Remove the old observer if it exists to prevent data from getting mixed up
+            if (userObserver != null) {
+                userViewModel.getUser(video.getUserId()).removeObserver(userObserver);
+            }
+
+            // Create a new observer for the current video user
+            userObserver = user -> {
+                if (user != null) {
+                    String userProfileUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
+                    Glide.with(itemView.getContext())
+                            .load(userProfileUrl)
+                            .placeholder(R.drawable.default_profile_picture)
+                            .into(profilePicture);
+                    videoUser.setText(user.getUserName());
+                } else {
+                    profilePicture.setImageResource(R.drawable.default_profile_picture);
+                    videoUser.setText("[deleted user]");
+                    Log.e(TAG, "User not found");
+                }
+            };
+
+            // Observe the current user's data
+            userViewModel.getUser(video.getUserId()).observe((AppCompatActivity) itemView.getContext(), userObserver);
+
+            itemView.setTag(video);
+        }
+
+        private String formatDateString(String originalDate) {
+            SimpleDateFormat originalFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            SimpleDateFormat targetFormat = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
+
+            try {
+                Date date = originalFormat.parse(originalDate);
+                return targetFormat.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                // Return the original date if parsing fails
+                return originalDate;
+            }
         }
     }
 }
+

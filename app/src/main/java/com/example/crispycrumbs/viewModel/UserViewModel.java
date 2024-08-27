@@ -19,10 +19,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public LiveData<UserItem> getUser(String userId) {
-        if (user == null) {
-            user = userRepository.getUser(userId);
-        }
-        return user;
+        return userRepository.getUser(userId);
     }
 
     public void updateUser(UserItem updatedUser) {

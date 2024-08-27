@@ -1,6 +1,6 @@
 plugins {
 
-    id("com.android.application") version "8.4.1"
+    id("com.android.application") version "8.5.0"
 }
 
 android {
@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    implementation ("com.github.bumptech.glide:glide:4.13.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.13.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation(libs.gson)

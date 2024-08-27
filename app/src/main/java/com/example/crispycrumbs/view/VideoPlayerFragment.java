@@ -24,12 +24,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.CommentSection_Adapter;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 
@@ -130,32 +132,62 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         likesTextView.setText(video.getLikes() + " likes");
         views.setText(video.getViews() + " views");
 
-        UserItem uploader = userViewModel.getUser(video.getUserId()).getValue();
-        if (uploader != null) {
-            profilePicture.setImageURI(Uri.parse(uploader.getProfilePhoto()));
-            userNameTextView.setText(uploader.getUserName());
-        } else {
-            profilePicture.setImageResource(R.drawable.default_profile_picture);
-            userNameTextView.setText("[deleted user]");
-            Log.e(TAG, "User not found");
-        }
-
-        profilePicture.setOnClickListener(v -> {
-            MainPage.getInstance().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new ProfileFragment(video.getUserId()))
-                    .commit();
+        // Observe user profile data
+        userViewModel.getUser(video.getUserId()).observe(getViewLifecycleOwner(), new Observer<UserItem>() {
+            @Override
+            public void onChanged(UserItem uploader) {
+                if (uploader != null) {
+                    String userProfileUrl = ServerAPI.getInstance().constructUrl(uploader.getProfilePhoto());
+                    Glide.with(VideoPlayerFragment.this)
+                            .load(userProfileUrl)
+                            .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
+                            .into(profilePicture);
+                    userNameTextView.setText(uploader.getUserName());
+                } else {
+                    profilePicture.setImageResource(R.drawable.default_profile_picture);
+                    userNameTextView.setText("[deleted user]");
+                    Log.e(TAG, "User not found");
+                }
+            }
         });
+
+        // Load video file URL into VideoView
+        String videoUrl = ServerAPI.getInstance().constructUrl(video.getVideoFile());
+        Uri videoUri = Uri.parse(videoUrl);
+        videoView.setVideoURI(videoUri);
+
+        mediaController = new MediaController(getContext());
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
+
+        videoView.start();
 
         descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
 
-//        likeButton.setOnClickListener(v -> likeClick());
-//        unlikeButton.setOnClickListener(v -> dislikeClick());
-//
-//        shareButton.setOnClickListener(v -> showShareMenu());
-//
-//        // Increment video views
-//        videoViewModel.incrementVideoViews(videoId);
+        // Initialize the comments section
+        initializeCommentsSection(video.getComments());
     }
+
+    private void initializeCommentsSection(ArrayList<CommentItem> comments) {
+        if (comments == null || comments.isEmpty()) {
+            commentSectionContainer.setVisibility(View.GONE);
+            return;
+        }
+
+        UserItem currentUser = LoggedInUser.getUser();
+        String currentUserId = currentUser != null ? currentUser.getUserId() : null;
+
+        adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        description.setVisibility(View.GONE);
+        buttonBar.setVisibility(View.VISIBLE);
+        commentSectionContainer.setVisibility(View.VISIBLE);
+    }
+
+
+
 
     private void toggleDescriptionComments() {
         if (description.getVisibility() == View.VISIBLE) {

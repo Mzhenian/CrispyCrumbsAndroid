@@ -36,4 +36,10 @@ public interface VideoDao {
     // Synchronous method to fetch a single video by its ID (used within a background thread)
     @Query("SELECT * FROM videos WHERE videoId = :videoId")
     PreviewVideoCard getVideoByIdSync(String videoId);
+
+    @Query("SELECT * FROM videos WHERE userId = :userId")
+    List<PreviewVideoCard> getVideosByUserIdSync(String userId);
+
+    @Query("SELECT * FROM videos WHERE userId = :userId")
+    LiveData<List<PreviewVideoCard>> getVideosByUserId(String userId);
 }

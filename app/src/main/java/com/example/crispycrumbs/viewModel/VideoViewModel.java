@@ -45,6 +45,10 @@ public class VideoViewModel extends AndroidViewModel {
         videoRepository.insertVideo(video);
     }
 
+    public LiveData<List<PreviewVideoCard>> getVideosByUser(String userId) {
+        return videoRepository.getVideosByUser(userId);
+    }
+
 //    public void updateVideo(PreviewVideoCard video) {
 //        videoRepository.updateVideo(video);
 //    }

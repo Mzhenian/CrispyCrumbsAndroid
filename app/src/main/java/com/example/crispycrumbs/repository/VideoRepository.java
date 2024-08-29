@@ -103,6 +103,37 @@ public class VideoRepository {
         return mostRecentLiveData;
     }
 
+    public LiveData<List<PreviewVideoCard>> getVideosByUser(String userId) {
+        MutableLiveData<List<PreviewVideoCard>> userVideosLiveData = new MutableLiveData<>();
+
+        // Step 1: Load from Room (synchronously)
+        executor.execute(() -> {
+            List<PreviewVideoCard> localVideos = videoDao.getVideosByUserIdSync(userId);
+            userVideosLiveData.postValue(localVideos);
+        });
+
+        // Step 2: Fetch from the server and update Room and LiveData
+        serverAPI.getVideosByUser(userId).enqueue(new Callback<List<PreviewVideoCard>>() {
+            @Override
+            public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<PreviewVideoCard> videoList = response.body();
+                    userVideosLiveData.postValue(videoList);
+
+                    // Update Room database with the new data
+                    executor.execute(() -> videoDao.insertVideos(videoList));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PreviewVideoCard>> call, Throwable t) {
+                // Handle the error
+            }
+        });
+
+        return userVideosLiveData;
+    }
+
     public void insertVideo(PreviewVideoCard video) {
         executor.execute(() -> videoDao.insertVideo(video));
     }

@@ -1,6 +1,7 @@
 package com.example.crispycrumbs.serverAPI;
 
 import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
@@ -44,5 +45,8 @@ public interface ServerAPInterface {
 
     @POST("videos/{id}/dislike")
     Call<ApiResponse<Void>> dislikeVideo(@Path("id") String videoId);
+
+    @GET("users/{userId}/videos")
+    Call<List<PreviewVideoCard>> getVideosByUser(@Path("userId") String userId);
 
 }

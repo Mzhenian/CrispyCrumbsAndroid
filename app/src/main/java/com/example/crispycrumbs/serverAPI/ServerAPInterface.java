@@ -7,11 +7,15 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import java.util.List;
@@ -37,14 +41,16 @@ public interface ServerAPInterface {
     @POST("videos/{videoId}/comments")
     Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
 
-    @POST("videos/{id}/incrementViews")
-    Call<ApiResponse<Void>> incrementVideoViews(@Path("id") String videoId);
+    @POST("videos/incrementViews")
+    Call<ApiResponse<Void>> incrementVideoViews(@Body VideoIdRequest videoIdRequest);
 
-    @POST("videos/{id}/like")
-    Call<ApiResponse<Void>> likeVideo(@Path("id") String videoId);
+    @POST("videos/like")
+    Call<PreviewVideoCard> likeVideo(@Header("Authorization") String token, @Body LikeDislikeRequest request);
 
-    @POST("videos/{id}/dislike")
-    Call<ApiResponse<Void>> dislikeVideo(@Path("id") String videoId);
+    @POST("videos/dislike")
+    Call<PreviewVideoCard> dislikeVideo(@Header("Authorization") String token, @Body LikeDislikeRequest request);
+
+
 
     @GET("users/{userId}/videos")
     Call<List<PreviewVideoCard>> getVideosByUser(@Path("userId") String userId);

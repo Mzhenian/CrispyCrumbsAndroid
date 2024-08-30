@@ -49,5 +49,7 @@ public class VideoResponse {
     public void setRandomVideos(List<PreviewVideoCard> randomVideos) {
         this.randomVideos = randomVideos;
     }
+
+
 }
 

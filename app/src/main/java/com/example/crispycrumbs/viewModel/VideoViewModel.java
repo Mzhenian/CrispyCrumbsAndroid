@@ -49,32 +49,17 @@ public class VideoViewModel extends AndroidViewModel {
         return videoRepository.getVideosByUser(userId);
     }
 
-//    public void updateVideo(PreviewVideoCard video) {
-//        videoRepository.updateVideo(video);
-//    }
+    public void incrementVideoViews(String videoId) {
+        videoRepository.incrementVideoViews(videoId);
+    }
 
-//    public void incrementVideoViews(String videoId) {
-//        videoRepository.incrementVideoViews(videoId);
-//    }
-//
-//    public LiveData<List<CommentItem>> getCommentsForVideo(String videoId) {
-//        return videoRepository.getCommentsForVideo(videoId);
-//    }
-//
-//    public void addCommentToVideo(String videoId, CommentItem comment) {
-//        videoRepository.addCommentToVideo(videoId, comment);
-//    }
-//
-//    public void likeVideo(String videoId) {
-//        videoRepository.likeVideo(videoId);
-//    }
-//
-//    public void dislikeVideo(String videoId) {
-//        videoRepository.dislikeVideo(videoId);
-//    }
-//
-//    public LiveData<Integer> getLikeDislikeStatus(String videoId) {
-//        return videoRepository.getLikeDislikeStatus(videoId);
-//    }
+    public void likeVideo(String videoId, String userId) {
+        videoRepository.likeVideo(videoId, userId);
+    }
+
+    public void dislikeVideo(String videoId, String userId) {
+        videoRepository.dislikeVideo(videoId, userId);
+    }
+
 
 }

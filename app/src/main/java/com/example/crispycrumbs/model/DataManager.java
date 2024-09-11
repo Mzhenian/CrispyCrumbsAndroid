@@ -246,7 +246,7 @@ public class DataManager {
     }
 
     public int likeClick(String videoId) {
-        UserItem user = LoggedInUser.getUser();
+        UserItem user = LoggedInUser.getUser().getValue();
         if (user == null) {
             return NO_LIKE_DISLIKE;
         }
@@ -279,7 +279,7 @@ public class DataManager {
     }
 
     public int dislikeClick(String videoId) {
-        UserItem user = LoggedInUser.getUser();
+        UserItem user = LoggedInUser.getUser().getValue();
         if (user == null) {
             return NO_LIKE_DISLIKE;
         }
@@ -312,7 +312,7 @@ public class DataManager {
     }
 
     public int getLikeDislike(String videoId) {
-        UserItem user = LoggedInUser.getUser();
+        UserItem user = LoggedInUser.getUser().getValue();
         if (user == null) {
             return NO_LIKE_DISLIKE;
         }

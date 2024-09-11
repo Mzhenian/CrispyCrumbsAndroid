@@ -1,14 +1,15 @@
 package com.example.crispycrumbs.serverAPI;
 
 import com.example.crispycrumbs.dataUnit.CommentItem;
-
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,17 +21,10 @@ public class ServerAPI {
 
     private Retrofit retrofit = null;
     private ServerAPInterface serverAPInterface = null;
-    private String IP = "192.168.38.220"; // Default IP, assuming the server is running on the same machine as the emulator
+        private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
+//    private String IP = "192.168.1.227";
+    private String port = "1324";
 
-    private void buildRetrofit() {
-        if (null == retrofit || !retrofit.baseUrl().toString().equals("http://" + IP + ":1324/api/")) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl("http://" + IP + ":1324/api/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            serverAPInterface = retrofit.create(ServerAPInterface.class);
-        }
-    }
 
     private ServerAPI() {
         buildRetrofit();
@@ -38,6 +32,22 @@ public class ServerAPI {
 
     public static ServerAPI getInstance() {
         return serverAPI;
+    }
+
+    private void buildRetrofit() {
+        if (null == retrofit || !retrofit.baseUrl().toString().equals("http://" + IP + ":" + port + "/api/")) {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(new authInterceptor())
+                    .build();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl("http://" + IP + ":" + port + "/api/")
+                    .client(client)
+                    .callbackExecutor(Executors.newSingleThreadExecutor())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            serverAPInterface = retrofit.create(ServerAPInterface.class);
+        }
     }
 
     public void setIP(String IP) {
@@ -49,9 +59,9 @@ public class ServerAPI {
         return serverAPInterface;
     }
 
-    // Method to dynamically construct URLs based on the current IP
+    // Method to dynamically construct URLs based on the current IP for server assets
     public String constructUrl(String path) {
-        return "http://" + IP + ":1324/api/db/" + path;
+        return "http://" + IP + ":" + port + "/api/db/" + path;
     }
 
     public void login(String userName, String password, boolean rememberMe, LoginCallback callback) {

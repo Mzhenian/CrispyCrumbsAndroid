@@ -67,12 +67,6 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
             }
         });
 
-        MainPage mainPage = (MainPage) getActivity();
-        if (mainPage != null) {
-            mainPage.updateNavigationMenu();
-            mainPage.updateNavHeader();
-        }
-
         return view;
     }
 

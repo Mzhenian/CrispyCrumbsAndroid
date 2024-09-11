@@ -15,7 +15,6 @@ import com.example.crispycrumbs.view.EditVideoFragment;
 import com.example.crispycrumbs.view.MainPage;
 import com.example.crispycrumbs.view.VideoPlayerFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlayList_Adapter extends VideoList_Adapter {

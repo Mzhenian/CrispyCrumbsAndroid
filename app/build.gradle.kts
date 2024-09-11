@@ -1,6 +1,6 @@
 plugins {
 
-    id("com.android.application") version "8.5.0"
+    id("com.android.application") version "8.4.1"
 }
 
 android {
@@ -11,15 +11,16 @@ android {
         applicationId = "com.example.crispycrumbs"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "3.0 server connection"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = false //todo enable before last testing
+            isShrinkResources = false //todo enable before last testing
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -37,10 +38,12 @@ android {
 }
 
 dependencies {
-    implementation ("com.github.bumptech.glide:glide:4.13.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.13.0")
+    implementation("com.github.bumptech.glide:glide:4.13.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.3")
+    implementation("androidx.activity:activity-ktx:1.9.2")
     implementation(libs.gson)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -60,6 +63,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.gson)
     annotationProcessor(libs.room.compiler)
-
 
 }

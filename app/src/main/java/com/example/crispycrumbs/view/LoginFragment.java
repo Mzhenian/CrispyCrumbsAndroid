@@ -1,10 +1,6 @@
 package com.example.crispycrumbs.view;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +10,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.crispycrumbs.localDB.LoggedInUser;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
-import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
@@ -51,35 +48,39 @@ public class LoginFragment extends Fragment {
             return false;
         });
 
-        // Set an OnClickListener for the login button
         loginButton.setOnClickListener(v -> loginAttempt());
 
         return view;
     }
+
     //with server
     void loginAttempt() {
         ServerAPI serverAPI = ServerAPI.getInstance();
-        serverAPI.login(userName.getText().toString(), password.getText().toString(), false, new LoginCallback() {
+        serverAPI.login(userName.getText().toString(), password.getText().toString(), true, new LoginCallback() {
             @Override
             public void onSuccess(LoginResponse loginResponse) {
                 LoggedInUser.setLoggedInUser(loginResponse.getUser());
                 LoggedInUser.setToken(loginResponse.getToken());
 
-                Toast.makeText(getContext(), "welcome back " + LoggedInUser.getUser().getDisplayedName(), Toast.LENGTH_SHORT).show();
+                getActivity().runOnUiThread(() -> {
+//                    Toast.makeText(getContext(), "welcome back " + LoggedInUser.getUser().getValue().getDisplayedName(), Toast.LENGTH_SHORT).show();
 
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                HomeFragment homeFragment = new HomeFragment();
-                transaction.replace(R.id.fragment_container, homeFragment);
-                transaction.commit();
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    HomeFragment homeFragment = new HomeFragment();
+                    transaction.replace(R.id.fragment_container, homeFragment);
+                    transaction.commit();
+                });
             }
 
             @Override
             public void onFailure(Throwable t, int statusCode) {
-                if (statusCode == 400) {
-                    Toast.makeText(getContext(), "Username or password is incorrect", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Login failed: " + (-1  == statusCode ? "" : statusCode) + " " + t.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                getActivity().runOnUiThread(() -> {
+                    if (statusCode == 400) {
+                        Toast.makeText(getContext(), "Username or password is incorrect", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Login failed: " + (-1 == statusCode ? "" : statusCode) + " " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
     }

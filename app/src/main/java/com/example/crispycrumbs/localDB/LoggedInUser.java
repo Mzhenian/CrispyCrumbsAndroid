@@ -4,16 +4,19 @@ import static com.example.crispycrumbs.view.MainPage.getInstance;
 
 import android.widget.TextView;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 
 public class LoggedInUser {
-    private static UserItem loggedInUser = null;
+    private static MutableLiveData<UserItem> loggedInUser = new MutableLiveData<>();
     private static String token = null;
 
 
-    public static UserItem getUser() {
+    public static LiveData<UserItem> getUser() {
         return loggedInUser;
     }
 
@@ -22,13 +25,11 @@ public class LoggedInUser {
     }
 
     public static void setLoggedInUser(UserItem userItem) {
-        LoggedInUser.loggedInUser = userItem;
-
-        if (loggedInUser == null) {
+        if (null == userItem) {
             logOut();
-        } else {
-            getInstance().updateNavHeader();
+            return;
         }
+        LoggedInUser.loggedInUser.postValue(userItem);
     }
     public static void setToken(String token) {
         LoggedInUser.token = token;
@@ -36,21 +37,11 @@ public class LoggedInUser {
 
 
     public static void logOut() {
-        LoggedInUser.loggedInUser = null;
+        LoggedInUser.loggedInUser.postValue(null);
         LoggedInUser.token = null;
-        TextView user_name = getInstance().findViewById(R.id.user_name);
-        if (user_name != null) {
-            user_name.setText("guest");
-        }
-
-        TextView user_email = getInstance().findViewById(R.id.user_email);
-        if (user_email != null) {
-            user_email.setText("");
-        }
-
     }
 
     public static void removeVideo(PreviewVideoCard videoItem) {
-        loggedInUser.delUploadedVideo(videoItem.getVideoId());
+        loggedInUser.getValue().delUploadedVideo(videoItem.getVideoId());
     }
 }

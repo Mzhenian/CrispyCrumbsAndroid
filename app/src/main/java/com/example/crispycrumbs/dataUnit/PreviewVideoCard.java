@@ -56,7 +56,8 @@ public class PreviewVideoCard implements Serializable {
         this.videoFile = videoFile;
         this.description = description;
 
-        this.userId = LoggedInUser.getUser().getUserId();
+        UserItem user = LoggedInUser.getUser().getValue();
+        this.userId = (user == null ? null : user.getUserId());
         this.comments = new ArrayList<>();
         this.views = 0;
         //todo remove

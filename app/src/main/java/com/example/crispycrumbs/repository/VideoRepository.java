@@ -268,7 +268,7 @@ public class VideoRepository {
                             videoDao.insertVideo(updatedVideo);
 
                             // Update the user's liked/disliked lists
-                            UserItem user = LoggedInUser.getUser();
+                            UserItem user = LoggedInUser.getUser().getValue();
                             if (user.hasLiked(videoId)) {
                                 Log.d("VideoRepository", "User already liked the video. Removing like.");
                                 user.removeLike(videoId);
@@ -323,7 +323,7 @@ public class VideoRepository {
                             videoDao.insertVideo(updatedVideo);
 
                             // Update the user's liked/disliked lists
-                            UserItem user = LoggedInUser.getUser();
+                            UserItem user = LoggedInUser.getUser().getValue();
                             if (user.hasDisliked(videoId)) {
                                 Log.d("VideoRepository", "User already disliked the video. Removing dislike.");
                                 user.removeDislike(videoId);

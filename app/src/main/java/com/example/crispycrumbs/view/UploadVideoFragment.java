@@ -226,7 +226,7 @@ public class UploadVideoFragment extends Fragment {
 
         if (validateUploadable()) {
             DataManager.getInstance().addVideo(previewVideoCard);
-            LoggedInUser.getUser().addVideo(previewVideoCard.getVideoId());
+            LoggedInUser.getUser().getValue().addVideo(previewVideoCard.getVideoId());
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             Toast.makeText(getContext(), "uploaded " + previewVideoCard.getTitle() + " successfully", Toast.LENGTH_SHORT).show();
         }

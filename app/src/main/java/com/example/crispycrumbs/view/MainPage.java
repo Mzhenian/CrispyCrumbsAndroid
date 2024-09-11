@@ -24,12 +24,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
+import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,6 +43,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
+
+    private Observer<UserItem> LoggedInUserObserver = null;
 
     public static DataManager getDataManager() {
         return dataManager;
@@ -70,7 +75,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         setContentView(R.layout.page_main);
         instance = this;
 
-//        setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,6 +106,9 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
+        LoggedInUserObserver = getLoggedInUserObserver();
+        LoggedInUser.getUser().observe(this, LoggedInUserObserver);
+        LoggedInUser.setLoggedInUser(LoggedInUser.getUser().getValue());
 
         userLogic = UserLogic.getInstance();
         dataManager = DataManager.getInstance();
@@ -117,8 +124,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
-        updateNavigationMenu();
-
         ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -130,8 +135,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        updateNavHeader();
     }
 
     @Override
@@ -178,7 +181,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         } else if (itemId == R.id.nav_logout) {
             LoggedInUser.logOut();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
-            updateNavigationMenu();
         } else if (itemId == R.id.nav_signup) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_upload_video) {
@@ -207,56 +209,59 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         }
     }
 
-    public void updateNavigationMenu() {
+    public Observer<UserItem> getLoggedInUserObserver() {
         Menu menu = navigationView.getMenu();
-        boolean isLoggedIn = LoggedInUser.getUser() != null;
 
-        menu.findItem(R.id.nav_home).setVisible(true);
-        menu.findItem(R.id.theme_setter).setVisible(true);
-
-        menu.findItem(R.id.nav_profile).setVisible(isLoggedIn);
-        menu.findItem(R.id.nav_my_videos).setVisible(isLoggedIn);
-        menu.findItem(R.id.nav_logout).setVisible(isLoggedIn);
-        menu.findItem(R.id.nav_upload_video).setVisible(isLoggedIn);
-        menu.findItem(R.id.nav_login).setVisible(!isLoggedIn);
-        menu.findItem(R.id.nav_signup).setVisible(!isLoggedIn);
-    }
-
-    public void updateNavHeader() {
+        NavigationView navigationView = findViewById(R.id.nav_Bar);
         View headerView = navigationView.getHeaderView(0);
         ImageView profilePicture = headerView.findViewById(R.id.profile_picture);
         TextView userName = headerView.findViewById(R.id.user_name);
         TextView userEmail = headerView.findViewById(R.id.user_email);
 
-        UserItem currentUser = LoggedInUser.getUser();
+        return user -> {
+            menu.findItem(R.id.nav_home).setVisible(true);
+            menu.findItem(R.id.theme_setter).setVisible(true);
+            String message;
 
-        if (currentUser != null) {
-            profilePicture.setImageURI(getUriFromResOrFile(currentUser.getProfilePhoto()));
-            userName.setText(currentUser.getDisplayedName());
-            userEmail.setText(currentUser.getEmail());
-            profilePicture.setOnClickListener(v -> {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
+            if (null != user) { // not guest
+                String userProfilePicUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
+                Glide.with(MainPage.this)
+                        .load(userProfilePicUrl)
+                        .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
+                        .into(profilePicture);
+                userName.setText(user.getDisplayedName());
+                userEmail.setText(user.getEmail());
+                profilePicture.setOnClickListener(v -> {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
 //                drawerLayout.closeDrawer(GravityCompat.START);
-            });
-        } else {
-            profilePicture.setImageResource(R.drawable.default_profile_picture);
-            userName.setText(R.string.guest);
-            userEmail.setText("");
-        }
-    }
+                });
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // Save the state of the LoggedInUser
-        outState.putSerializable("LoggedInUser", LoggedInUser.getUser());
-    }
+                    menu.findItem(R.id.nav_profile).setVisible(true);
+                    menu.findItem(R.id.nav_my_videos).setVisible(true);
+                    menu.findItem(R.id.nav_logout).setVisible(true);
+                    menu.findItem(R.id.nav_upload_video).setVisible(true);
+                    menu.findItem(R.id.nav_login).setVisible(false);
+                    menu.findItem(R.id.nav_signup).setVisible(false);
+                message = "Welcome back " + user.getDisplayedName();
+            } else{ // guest
+                if (userName.getText().equals(getResources().getString(R.string.guest))) {
+                    message = "Welcome back";
+                } else {
+                    message = "Goodbye " + userName.getText();
+                }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // Restore the state of the LoggedInUser
-        LoggedInUser.setLoggedInUser((UserItem) savedInstanceState.getSerializable("LoggedInUser"));
-    }
+                profilePicture.setImageResource(R.drawable.default_profile_picture);
+                userName.setText(R.string.guest);
+                userEmail.setText("");
 
+                menu.findItem(R.id.nav_profile).setVisible(false);
+                menu.findItem(R.id.nav_my_videos).setVisible(false);
+                menu.findItem(R.id.nav_logout).setVisible(false);
+                menu.findItem(R.id.nav_upload_video).setVisible(false);
+                menu.findItem(R.id.nav_login).setVisible(true);
+                menu.findItem(R.id.nav_signup).setVisible(true);
+            }
+            Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+        };
+    }
 }

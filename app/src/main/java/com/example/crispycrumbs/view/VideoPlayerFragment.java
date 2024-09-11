@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -36,7 +35,6 @@ import com.example.crispycrumbs.viewModel.UserViewModel;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
@@ -97,48 +95,54 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             return view;
         }
 
+        profilePicture.setOnClickListener(v -> {
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
+        });
+
         likeButton.setOnClickListener(v -> {
-            if (video != null) {
-                if (LoggedInUser.getUser() != null) { // Check if user is logged in
-                    if (LoggedInUser.getUser().hasLiked(video.getVideoId())) {
-                        // User already liked the video, so remove the like
-                        video.setLikes(video.getLikes() - 1);
-                        LoggedInUser.getUser().removeLike(video.getVideoId());
-                    } else {
-                        // User has not liked the video, so add the like
-                        video.setLikes(video.getLikes() + 1);
-                        LoggedInUser.getUser().likeVideo(video.getVideoId());
-                        if (LoggedInUser.getUser().hasDisliked(video.getVideoId())) {
-                            video.setDislikes(video.getDislikes() - 1);
-                            LoggedInUser.getUser().removeDislike(video.getVideoId());
-                        }
-                    }
-                    updateLikesAndViewsCount(); // Update UI immediately
-                    videoViewModel.likeVideo(video.getVideoId(), LoggedInUser.getUser().getUserId()); // Then call the server
-                } else {
-                    Toast.makeText(getContext(), "Please log in to like videos.", Toast.LENGTH_SHORT).show();
-                }
+            if (video == null) {
+                return;
             }
+            if (LoggedInUser.getUser() == null) {
+                Toast.makeText(getContext(), "Please log in to like videos.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            //todo move the logic up to the view model
+//            // User already liked the video, so remove the like
+//            if (LoggedInUser.getUser().hasLiked(video.getVideoId())) {
+//                video.setLikes(video.getLikes() - 1);
+//                LoggedInUser.getUser().removeLike(video.getVideoId());
+//            } else { // User has not liked the video, so add the like
+//                video.setLikes(video.getLikes() + 1);
+//                LoggedInUser.getUser().likeVideo(video.getVideoId());
+//                if (LoggedInUser.getUser().hasDisliked(video.getVideoId())) {
+//                    video.setDislikes(video.getDislikes() - 1);
+//                    LoggedInUser.getUser().removeDislike(video.getVideoId());
+//                }
+//            }
+            videoViewModel.likeVideo(video.getVideoId(), LoggedInUser.getUser().getValue().getUserId()); // Then call the server
+            //todo migrate to the livedata and delete updateLikesAndViewsCount
+            updateLikesAndViewsCount(); // Update UI immediately
         });
 
         unlikeButton.setOnClickListener(v -> {
             if (video != null) {
                 if (LoggedInUser.getUser() != null) { // Check if user is logged in
-                    if (LoggedInUser.getUser().hasDisliked(video.getVideoId())) {
+                    if (LoggedInUser.getUser().getValue().hasDisliked(video.getVideoId())) {
                         // User already disliked the video, so remove the dislike
                         video.setDislikes(video.getDislikes() - 1);
-                        LoggedInUser.getUser().removeDislike(video.getVideoId());
+                        LoggedInUser.getUser().getValue().removeDislike(video.getVideoId());
                     } else {
                         // User has not disliked the video, so add the dislike
                         video.setDislikes(video.getDislikes() + 1);
-                        LoggedInUser.getUser().dislikeVideo(video.getVideoId());
-                        if (LoggedInUser.getUser().hasLiked(video.getVideoId())) {
+                        LoggedInUser.getUser().getValue().dislikeVideo(video.getVideoId());
+                        if (LoggedInUser.getUser().getValue().hasLiked(video.getVideoId())) {
                             video.setLikes(video.getLikes() - 1);
-                            LoggedInUser.getUser().removeLike(video.getVideoId());
+                            LoggedInUser.getUser().getValue().removeLike(video.getVideoId());
                         }
                     }
                     updateLikesAndViewsCount(); // Update UI immediately
-                    videoViewModel.dislikeVideo(video.getVideoId(), LoggedInUser.getUser().getUserId()); // Then call the server
+                    videoViewModel.dislikeVideo(video.getVideoId(), LoggedInUser.getUser().getValue().getUserId()); // Then call the server
                 } else {
                     Toast.makeText(getContext(), "Please log in to dislike videos.", Toast.LENGTH_SHORT).show();
                 }
@@ -226,7 +230,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             return;
         }
 
-        UserItem currentUser = LoggedInUser.getUser();
+        UserItem currentUser = LoggedInUser.getUser().getValue();
         String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
         adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
@@ -268,7 +272,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     }
 
     private void updateLikeDislikeButtons() {
-        UserItem currentUser = LoggedInUser.getUser();
+        UserItem currentUser = LoggedInUser.getUser().getValue();
 
         if (currentUser == null) {
             // No user is logged in, so clear the selection states

@@ -62,7 +62,7 @@ public class EditVideoFragment extends Fragment {
             MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UploadVideoFragment()).commit();
             return view;
         }
-        if (null == LoggedInUser.getUser() || null == LoggedInUser.getUser().getUserId()) {
+        if (null == LoggedInUser.getUser() || null == LoggedInUser.getUser().getValue().getUserId()) {
             MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             return view;
         }
@@ -70,7 +70,7 @@ public class EditVideoFragment extends Fragment {
         videoId = bundle.getString("videoId");
         video = DataManager.getInstance().getVideoById(videoId);
 
-        if (!(video.getUserId().equals(LoggedInUser.getUser().getUserId()))) {
+        if (!(video.getUserId().equals(LoggedInUser.getUser().getValue().getUserId()))) {
             MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UploadVideoFragment()).commit();
             return view;
         }

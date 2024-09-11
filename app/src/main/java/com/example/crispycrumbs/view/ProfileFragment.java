@@ -35,7 +35,7 @@ public class ProfileFragment extends Fragment {
                 MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
             }
         } else {
-            viewModel.getUser().setValue(MainPage.getDataManager().getUserById(userId));
+            viewModel.setUser(MainPage.getDataManager().getUserById(userId));
             if (viewModel.getUser() == null || viewModel.getUser().getValue() == null) {
                 Toast.makeText(getContext(), "Profile not found.", Toast.LENGTH_SHORT).show();
                 MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
@@ -49,8 +49,7 @@ public class ProfileFragment extends Fragment {
         View view = binding.getRoot();
 
         if (viewModel.getUser() == null || viewModel.getUser().getValue() == null) {
-            Toast.makeText(getContext(), "no such user ", Toast.LENGTH_SHORT).show();
-            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+            return  view;
         }
         binding.profilePicture.setImageURI(DataManager.getUriFromResOrFile((viewModel.getUser().getValue().getProfilePhoto() != null) ? viewModel.getUser().getValue().getProfilePhoto() : DataManager.getDefaultProfilePhoto()));
         binding.userName.setText(viewModel.getUser().getValue().getDisplayedName());

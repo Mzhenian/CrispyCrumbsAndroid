@@ -43,13 +43,13 @@ public class PlayListFragment extends Fragment {
         binding = FragmentPlaylistBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        if (user != null && user != LoggedInUser.getUser()) {
+        if (user != null && user != LoggedInUser.getUser().getValue()) {
             binding.playlistTitle.setText(user.getDisplayedName() + " Videos");
         }
 
         RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
 
-        adapter = new PlayList_Adapter(getContext(), new ArrayList<>(), null, user != null ? user : LoggedInUser.getUser());
+        adapter = new PlayList_Adapter(getContext(), new ArrayList<>(), null, user != null ? user : LoggedInUser.getUser().getValue());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -57,7 +57,7 @@ public class PlayListFragment extends Fragment {
         videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
         // Observe videos by the user
-        String userId = user != null ? user.getUserId() : LoggedInUser.getUser().getUserId();
+        String userId = user != null ? user.getUserId() : LoggedInUser.getUser().getValue().getUserId();
         videoViewModel.getVideosByUser(userId).observe(getViewLifecycleOwner(), new Observer<List<PreviewVideoCard>>() {
             @Override
             public void onChanged(List<PreviewVideoCard> videoList) {

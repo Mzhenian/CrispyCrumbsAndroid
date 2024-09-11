@@ -129,7 +129,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
             Glide.with(itemView.getContext())
                     .load(thumbnailUrl)
-                    .placeholder(R.drawable.default_user_pic)
+                    .placeholder(R.drawable.default_video_thumbnail)
                     .into(videoThumbnail);
 
             // Remove the old observer if it exists to prevent data from getting mixed up

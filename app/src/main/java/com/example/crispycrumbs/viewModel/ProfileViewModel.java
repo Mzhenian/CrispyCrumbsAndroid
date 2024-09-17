@@ -17,6 +17,7 @@ public class ProfileViewModel extends ViewModel {
         }
         return user;
     }
+
     public void setUser(UserItem user) {
         MainPage.getInstance().runOnUiThread(() -> {
             this.user.setValue(user);

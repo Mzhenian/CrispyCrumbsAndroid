@@ -5,9 +5,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.crispycrumbs.dao.UserDao;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
-import com.example.crispycrumbs.dao.UserDao;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
@@ -61,7 +61,6 @@ public class UserRepository {
 
         return userLiveData;
     }
-
 
 
     public void insertUser(UserItem user) {

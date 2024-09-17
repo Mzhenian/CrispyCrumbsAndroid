@@ -4,7 +4,7 @@ import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
-public class VideoResponse {
+public class VideoListsResponse {
     @SerializedName("mostViewedVideos")
     private List<PreviewVideoCard> mostViewedVideos;
 

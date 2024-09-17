@@ -1,36 +1,39 @@
 package com.example.crispycrumbs.view;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.PlayList_Adapter;
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.databinding.FragmentPlaylistBinding;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
-import com.example.crispycrumbs.databinding.FragmentPlaylistBinding;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PlayListFragment extends Fragment {
 
+    private final String TAG = "PlayListFragment";
     private FragmentPlaylistBinding binding;
     private PlayList_Adapter adapter;
     private UserItem user;
     private VideoViewModel videoViewModel;
 
     public PlayListFragment() {
+        if (null != LoggedInUser.getUser().getValue()) {
+            this.user = LoggedInUser.getUser().getValue();
+        }
     }
 
     public PlayListFragment(UserItem user) {
@@ -58,11 +61,13 @@ public class PlayListFragment extends Fragment {
 
         // Observe videos by the user
         String userId = user != null ? user.getUserId() : LoggedInUser.getUser().getValue().getUserId();
-        videoViewModel.getVideosByUser(userId).observe(getViewLifecycleOwner(), new Observer<List<PreviewVideoCard>>() {
-            @Override
-            public void onChanged(List<PreviewVideoCard> videoList) {
+        videoViewModel.getVideosByUser(userId).observe(getViewLifecycleOwner(), videoList -> {
+            if (videoList != null) {
                 adapter.updateVideoList(videoList);
+            } else {
+                Log.e(TAG, "Video list is null");
             }
+//            adapter.updateVideoList(videoList)
         });
 
         // Search functionality

@@ -1,12 +1,6 @@
 package com.example.crispycrumbs.view;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +8,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
-import com.example.crispycrumbs.view.MainPage;
-import com.example.crispycrumbs.view.VideoPlayerFragment;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemClickListener {
 
@@ -42,13 +38,20 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
         // Observe the video list LiveData from ViewModel
-        videoViewModel.getAllVideos().observe(getViewLifecycleOwner(), new Observer<List<PreviewVideoCard>>() {
-            @Override
-            public void onChanged(List<PreviewVideoCard> videoList) {
-                // Update the adapter with the new video list
+        videoViewModel.getAllVideos().observe(getViewLifecycleOwner(), videoList -> {
+            // Update the adapter with the new video list
+            if (videoList != null) {
                 adapter.updateVideoList(videoList);
+            } else {
+                Log.e(TAG, "Video list is null");
             }
+//            adapter.updateVideoList(videoList);
         });
+//        // Observe the video list LiveData from ViewModel
+//        videoViewModel.getAllVideos().observe(getViewLifecycleOwner(), videoList -> {
+//            // Update the adapter with the new video list
+//            adapter.updateVideoList(videoList);
+//        });
 
         SearchView searchBar = view.findViewById(R.id.search_bar);
         customizeSearchViewIcon(searchBar);

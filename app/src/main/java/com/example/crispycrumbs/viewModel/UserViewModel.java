@@ -1,10 +1,11 @@
 package com.example.crispycrumbs.viewModel;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
 import com.example.crispycrumbs.dataUnit.UserItem;
-import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.repository.UserRepository;
 

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -18,7 +19,7 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +33,7 @@ import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
-import com.example.crispycrumbs.viewModel.VideoViewModel;
+import com.example.crispycrumbs.viewModel.VideoPlayerViewModel;
 
 import java.util.ArrayList;
 
@@ -41,11 +42,10 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private static final String TAG = "VideoPlayerFragment";
     private static final String KEY_POSITION = "position";
     private static final String KEY_COMMENTS = "comments";
-
-
+    private final ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
+    TextView date;
     private MediaController mediaController;
     private VideoView videoView;
-    private ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
     private int currentPosition = 0;
     private String videoId;
     private PreviewVideoCard video;
@@ -60,8 +60,10 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private ImageButton unlikeButton;
     private TextView likesTextView;
     private TextView views;
-    private VideoViewModel videoViewModel;
+    private VideoPlayerViewModel videoPlayerViewModel;
     private UserViewModel userViewModel;
+    private LiveData<PreviewVideoCard> videoCardLiveData;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,132 +84,82 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         descriptionButton = view.findViewById(R.id.btn_video_description);
         buttonBar = view.findViewById(R.id.button_bar);
         commentSectionContainer = view.findViewById(R.id.comment_section_container);
-
-        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
+        progressBar = view.findViewById(R.id.progressBar2);
+        videoPlayerViewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        date = view.findViewById(R.id.video_date);
+
 
         // Get videoId from arguments
         Bundle bundle = getArguments();
-        if (bundle != null) {
-            videoId = bundle.getString("videoId");
-        } else {
+        if (bundle == null) {
             Toast.makeText(getContext(), "No video selected", Toast.LENGTH_SHORT).show();
             return view;
         }
 
         profilePicture.setOnClickListener(v -> {
-            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
+            loadingMessage();
         });
 
         likeButton.setOnClickListener(v -> {
-            if (video == null) {
-                return;
-            }
-            if (LoggedInUser.getUser() == null) {
-                Toast.makeText(getContext(), "Please log in to like videos.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            //todo move the logic up to the view model
-//            // User already liked the video, so remove the like
-//            if (LoggedInUser.getUser().hasLiked(video.getVideoId())) {
-//                video.setLikes(video.getLikes() - 1);
-//                LoggedInUser.getUser().removeLike(video.getVideoId());
-//            } else { // User has not liked the video, so add the like
-//                video.setLikes(video.getLikes() + 1);
-//                LoggedInUser.getUser().likeVideo(video.getVideoId());
-//                if (LoggedInUser.getUser().hasDisliked(video.getVideoId())) {
-//                    video.setDislikes(video.getDislikes() - 1);
-//                    LoggedInUser.getUser().removeDislike(video.getVideoId());
-//                }
-//            }
-            videoViewModel.likeVideo(video.getVideoId(), LoggedInUser.getUser().getValue().getUserId()); // Then call the server
-            //todo migrate to the livedata and delete updateLikesAndViewsCount
-            updateLikesAndViewsCount(); // Update UI immediately
+            loadingMessage();
         });
 
         unlikeButton.setOnClickListener(v -> {
-            if (video != null) {
-                if (LoggedInUser.getUser() != null) { // Check if user is logged in
-                    if (LoggedInUser.getUser().getValue().hasDisliked(video.getVideoId())) {
-                        // User already disliked the video, so remove the dislike
-                        video.setDislikes(video.getDislikes() - 1);
-                        LoggedInUser.getUser().getValue().removeDislike(video.getVideoId());
-                    } else {
-                        // User has not disliked the video, so add the dislike
-                        video.setDislikes(video.getDislikes() + 1);
-                        LoggedInUser.getUser().getValue().dislikeVideo(video.getVideoId());
-                        if (LoggedInUser.getUser().getValue().hasLiked(video.getVideoId())) {
-                            video.setLikes(video.getLikes() - 1);
-                            LoggedInUser.getUser().getValue().removeLike(video.getVideoId());
-                        }
-                    }
-                    updateLikesAndViewsCount(); // Update UI immediately
-                    videoViewModel.dislikeVideo(video.getVideoId(), LoggedInUser.getUser().getValue().getUserId()); // Then call the server
-                } else {
-                    Toast.makeText(getContext(), "Please log in to dislike videos.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        videoViewModel.getVideo(videoId).observe(getViewLifecycleOwner(), new Observer<PreviewVideoCard>() {
-            @Override
-            public void onChanged(PreviewVideoCard videoData) {
-                if (videoData != null) {
-                    video = videoData;
-                    initializeVideo(video);
-                    initializeVideoDetails(video);
-                    updateLikesAndViewsCount(); // Update UI with new view and like counts
-                    updateLikeDislikeButtons(); // Update button states
-                } else {
-                    Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
-                }
-            }
+            loadingMessage();
         });
 
 
+        videoPlayerViewModel.setVideo(bundle.getString("videoId"));
+        videoCardLiveData = videoPlayerViewModel.getVideo();
+        videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
+            if (null == video) {
+                Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
+//                MainPage.getInstance().getSupportFragmentManager().popBackStack();
+                return;
+            }
+            if (null != this.video && this.video.getVideoId().equals(video.getVideoId())) {
+                this.video = video;
+                updateVideoDetails();
+                return;
+            }
+
+            this.video = video;
+            videoId = video.getVideoId();
+
+            initializeVideo(video);
+            initializeVideoDetails(video);
+
+            profilePicture.setOnClickListener(v -> {
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
+            });
+
+            if (null == LoggedInUser.getUser().getValue()) {
+                likeButton.setOnClickListener(v -> {
+                    MainPage.getInstance().showLoginSnackbar(view);
+                });
+
+                unlikeButton.setOnClickListener(v -> {
+                    MainPage.getInstance().showLoginSnackbar(view);
+                });
+            } else {
+                likeButton.setOnClickListener(v -> {
+                    videoPlayerViewModel.likeVideo();
+                });
+
+                unlikeButton.setOnClickListener(v -> {
+                    videoPlayerViewModel.dislikeVideo();
+                });
+            }
+        });
         return view;
     }
 
-    private void initializeVideo(PreviewVideoCard video) {
-        Uri videoUri = Uri.parse(video.getVideoFile());
-        videoView.setVideoURI(videoUri);
-
-        mediaController = new MediaController(getContext());
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
-
-        videoView.setOnPreparedListener(mp -> {
-            videoView.start();
-            incrementViewCount(video.getVideoId()); // Trigger view count increment
-        });
+    private void loadingMessage() {
+        Toast.makeText(getContext(), "Loading video and his data...", Toast.LENGTH_SHORT).show();
     }
 
-    private void initializeVideoDetails(PreviewVideoCard video) {
-        titleTextView.setText(video.getTitle());
-        description.setText(video.getDescription());
-        likesTextView.setText(video.getLikes() + " likes");
-        views.setText(video.getViews() + " views");
-
-        // Observe user profile data
-        userViewModel.getUser(video.getUserId()).observe(getViewLifecycleOwner(), new Observer<UserItem>() {
-            @Override
-            public void onChanged(UserItem uploader) {
-                if (uploader != null) {
-                    String userProfileUrl = ServerAPI.getInstance().constructUrl(uploader.getProfilePhoto());
-                    Glide.with(VideoPlayerFragment.this)
-                            .load(userProfileUrl)
-                            .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
-                            .into(profilePicture);
-                    userNameTextView.setText(uploader.getUserName());
-                } else {
-                    profilePicture.setImageResource(R.drawable.default_profile_picture);
-                    userNameTextView.setText("[deleted user]");
-                    Log.e(TAG, "User not found");
-                }
-            }
-        });
-
-        // Load video file URL into VideoView
+    private void initializeVideo(PreviewVideoCard video) {
         String videoUrl = ServerAPI.getInstance().constructUrl(video.getVideoFile());
         Uri videoUri = Uri.parse(videoUrl);
         videoView.setVideoURI(videoUri);
@@ -216,9 +168,40 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
 
-        videoView.start();
+        videoView.setOnPreparedListener(mp -> {
+            progressBar.setVisibility(View.GONE);
+            videoView.start();
+            videoPlayerViewModel.incrementVideoViews(); // Trigger view count increment
+        });
+    }
 
-        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
+    private void initializeVideoDetails(PreviewVideoCard video) {
+        titleTextView.setText(video.getTitle());
+        description.setText(video.getDescription());
+
+        updateVideoDetails();
+
+
+        // Observe user profile data
+        userViewModel.getUser(video.getUserId()).observe(getViewLifecycleOwner(), uploader -> {
+            if (uploader != null) {
+                String userProfileUrl = ServerAPI.getInstance().constructUrl(uploader.getProfilePhoto());
+                Glide.with(VideoPlayerFragment.this)
+                        .load(userProfileUrl)
+                        .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
+                        .into(profilePicture);
+                userNameTextView.setText(uploader.getUserName());
+            } else {
+                profilePicture.setImageResource(R.drawable.default_profile_picture);
+                userNameTextView.setText(R.string.deleted_user);
+                Log.e(TAG, "Uploader not found");
+            }
+        });
+
+        String formattedDate = videoPlayerViewModel.formatDate(video.getUploadDate());
+        date.setText(formattedDate);        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
+        shareButton.setOnClickListener(v -> showShareMenu());
+
 
         // Initialize the comments section
         initializeCommentsSection(video.getComments());
@@ -258,40 +241,32 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         commentSectionContainer.setVisibility(View.GONE);
     }
 
-    private void updateLikesAndViewsCount() {
-        if (video != null) {
-            Log.d(TAG, "Updating UI with likes: " + video.getLikes() + " and dislikes: " + video.getDislikes());
-            likesTextView.setText(video.getLikes() + " likes");
-            // Assuming you have a dislikesTextView for dislikes
-            // dislikesTextView.setText(video.getDislikes() + " dislikes");
-            views.setText(video.getViews() + " views");
-
-            // Log current button states
-            Log.d(TAG, "Like button selected: " + likeButton.isSelected() + ", Unlike button selected: " + unlikeButton.isSelected());
-        }
-    }
-
-    private void updateLikeDislikeButtons() {
-        UserItem currentUser = LoggedInUser.getUser().getValue();
-
-        if (currentUser == null) {
-            // No user is logged in, so clear the selection states
-            likeButton.setSelected(false);
-            unlikeButton.setSelected(false);
+    private void updateVideoDetails() {
+        if (null == video) {
             return;
         }
+        Log.d(TAG, "Updating UI with likes: " + video.getLikes() + " and dislikes: " + video.getDislikes());
+        likesTextView.setText(video.getLikes() + " likes");
+        // Assuming you have a dislikesTextView for dislikes
+        // dislikesTextView.setText(video.getDislikes() + " dislikes");
+        views.setText(video.getViews() + " views");
 
-        String userId = currentUser.getUserId();
+        likeButton.setSelected(false);
+        likeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
+//            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange));
+        unlikeButton.setSelected(false);
+        unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
 
-        if (video.getLikedBy().contains(userId)) {
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+        if (currentUser == null) {
+            // No user is logged in, so clear the selection like buttons  states
+        } else if (video.getLikedBy().contains(currentUser.getUserId())) {
             likeButton.setSelected(true);
-            unlikeButton.setSelected(false);
-        } else if (video.getDislikedBy().contains(userId)) {
-            likeButton.setSelected(false);
+            likeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
+//            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange_light));
+        } else if (video.getDislikedBy().contains(currentUser.getUserId())) {
             unlikeButton.setSelected(true);
-        } else {
-            likeButton.setSelected(false);
-            unlikeButton.setSelected(false);
+            unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
         }
     }
 
@@ -332,14 +307,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         dialog.show();
     }
 
-    private void incrementViewCount(String videoId) {
-        if (videoId != null && !videoId.isEmpty()) {
-            videoViewModel.incrementVideoViews(videoId);
-        } else {
-            Log.e(TAG, "Invalid videoId for incrementing views");
-        }
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -360,6 +327,13 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     public void onStop() {
         super.onStop();
         videoView.stopPlayback();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        videoCardLiveData.removeObservers(getViewLifecycleOwner());
+        videoView = null;
     }
 
     @Override

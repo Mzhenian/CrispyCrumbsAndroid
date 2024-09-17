@@ -1,7 +1,6 @@
 package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
-import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -28,12 +27,13 @@ import androidx.lifecycle.Observer;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -106,6 +106,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
+        //todo testme, need to explicitly LoggedInUser.getUser().removeObservers(LoggedInUserObserver); ?
         LoggedInUserObserver = getLoggedInUserObserver();
         LoggedInUser.getUser().observe(this, LoggedInUserObserver);
         LoggedInUser.setLoggedInUser(LoggedInUser.getUser().getValue());
@@ -236,14 +237,14 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 //                drawerLayout.closeDrawer(GravityCompat.START);
                 });
 
-                    menu.findItem(R.id.nav_profile).setVisible(true);
-                    menu.findItem(R.id.nav_my_videos).setVisible(true);
-                    menu.findItem(R.id.nav_logout).setVisible(true);
-                    menu.findItem(R.id.nav_upload_video).setVisible(true);
-                    menu.findItem(R.id.nav_login).setVisible(false);
-                    menu.findItem(R.id.nav_signup).setVisible(false);
+                menu.findItem(R.id.nav_profile).setVisible(true);
+                menu.findItem(R.id.nav_my_videos).setVisible(true);
+                menu.findItem(R.id.nav_logout).setVisible(true);
+                menu.findItem(R.id.nav_upload_video).setVisible(true);
+                menu.findItem(R.id.nav_login).setVisible(false);
+                menu.findItem(R.id.nav_signup).setVisible(false);
                 message = "Welcome back " + user.getDisplayedName();
-            } else{ // guest
+            } else { // guest
                 if (userName.getText().equals(getResources().getString(R.string.guest))) {
                     message = "Welcome back";
                 } else {
@@ -263,5 +264,12 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             }
             Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
         };
+    }
+
+    public void showLoginSnackbar(View view) {
+        Snackbar.make(view, "Please login to interact", Snackbar.LENGTH_LONG)
+                .setAction("Login", v -> {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
+                }).show();
     }
 }

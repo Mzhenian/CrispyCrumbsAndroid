@@ -1,7 +1,6 @@
 package com.example.crispycrumbs.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,26 +19,22 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
-import com.example.crispycrumbs.view.MainPage;
-import com.example.crispycrumbs.view.VideoPlayerFragment;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.ViewHolder> {
     private static final String TAG = "VideoList_Adapter";
     private final Context context;
     private final OnItemClickListener listener;
+    private final UserViewModel userViewModel;
     protected List<PreviewVideoCard> originalVideoList;
     protected List<PreviewVideoCard> filteredVideoList;
-    private final UserViewModel userViewModel;
 
     public VideoList_Adapter(Context context, List<PreviewVideoCard> videoArrayList, OnItemClickListener listener) {
         this.context = context;
@@ -88,6 +83,12 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     }
 
     public void updateVideoList(List<PreviewVideoCard> newVideoList) {
+        if (newVideoList == null) {
+            Log.e(TAG, "Video list is null");
+            return;
+        }
+
+
         originalVideoList.clear();
         originalVideoList.addAll(newVideoList);
         filteredVideoList.clear();

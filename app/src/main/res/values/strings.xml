@@ -84,4 +84,5 @@
     <string name="less">less</string>
     <string name="my_videos">My videos</string>
     <string name="toggle_theme">Toggle theme</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
 </resources>

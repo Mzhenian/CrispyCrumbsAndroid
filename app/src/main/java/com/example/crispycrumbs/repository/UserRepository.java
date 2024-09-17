@@ -93,38 +93,21 @@ public class UserRepository {
     }
 
     public void updateUserOnServer(UserItem updatedUser, File profilePhotoFile) {
-        // Log the start of the update process
-        Log.d("UserRepository", "Starting server update for user ID: " + updatedUser.getUserId());
-
         // Convert user fields to RequestBody Map
         Map<String, RequestBody> userFields = new HashMap<>();
-        userFields.put("userName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getUserName()));  // Use getUserName() here
+        userFields.put("userName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getUserName()));  // Use getUserName()
         userFields.put("email", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getEmail()));
         userFields.put("phoneNumber", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPhoneNumber()));
-        userFields.put("fullName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getDisplayedName()));  // Use getDisplayedName() here for full name
-
-        Log.d("UserRepository", "User fields prepared for update: userName=" + updatedUser.getUserName()
-                + ", fullName=" + updatedUser.getDisplayedName()
-                + ", email=" + updatedUser.getEmail()
-                + ", phoneNumber=" + updatedUser.getPhoneNumber());
-
-        if (!userFields.isEmpty()) {
-            Log.d("UserRepository", "User fields map size: " + userFields.size());
-        }
+        userFields.put("fullName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getDisplayedName()));  // Use getDisplayedName()
 
         // Convert profile photo file to MultipartBody.Part
         MultipartBody.Part profilePhotoPart = null;
         if (profilePhotoFile != null) {
             RequestBody profilePhotoRequestBody = RequestBody.create(MediaType.parse("image/*"), profilePhotoFile);
             profilePhotoPart = MultipartBody.Part.createFormData("profilePhoto", profilePhotoFile.getName(), profilePhotoRequestBody);
-            Log.d("UserRepository", "Profile photo part created with file: " + profilePhotoFile.getAbsolutePath());
-        } else {
-            Log.d("UserRepository", "No profile photo to update.");
         }
 
-        Log.d("UserRepository", "Token being used: " + LoggedInUser.getToken());
-        Log.d("UserRepository", "Updating user with ID: " + LoggedInUser.getUser().getValue().getUserId());
-
+        // Retrieve the user ID from the logged-in user
         String userId = LoggedInUser.getUser().getValue().getUserId();
 
         // Make the server API call
@@ -132,11 +115,8 @@ public class UserRepository {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful()) {
-                    Log.d("UserRepository", "User updated successfully on server. Response: " + response.body().toString());
-                    // Optionally, update Room after successful server update
-                    executor.execute(() -> userDao.updateUser(response.body().toUserItem()));  // Use server response for updating Room
-                } else {
-                    Log.e("UserRepository", "Failed to update user on server. Response code: " + response.code() + ", Message: " + response.message());
+                    // Update Room after successful server update using the server's response
+                    executor.execute(() -> userDao.updateUser(response.body().toUserItem()));
                 }
             }
 
@@ -146,6 +126,7 @@ public class UserRepository {
             }
         });
     }
+
 
 
 

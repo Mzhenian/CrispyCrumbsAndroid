@@ -53,6 +53,7 @@ public class UserItem implements Serializable {
     private String country;
     private String profilePhoto; // path to the profile picture
 
+    // Constructor (without userId) - userId comes from the server
     public UserItem(String userName, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {
         this.userName = userName;
         this.password = password;
@@ -62,9 +63,6 @@ public class UserItem implements Serializable {
         this.dateOfBirth = dateOfBirth;
         this.country = country;
         this.profilePhoto = profilePhoto;
-
-        String lastUserId = getDataManager().getLastUserId();
-        this.userId = UserLogic.nextId(lastUserId);
     }
 
 

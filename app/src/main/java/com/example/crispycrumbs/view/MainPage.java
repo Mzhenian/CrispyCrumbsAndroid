@@ -187,7 +187,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UploadVideoFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.theme_setter) {
             toggleDarkTheme();
+        } else if (itemId == R.id.nav_edit_profile) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EditProfileFragment()).addToBackStack(null).commit();
         }
+
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -240,6 +243,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                     menu.findItem(R.id.nav_my_videos).setVisible(true);
                     menu.findItem(R.id.nav_logout).setVisible(true);
                     menu.findItem(R.id.nav_upload_video).setVisible(true);
+                    menu.findItem(R.id.nav_edit_profile).setVisible(true);
                     menu.findItem(R.id.nav_login).setVisible(false);
                     menu.findItem(R.id.nav_signup).setVisible(false);
                 message = "Welcome back " + user.getDisplayedName();
@@ -255,6 +259,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 userEmail.setText("");
 
                 menu.findItem(R.id.nav_profile).setVisible(false);
+                menu.findItem(R.id.nav_edit_profile).setVisible(false);
                 menu.findItem(R.id.nav_my_videos).setVisible(false);
                 menu.findItem(R.id.nav_logout).setVisible(false);
                 menu.findItem(R.id.nav_upload_video).setVisible(false);

@@ -59,7 +59,7 @@
 <!--        android:textColor="@color/black_div"-->
 <!--        android:padding="10dp"/>-->
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_my_videos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

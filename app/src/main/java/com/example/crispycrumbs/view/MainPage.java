@@ -1,7 +1,6 @@
 package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
-import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -35,6 +34,7 @@ import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -107,6 +107,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
+        //todo testme, need to explicitly LoggedInUser.getUser().removeObservers(LoggedInUserObserver); ?
         LoggedInUserObserver = getLoggedInUserObserver();
         LoggedInUser.getUser().observe(this, LoggedInUserObserver);
         LoggedInUser.setLoggedInUser(LoggedInUser.getUser().getValue());
@@ -250,6 +251,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
+                profilePicture.setOnClickListener(v -> {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
+//                drawerLayout.closeDrawer(GravityCompat.START);
+                });
 
                 menu.findItem(R.id.nav_profile).setVisible(true);
                 menu.findItem(R.id.nav_my_videos).setVisible(true);
@@ -278,11 +283,14 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
                 Toast.makeText(MainPage.getInstance(), "Goodbye", Toast.LENGTH_SHORT).show();
             }
+            //Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
         };
     }
 
-
-
-
-
+    public void showLoginSnackbar(View view) {
+        Snackbar.make(view, "Please login to interact", Snackbar.LENGTH_LONG)
+                .setAction("Login", v -> {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
+                }).show();
+    }
 }

@@ -85,6 +85,7 @@ public class DataManager {
         return UserList;
     }
 
+    //todo connect to server
     public UserItem getUserById(String userId) {
         for (UserItem user : UserList) {
             if (user.getUserId().equals(userId)) {

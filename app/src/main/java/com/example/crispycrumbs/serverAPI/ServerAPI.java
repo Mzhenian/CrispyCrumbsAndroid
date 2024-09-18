@@ -1,9 +1,10 @@
 package com.example.crispycrumbs.serverAPI;
 
 import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
 
 import java.util.List;
@@ -17,13 +18,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServerAPI {
-    private static ServerAPI serverAPI = new ServerAPI();
-
+    private static final ServerAPI serverAPI = new ServerAPI();
+    private String port = "1324";
     private Retrofit retrofit = null;
     private ServerAPInterface serverAPInterface = null;
-        //private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
-        private String IP = "192.168.0.220";
-    private String port = "1324";
+            private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
+//    private String IP = "10.100.102.62";
 
 
     private ServerAPI() {
@@ -86,13 +86,13 @@ public class ServerAPI {
     }
 
     // Additional methods for video and comment interactions
-    public void getAllVideos(Callback<VideoResponse> callback) {
-        Call<VideoResponse> call = serverAPInterface.getAllVideos();
+    public void getAllVideos(Callback<VideoListsResponse> callback) {
+        Call<VideoListsResponse> call = serverAPInterface.getAllVideos();
         call.enqueue(callback);
     }
 
-    public void getVideoById(String videoId, Callback<VideoResponse> callback) {
-        Call<VideoResponse> call = serverAPInterface.getVideoById(videoId);
+    public void getVideoById(String videoId, Callback<PreviewVideoCard> callback) {
+        Call<PreviewVideoCard> call = serverAPInterface.getVideoById(videoId);
         call.enqueue(callback);
     }
 

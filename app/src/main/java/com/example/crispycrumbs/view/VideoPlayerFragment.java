@@ -189,6 +189,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 Glide.with(VideoPlayerFragment.this)
                         .load(userProfileUrl)
                         .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
+                        .skipMemoryCache(true)
                         .into(profilePicture);
                 userNameTextView.setText(uploader.getUserName());
             } else {

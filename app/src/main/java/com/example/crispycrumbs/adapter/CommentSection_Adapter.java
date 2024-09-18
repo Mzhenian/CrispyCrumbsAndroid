@@ -78,6 +78,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                         Glide.with(context)
                                 .load(userProfileUrl)
                                 .placeholder(R.drawable.default_profile_picture)
+                                .skipMemoryCache(true)
                                 .into(holder.profilePicture);
                         // Set user name
                         holder.userName.setText(user.getUserName());

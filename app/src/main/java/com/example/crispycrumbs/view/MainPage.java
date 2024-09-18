@@ -5,15 +5,22 @@ import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -28,9 +35,11 @@ import androidx.lifecycle.Observer;
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.repository.VideoRepository;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -43,6 +52,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
+    ImageButton connectToServerAlertIcon;
+    Animation flickerAnimation;
 
     private Observer<UserItem> LoggedInUserObserver = null;
 
@@ -89,6 +100,14 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_Bar);
+
+        connectToServerAlertIcon = findViewById(R.id.connectToServerAlertIcon);
+        flickerAnimation = AnimationUtils.loadAnimation(this, R.anim.flicker_effect);
+        connectToServerAlertIcon.setOnClickListener(v -> {
+            showUpdateIPDialog();
+        });
+
+//        startConnectToServerAlert();
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -186,6 +205,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_upload_video) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UploadVideoFragment()).addToBackStack(null).commit();
+        } else if (itemId == R.id.server_ip_setter) {
+            showUpdateIPDialog();
         } else if (itemId == R.id.theme_setter) {
             toggleDarkTheme();
         }
@@ -229,6 +250,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 Glide.with(MainPage.this)
                         .load(userProfilePicUrl)
                         .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
+                        .skipMemoryCache(true)
                         .into(profilePicture);
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
@@ -271,5 +293,52 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 .setAction("Login", v -> {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
                 }).show();
+    }
+
+    public void startConnectToServerAlert() {
+        connectToServerAlertIcon.setVisibility(View.VISIBLE);
+        connectToServerAlertIcon.startAnimation(flickerAnimation);
+    }
+    public void stopConnectToServerAlert() {
+        connectToServerAlertIcon.setVisibility(View.GONE);
+        connectToServerAlertIcon.clearAnimation();
+    }
+    private void showUpdateIPDialog() {
+        ServerAPI serverAPI =  ServerAPI.getInstance();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.update_ip_box, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        EditText inputIP = dialogView.findViewById(R.id.ip_input);
+        Button IPOKButton = dialogView.findViewById(R.id.ip_ok_button);
+        Button IPDEFAULTButton = dialogView.findViewById(R.id.ip_default_button);
+
+        inputIP.setHint("currently: " + serverAPI.getIP());
+
+        IPOKButton.setOnClickListener(v -> {
+            String content = inputIP.getText().toString();
+
+            serverAPI.setIP(content);
+            refreshfragment();
+            dialog.dismiss();
+            //request videos
+            new VideoRepository(AppDB.getDatabase(this)).getMostViewedVideos();
+        });
+
+        IPDEFAULTButton.setOnClickListener(v -> {
+            serverAPI.setIP(ServerAPI.DEFAULT_IP);
+            refreshfragment();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+    private void refreshfragment() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        this.recreate();
     }
 }

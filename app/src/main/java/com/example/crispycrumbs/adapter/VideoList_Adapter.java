@@ -131,6 +131,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             Glide.with(itemView.getContext())
                     .load(thumbnailUrl)
                     .placeholder(R.drawable.default_video_thumbnail)
+                    .skipMemoryCache(true)
                     .into(videoThumbnail);
 
             // Remove the old observer if it exists to prevent data from getting mixed up
@@ -145,6 +146,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
                     Glide.with(itemView.getContext())
                             .load(userProfileUrl)
                             .placeholder(R.drawable.default_profile_picture)
+                            .skipMemoryCache(true)
                             .into(profilePicture);
                     videoUser.setText(user.getUserName());
                 } else {

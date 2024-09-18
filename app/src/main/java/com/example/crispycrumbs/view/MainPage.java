@@ -222,38 +222,29 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         TextView userEmail = headerView.findViewById(R.id.user_email);
 
         return user -> {
-            menu.findItem(R.id.nav_home).setVisible(true);
-            menu.findItem(R.id.theme_setter).setVisible(true);
-            String message;
-
-            if (null != user) { // not guest
+            if (user != null) {
+                // Reload the profile picture URL to ensure the latest image is shown
                 String userProfilePicUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
+
                 Glide.with(MainPage.this)
                         .load(userProfilePicUrl)
-                        .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
+                        .placeholder(R.drawable.default_profile_picture)
                         .into(profilePicture);
+
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
-                profilePicture.setOnClickListener(v -> {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
-//                drawerLayout.closeDrawer(GravityCompat.START);
-                });
 
-                    menu.findItem(R.id.nav_profile).setVisible(true);
-                    menu.findItem(R.id.nav_my_videos).setVisible(true);
-                    menu.findItem(R.id.nav_logout).setVisible(true);
-                    menu.findItem(R.id.nav_upload_video).setVisible(true);
-                    menu.findItem(R.id.nav_edit_profile).setVisible(true);
-                    menu.findItem(R.id.nav_login).setVisible(false);
-                    menu.findItem(R.id.nav_signup).setVisible(false);
-                message = "Welcome back " + user.getDisplayedName();
-            } else{ // guest
-                if (userName.getText().equals(getResources().getString(R.string.guest))) {
-                    message = "Welcome back";
-                } else {
-                    message = "Goodbye " + userName.getText();
-                }
+                menu.findItem(R.id.nav_profile).setVisible(true);
+                menu.findItem(R.id.nav_my_videos).setVisible(true);
+                menu.findItem(R.id.nav_logout).setVisible(true);
+                menu.findItem(R.id.nav_upload_video).setVisible(true);
+                menu.findItem(R.id.nav_edit_profile).setVisible(true);
+                menu.findItem(R.id.nav_login).setVisible(false);
+                menu.findItem(R.id.nav_signup).setVisible(false);
 
+                Toast.makeText(MainPage.getInstance(), "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
+
+            } else { // Case where user is null, meaning no user is logged in
                 profilePicture.setImageResource(R.drawable.default_profile_picture);
                 userName.setText(R.string.guest);
                 userEmail.setText("");
@@ -265,8 +256,12 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 menu.findItem(R.id.nav_upload_video).setVisible(false);
                 menu.findItem(R.id.nav_login).setVisible(true);
                 menu.findItem(R.id.nav_signup).setVisible(true);
+
+                Toast.makeText(MainPage.getInstance(), "Goodbye", Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
         };
     }
+
+
+
 }

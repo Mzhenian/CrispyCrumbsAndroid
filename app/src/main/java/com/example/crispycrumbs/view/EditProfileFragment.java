@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentEditProfileBinding;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
 
@@ -43,6 +45,9 @@ public class EditProfileFragment extends Fragment {
         // Observe logged-in user's data
         viewModel.getUser(null).observe(getViewLifecycleOwner(), userItem -> {
             if (userItem != null) {
+                // Initialize currentPhotoPath to the existing photo path
+                currentPhotoPath = userItem.getProfilePhoto();  // Set to existing photo
+
                 // Prepopulate the fields with current user data
                 Glide.with(this)
                         .load(userItem.getProfilePhoto() != null ? ServerAPI.getInstance().constructUrl(userItem.getProfilePhoto()) : R.drawable.default_profile_picture)
@@ -50,44 +55,60 @@ public class EditProfileFragment extends Fragment {
 
                 binding.editUserName.setText(userItem.getUserName());
                 binding.editUserEmail.setText(userItem.getEmail());
-                binding.editFullName.setText(userItem.getDisplayedName());  // Add fullName
-                binding.editPhoneNumber.setText(userItem.getPhoneNumber());  // Add phone number
+                binding.editFullName.setText(userItem.getDisplayedName());
+                binding.editPhoneNumber.setText(userItem.getPhoneNumber());
 
                 // Set onClickListener for the button to change profile picture
                 binding.btnChangeProfileImg.setOnClickListener(v -> uploadPhoto());
 
                 // Set onClickListener for Save button
                 binding.btnSave.setOnClickListener(v -> {
-                    // Update user details
                     String newUserName = binding.editUserName.getText().toString();
                     String newUserEmail = binding.editUserEmail.getText().toString();
-                    String newFullName = binding.editFullName.getText().toString();  // Capture full name
-                    String newPhoneNumber = binding.editPhoneNumber.getText().toString();  // Capture phone number
+                    String newFullName = binding.editFullName.getText().toString();
+                    String newPhoneNumber = binding.editPhoneNumber.getText().toString();
 
                     // Validate fields
                     if (newUserName.isEmpty() || newUserEmail.isEmpty() || newFullName.isEmpty() || newPhoneNumber.isEmpty()) {
                         Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    Log.d("EditProfile", "Current photo path: " + currentPhotoPath);
 
                     // Create updated UserItem
                     UserItem updatedUser = new UserItem(
-                            newUserName,                // User name
-                            userItem.getPassword(),      // Keep the same password
-                            newFullName,                 // Full name
-                            newUserEmail,                // Email
-                            newPhoneNumber,              // Phone number
-                            userItem.getDateOfBirth(),   // Keep existing date of birth
-                            userItem.getCountry(),       // Keep existing country
-                            currentPhotoPath             // Use the updated photo path (if updated)
+                            newUserName,
+                            userItem.getPassword(),
+                            newFullName,
+                            newUserEmail,
+                            newPhoneNumber,
+                            userItem.getDateOfBirth(),
+                            userItem.getCountry(),
+                            currentPhotoPath  // Use the current photo path
                     );
 
-                    // Convert the profile photo URI to a file
-                    File profilePhotoFile = currentPhotoPath != null ? new File(getRealPathFromUri(Uri.parse(currentPhotoPath))) : null;
+                    // Only create the File if currentPhotoPath is not null
+                    File profilePhotoFile = null;
+                    if (currentPhotoPath != null) {
+                        String realPath = getRealPathFromUri(Uri.parse(currentPhotoPath));
+                        if (realPath != null) {
+                            profilePhotoFile = new File(realPath);  // Create the file only if realPath is valid
+                        }
+                    }
 
-                    // Call the ViewModel to update Room and Server
+                    // Call ViewModel to update Room and Server
                     viewModel.updateUser(updatedUser, profilePhotoFile);
                     Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+
+                    updatedUser.setUserId(LoggedInUser.getUser().getValue().getUserId());
+                    updatedUser.setProfilePhoto(currentPhotoPath);
+                    Log.d("EditProfile", "Updated User ID: " + updatedUser.getUserId());
+                    Log.d("EditProfile", "Updated User image path: " + updatedUser.getProfilePhoto());
+
+                    // Update the logged-in user
+                    LoggedInUser.setLoggedInUser(updatedUser);
+
+                    // Refresh user data
                     viewModel.refreshUser(updatedUser.getUserId());
                 });
             }
@@ -96,9 +117,10 @@ public class EditProfileFragment extends Fragment {
         return view;
     }
 
+
     // Launch gallery to pick an image
     private void uploadPhoto() {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
     }
 

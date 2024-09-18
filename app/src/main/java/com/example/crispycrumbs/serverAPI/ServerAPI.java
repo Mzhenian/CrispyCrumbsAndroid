@@ -22,8 +22,8 @@ public class ServerAPI {
     private String port = "1324";
     private Retrofit retrofit = null;
     private ServerAPInterface serverAPInterface = null;
-            private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
-//    private String IP = "10.100.102.62";
+    //private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
+   private String IP = "192.168.0.220";
 
 
     private ServerAPI() {

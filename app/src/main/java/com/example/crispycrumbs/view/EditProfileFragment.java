@@ -51,7 +51,9 @@ public class EditProfileFragment extends Fragment {
                 // Prepopulate the fields with current user data
                 Glide.with(this)
                         .load(userItem.getProfilePhoto() != null ? ServerAPI.getInstance().constructUrl(userItem.getProfilePhoto()) : R.drawable.default_profile_picture)
+                        .circleCrop()  // Ensures the image is loaded as a circle
                         .into(binding.profilePicture);
+
 
                 binding.editUserName.setText(userItem.getUserName());
                 binding.editUserEmail.setText(userItem.getEmail());

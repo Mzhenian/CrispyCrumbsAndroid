@@ -4,6 +4,7 @@ import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -223,13 +224,29 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
         return user -> {
             if (user != null) {
-                // Reload the profile picture URL to ensure the latest image is shown
-                String userProfilePicUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
+                Log.d("MainPage", "User detected in observer:");
+                Log.d("MainPage", "User Name: " + user.getDisplayedName());
+                Log.d("MainPage", "User Email: " + user.getEmail());
+                Log.d("MainPage", "User Profile Photo: " + user.getProfilePhoto());
 
-                Glide.with(MainPage.this)
-                        .load(userProfilePicUrl)
-                        .placeholder(R.drawable.default_profile_picture)
-                        .into(profilePicture);
+                // Check if profilePhoto is a content URI or server URL
+                String profilePhoto = user.getProfilePhoto();
+                if (profilePhoto != null && profilePhoto.startsWith("content://")) {
+                    Log.d("MainPage", "Loading profile picture from content URI");
+                    // Load directly from content URI (local image)
+                    Glide.with(MainPage.this)
+                            .load(Uri.parse(profilePhoto))
+                            .placeholder(R.drawable.default_profile_picture)
+                            .into(profilePicture);
+                } else {
+                    Log.d("MainPage", "Loading profile picture from server URL");
+                    // Load from server URL
+                    String userProfilePicUrl = ServerAPI.getInstance().constructUrl(profilePhoto);
+                    Glide.with(MainPage.this)
+                            .load(userProfilePicUrl)
+                            .placeholder(R.drawable.default_profile_picture)
+                            .into(profilePicture);
+                }
 
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
@@ -244,7 +261,9 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
                 Toast.makeText(MainPage.getInstance(), "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
 
-            } else { // Case where user is null, meaning no user is logged in
+            } else {
+                Log.d("MainPage", "No user detected. Setting default guest values.");
+
                 profilePicture.setImageResource(R.drawable.default_profile_picture);
                 userName.setText(R.string.guest);
                 userEmail.setText("");
@@ -261,6 +280,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             }
         };
     }
+
+
 
 
 

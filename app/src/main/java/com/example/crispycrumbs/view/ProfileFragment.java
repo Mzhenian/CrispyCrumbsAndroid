@@ -66,7 +66,8 @@ public class ProfileFragment extends Fragment {
                 // If the user has a profile photo, load it; otherwise, use a default picture
                 if (profilePhotoUrl != null && !profilePhotoUrl.isEmpty()) {
                     Glide.with(this)
-                            .load(ServerAPI.getInstance().constructUrl(profilePhotoUrl)) // Load from server
+                            .load(ServerAPI.getInstance().constructUrl(profilePhotoUrl))
+                            .circleCrop() // Load from server
                             .placeholder(R.drawable.default_profile_picture) // Placeholder while loading
                             .error(R.drawable.default_profile_picture) // Fallback if load fails
                             .into(binding.profilePicture);

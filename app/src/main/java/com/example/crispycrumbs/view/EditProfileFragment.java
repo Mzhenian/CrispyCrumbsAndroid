@@ -133,18 +133,21 @@ public class EditProfileFragment extends Fragment {
             if (requestCode == REQUEST_IMAGE_PICK) {
                 Uri photoUri = data.getData();
                 try {
-                    // Set selected image to profile picture view
-                    Bitmap thumbnailBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-                    binding.profilePicture.setImageBitmap(thumbnailBitmap);
+                    // Use Glide to load the selected image with circle crop
+                    Glide.with(this)
+                            .load(photoUri)
+                            .circleCrop()  // Ensures the image is circular
+                            .into(binding.profilePicture);
 
                     // Save the photo URI
                     currentPhotoPath = photoUri.toString();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
     }
+
 
     // Helper method to get the real file path from Uri
     private String getRealPathFromUri(Uri uri) {

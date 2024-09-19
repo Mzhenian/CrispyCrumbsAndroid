@@ -248,6 +248,11 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                             .into(profilePicture);
                 }
 
+                profilePicture.setOnClickListener(v -> {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                });
+
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
 

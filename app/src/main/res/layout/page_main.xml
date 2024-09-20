@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     tools:openDrawer="start"
-    tools:context=".ui.MainPage">
+    tools:context=".view.MainPage">
     <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,9 +31,18 @@
             android:layout_gravity="end"
             android:padding="8dp"
            />
+
+        <ImageButton
+            android:id="@+id/connectToServerAlertIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:visibility="gone"
+            app:srcCompat="@drawable/connect_to_server_alert" />
     </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
+
+        <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/fragment_container"/>
@@ -41,6 +50,7 @@
 </LinearLayout>
 
 
+<!--    todo restore-->
         <com.google.android.material.navigation.NavigationView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -49,7 +59,6 @@
             android:id="@+id/nav_Bar"
             android:layout_gravity="start"
             android:fitsSystemWindows="true">
-
         </com.google.android.material.navigation.NavigationView>
 
 

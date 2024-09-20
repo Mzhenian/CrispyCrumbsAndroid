@@ -40,6 +40,10 @@
             android:icon="@drawable/upload_video_icon"
             android:title="@string/upload_video"/>
 
+        <item android:id="@+id/server_ip_setter"
+            android:icon="@drawable/connect_to_server_icon"
+            android:title="set server IP"/>
+
         <item android:id="@+id/theme_setter"
             android:icon="@drawable/dark_light_mode_icon"
             android:title="Toggle theme"/>

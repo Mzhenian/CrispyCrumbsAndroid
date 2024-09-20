@@ -77,9 +77,11 @@
     <string name="upload_video">Upload Video</string>
     <string name="guest">Guest</string>
     <string name="default_email">daefultemail@mail.com</string>
-    <string name="_0_likes">0 likes</string>
+    <string name="default_likes">"? likes"</string>
     <string name="_0_dislikes">o dislikes</string>
     <string name="birth_date">Birth Date:</string>
     <string name="more">more</string>
     <string name="less">less</string>
+    <string name="deleted_user">[deleted user]</string>
+    <string name="default_views">\? views</string>
 </resources>

@@ -9,6 +9,7 @@
         <item name="colorAccent">@color/crispy_orange_light</item>
         <item name="android:colorBackground">@color/off_white</item>
         <item name="android:windowBackground">@color/off_white</item>
+        <item name="android:statusBarColor">@color/off_white</item>
     </style>
 
     <style name="Theme.CrispyCrumbs.Light" parent="Base.Theme.CrispyCrumbs.Light">

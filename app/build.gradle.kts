@@ -11,15 +11,16 @@ android {
         applicationId = "com.example.crispycrumbs"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "3.0 server connection"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = false //todo enable before last testing
+            isShrinkResources = false //todo enable before last testing
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -37,9 +38,14 @@ android {
 }
 
 dependencies {
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.github.bumptech.glide:glide:4.13.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.3")
+    implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation(libs.gson)
     implementation(libs.appcompat)
-//    implementation("libs.appcompat:appcompat:1.1.0")
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
@@ -49,7 +55,13 @@ dependencies {
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
     implementation(libs.preference)
+    implementation(libs.room.common)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.gson)
+    annotationProcessor(libs.room.compiler)
+
 }

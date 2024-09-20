@@ -36,10 +36,7 @@ import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 import com.example.crispycrumbs.viewModel.VideoPlayerViewModel;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
@@ -68,10 +65,11 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private UserViewModel userViewModel;
     private LiveData<PreviewVideoCard> videoCardLiveData;
     private ProgressBar progressBar;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_video_player, container, false);
+        view = inflater.inflate(R.layout.fragment_video_player, container, false);
 
         userNameTextView = view.findViewById(R.id.user_name);
         videoView = view.findViewById(R.id.video_view);
@@ -117,32 +115,50 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         videoPlayerViewModel.setVideo(bundle.getString("videoId"));
         videoCardLiveData = videoPlayerViewModel.getVideo();
         videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
-            if (video == null) {
+            if (null == video) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Log when the LiveData receives an update
-            Log.d("LiveData update", "Observed LiveData update for videoId: " + video.getVideoId());
-
             if (null != this.video && this.video.getVideoId().equals(video.getVideoId())) {
                 this.video = video;
-                Log.d("LiveData update", "Video now has " + video.getComments().size() + " comments");
                 updateVideoDetails();
                 initializeCommentsSection(video.getComments());  // Update the comment section
-            } else {
-                this.video = video;
-                videoId = video.getVideoId();
-
-                initializeVideo(video);
-                initializeVideoDetails(video);
-                initializeCommentsSection(video.getComments());
+                return;
             }
+            this.video = video;
+            videoId = video.getVideoId();
+
+            initializeVideo(video);
+            initializeVideoDetails(video);
+
+            profilePicture.setOnClickListener(v -> {
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
+            });
+
+            if (null == LoggedInUser.getUser().getValue()) {
+                likeButton.setOnClickListener(v -> {
+                    MainPage.getInstance().showLoginSnackbar(view);
+                });
+
+                unlikeButton.setOnClickListener(v -> {
+                    MainPage.getInstance().showLoginSnackbar(view);
+                });
+            } else {
+                likeButton.setOnClickListener(v -> {
+                    videoPlayerViewModel.likeVideo();
+                });
+
+                unlikeButton.setOnClickListener(v -> {
+                    videoPlayerViewModel.dislikeVideo();
+                });
+            }
+
+            initializeCommentsSection(video.getComments());  // Update the comment section
 
             // Log when UI refreshes with the updated video
             Log.d("LiveData update", "Refreshing UI for updated video data");
         });
-
 
 
         Log.e("Comment update", "End of oncreateview in Fragment");
@@ -197,9 +213,9 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         });
 
         String formattedDate = videoPlayerViewModel.formatDate(video.getUploadDate());
-        date.setText(formattedDate);        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
+        date.setText(formattedDate);
+        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
         shareButton.setOnClickListener(v -> showShareMenu());
-
 
 
     }
@@ -232,7 +248,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private void toggleDescriptionComments() {
         if (description.getVisibility() == View.VISIBLE) {
             descriptionButton.setText(getString(R.string.more));
-            //initializeComments();
+            initializeCommentsSection(video.getComments());
         } else {
             descriptionButton.setText(getString(R.string.less));
             initializeDescription();
@@ -348,7 +364,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private void showAddCommentDialog() {
         UserItem currentUser = LoggedInUser.getUser().getValue();
         if (currentUser == null) {
-            Toast.makeText(getContext(), "Please log in to add a comment.", Toast.LENGTH_SHORT).show();
+            MainPage.getInstance().showLoginSnackbar(view);
             return;
         }
 
@@ -356,7 +372,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.add_comment_box, null);
         builder.setView(dialogView);
-
         AlertDialog dialog = builder.create();
 
         EditText inputContent = dialogView.findViewById(R.id.comment_input);
@@ -367,8 +382,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             String content = inputContent.getText().toString();
 
             if (!content.isEmpty()) {
-                videoPlayerViewModel.insertComment(video.getVideoId(), content);
-                videoPlayerViewModel.refreshVideo(video.getVideoId()); // Explicitly refresh video after adding comment
+                videoPlayerViewModel.insertComment(videoCardLiveData, content);
                 dialog.dismiss();
             } else {
                 Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();

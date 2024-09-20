@@ -188,7 +188,13 @@ public class VideoRepository {
         return videoLiveData;
     }
 
-    public void insertComment(MutableLiveData<PreviewVideoCard> videoLiveData, String videoId, String commentText, String date) {
+    public void insertComment(MutableLiveData<PreviewVideoCard> videoLiveData, String commentText, String date) {
+        if (videoLiveData.getValue() == null) {
+            Log.e("Comment update", "Video is null. Comment action is not permitted.");
+            return;
+        }
+
+        String videoId = videoLiveData.getValue().getVideoId();
         Log.d("Comment update", "Inserting comment for videoId: " + videoId + " with text: " + commentText);
 
         CommentRequest commentRequest = new CommentRequest(videoId, commentText, date);
@@ -203,30 +209,20 @@ public class VideoRepository {
                     Log.d("Comment update", "Successfully added comment on the server: " + newComment.getComment());
 
                     executor.execute(() -> {
-                        PreviewVideoCard video = videoDao.getVideoByIdSync(videoId);
-                        if (video != null) {
-                            Log.d("Comment update", "Current number of comments before adding: " + video.getComments().size());
+                        PreviewVideoCard video = videoLiveData.getValue();
 
-                            video.getComments().add(newComment);
-                            Log.d("Comment update", "New comment added. Total comments now: " + video.getComments().size());
+                        Log.d("Comment update", "Current number of comments before adding: " + video.getComments().size());
 
-                            // Introduce a small delay to ensure UI has time to observe the LiveData update
-                            try {
-                                Thread.sleep(200); // Add a delay of 200ms
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        video.getComments().add(newComment);
+                        Log.d("Comment update", "New comment added. Total comments now: " + video.getComments().size());
 
-                            // Post the updated video to LiveData and ensure it reflects in the UI
-                            videoLiveData.postValue(video);
-                            Log.d("Comment update", "Posted updated video to LiveData for videoId: " + videoId);
+                        // Post the updated video to LiveData and ensure it reflects in the UI
+                        videoLiveData.postValue(video);
+                        Log.d("Comment update", "Posted updated video to LiveData for videoId: " + videoId);
 
-                            // Update Room database with the new data
-                            videoDao.insertVideo(video);
-                            Log.d("Comment update", "Inserted video with updated comments into Room.");
-                        } else {
-                            Log.e("Comment update", "Video not found in Room for videoId: " + videoId);
-                        }
+                        // Update Room database with the new data
+                        videoDao.insertVideo(video);
+                        Log.d("Comment update", "Inserted video with updated comments into Room.");
                     });
                 } else {
                     Log.e("Comment update", "Failed to add comment: " + response.message());

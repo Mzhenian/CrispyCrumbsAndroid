@@ -63,8 +63,13 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        CommentItem item = commentItemArrayList.get(position);
+        // Instead of using position directly:
+        int adapterPosition = holder.getAdapterPosition();  // This ensures the correct position is always retrieved
+
+        CommentItem item = commentItemArrayList.get(adapterPosition); // Use adapterPosition here
         if (item != null) {
+            Log.d(TAG, "Binding comment at position: " + adapterPosition + ", CommentId: " + item.getId());
+
             // Get UserViewModel
             UserViewModel userViewModel = new ViewModelProvider((AppCompatActivity) context).get(UserViewModel.class);
 
@@ -73,6 +78,8 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                 @Override
                 public void onChanged(UserItem user) {
                     if (user != null) {
+                        Log.d(TAG, "Found user for comment at position: " + adapterPosition + ", UserId: " + item.getUserId() + ", UserName: " + user.getUserName());
+
                         // Load user profile image
                         String userProfileUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
                         Glide.with(context)
@@ -83,50 +90,63 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                         holder.userName.setText(user.getUserName());
                     } else {
                         // Handle case where user is not found (e.g., deleted user)
+                        Log.e(TAG, "User not found for comment at position: " + adapterPosition + ", UserId: " + item.getUserId());
+
                         holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
                         holder.userName.setText("[deleted user]");
-                        Log.e(TAG, "User not found");
                     }
                 }
             });
 
             // Set comment content and date
             holder.content.setText(item.getComment());
+            Log.d(TAG, "Setting comment text at position: " + adapterPosition + ", Comment: " + item.getComment());
 
             // Format and set the video date
             String formattedDate = formatDateString(item.getDate());
             holder.date.setText(formattedDate);
+            Log.d(TAG, "Formatted date for comment at position: " + adapterPosition + ": " + formattedDate);
 
             // Show or hide edit/delete buttons based on the current user
             if (item.getUserId().equals(currentUserId)) {
+                Log.d(TAG, "Current user owns comment at position: " + adapterPosition + ". Showing edit/delete buttons.");
                 holder.editButton.setVisibility(View.VISIBLE);
                 holder.deleteButton.setVisibility(View.VISIBLE);
-                holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(position));
+                holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(adapterPosition));
                 holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(holder.getAdapterPosition()));
             } else {
+                Log.d(TAG, "Current user does not own comment at position: " + adapterPosition + ". Hiding edit/delete buttons.");
                 holder.editButton.setVisibility(View.GONE);
                 holder.deleteButton.setVisibility(View.GONE);
             }
-
-            // Handle profile picture click to open user's profile
-            holder.profilePicture.setOnClickListener(v -> {
-                MainPage.getInstance().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment(item.getUserId()))
-                        .commit();
-            });
+        } else {
+            Log.e(TAG, "Comment item is null at position: " + adapterPosition);
         }
+    }
+
+
+
+    public void updateComments(ArrayList<CommentItem> newComments) {
+        Log.d("CommentSection_Adapter", "Updating comment list. Old size: " + this.commentItemArrayList.size() + ", New size: " + newComments.size());
+        this.commentItemArrayList.clear();
+        this.commentItemArrayList.addAll(newComments);
+        notifyDataSetChanged();
+        Log.d("CommentSection_Adapter", "Comments updated. Total new size: " + this.commentItemArrayList.size());
+    }
+
+
+    public void removeComment(int position) {
+        Log.d(TAG, "Removing comment at position: " + position + ". Current total comments: " + getItemCount());
+        commentItemArrayList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
+        Log.d(TAG, "Comment removed. New total comments: " + getItemCount());
     }
 
 
     @Override
     public int getItemCount() {
         return commentItemArrayList.size();
-    }
-
-    public void removeComment(int position) {
-        commentItemArrayList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
     }
 
     private String formatDateString(String originalDate) {
@@ -156,6 +176,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             date = itemView.findViewById(R.id.comment_date);
             editButton = itemView.findViewById(R.id.edit_button);
             deleteButton = itemView.findViewById(R.id.delete_button);
+
         }
     }
 }

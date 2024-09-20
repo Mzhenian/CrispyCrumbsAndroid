@@ -3,6 +3,8 @@ package com.example.crispycrumbs.serverAPI;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.DeleteCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
@@ -14,11 +16,10 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
+import retrofit2.http.HTTP;
 import retrofit2.http.Multipart;
-import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
@@ -45,8 +46,12 @@ public interface ServerAPInterface {
     @GET("videos/{videoId}/comments")
     Call<List<CommentItem>> getCommentsForVideo(@Path("videoId") String videoId);
 
-    @POST("videos/{videoId}/comments")
-    Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
+    @POST("videos/comment")
+    Call<CommentItem> postComment(@Body CommentRequest commentRequest);
+
+    @HTTP(method = "DELETE", path = "videos/comment", hasBody = true)
+    Call<Void> deleteComment(@Body DeleteCommentRequest request);
+
 
     @POST("videos/incrementViews")
     Call<ApiResponse<Void>> incrementVideoViews(@Body VideoIdRequest videoIdRequest);

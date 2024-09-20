@@ -14,6 +14,8 @@ import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.DeleteCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
@@ -27,6 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class VideoRepository {
+    private final ServerAPInterface serverAPINOAPI;
     private VideoDao videoDao;
     private ServerAPInterface serverAPI;
     private Executor executor = Executors.newSingleThreadExecutor();
@@ -35,6 +38,7 @@ public class VideoRepository {
     public VideoRepository(AppDB db) {
         videoDao = db.videoDao();
         serverAPI = ServerAPI.getInstance().getAPI();
+        serverAPINOAPI = ServerAPI.getInstance().getAPIWithoutAPI();
     }
 
     public LiveData<List<PreviewVideoCard>> getMostViewedVideos() {
@@ -184,12 +188,86 @@ public class VideoRepository {
         return videoLiveData;
     }
 
-    public void insertComment(CommentItem comment, String videoId) {
-        executor.execute(() -> {
-            PreviewVideoCard video = videoDao.getVideoByIdSync(videoId);
-            if (video != null) {
-                video.getComments().add(comment);
-                videoDao.insertVideo(video);
+    public void insertComment(MutableLiveData<PreviewVideoCard> videoLiveData, String videoId, String commentText, String date) {
+        Log.d("Comment update", "Inserting comment for videoId: " + videoId + " with text: " + commentText);
+
+        CommentRequest commentRequest = new CommentRequest(videoId, commentText, date);
+
+        serverAPI.postComment(commentRequest).enqueue(new Callback<CommentItem>() {
+            @Override
+            public void onResponse(Call<CommentItem> call, Response<CommentItem> response) {
+                Log.d("Comment update", "Server response: isSuccessful=" + response.isSuccessful() + ", body=" + response.body());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    CommentItem newComment = response.body();
+                    Log.d("Comment update", "Successfully added comment on the server: " + newComment.getComment());
+
+                    executor.execute(() -> {
+                        PreviewVideoCard video = videoDao.getVideoByIdSync(videoId);
+                        if (video != null) {
+                            Log.d("Comment update", "Current number of comments before adding: " + video.getComments().size());
+
+                            video.getComments().add(newComment);
+                            Log.d("Comment update", "New comment added. Total comments now: " + video.getComments().size());
+
+                            // Introduce a small delay to ensure UI has time to observe the LiveData update
+                            try {
+                                Thread.sleep(200); // Add a delay of 200ms
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Post the updated video to LiveData and ensure it reflects in the UI
+                            videoLiveData.postValue(video);
+                            Log.d("Comment update", "Posted updated video to LiveData for videoId: " + videoId);
+
+                            // Update Room database with the new data
+                            videoDao.insertVideo(video);
+                            Log.d("Comment update", "Inserted video with updated comments into Room.");
+                        } else {
+                            Log.e("Comment update", "Video not found in Room for videoId: " + videoId);
+                        }
+                    });
+                } else {
+                    Log.e("Comment update", "Failed to add comment: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommentItem> call, Throwable t) {
+                Log.e("Comment update", "Error posting comment", t);
+            }
+        });
+    }
+
+
+
+    public void deleteComment(String videoId, String commentId, String userId) {
+        Log.d("Comment delete", "Sending delete request with videoId: " + videoId + ", commentId: " + commentId + ", userId: " + userId);
+
+        DeleteCommentRequest request = new DeleteCommentRequest(videoId, commentId, userId); // Pass commentId as String
+
+        serverAPI.deleteComment(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Comment delete", "Successfully deleted comment from the server");
+
+                    executor.execute(() -> {
+                        PreviewVideoCard video = videoDao.getVideoByIdSync(videoId);
+                        if (video != null) {
+                            video.getComments().removeIf(comment -> comment.getId().equals(commentId)); // Use String equals
+                            videoDao.insertVideo(video); // Update Room after comment removal
+                        }
+                    });
+                } else {
+                    Log.e("Comment delete", "Failed to delete comment: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("Comment delete", "Error deleting comment", t);
             }
         });
     }
@@ -205,8 +283,10 @@ public class VideoRepository {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Successfully incremented views on server for videoId: " + videoId);
                     executor.execute(() -> {
+
                         // Fetch the latest data from Room after updating views
                         PreviewVideoCard video = videoDao.getVideoByIdSync(videoId);
+
                         if (video != null) {
                             video.setViews(video.getViews() + 1);
                             videoDao.insertVideo(video);

@@ -7,8 +7,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.repository.VideoRepository;
 
 import java.text.ParseException;
@@ -72,4 +76,31 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         }
         return outputFormat.format(date);
     }
+
+    public void insertComment(String videoId, String commentText) {
+        Log.d("VideoPlayerViewModel", "Inserting comment for videoId: " + videoId);
+
+        // Get the current date in the correct format
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(new Date());
+
+        // Retrieve the LiveData for the video
+        MutableLiveData<PreviewVideoCard> videoLiveData = (MutableLiveData<PreviewVideoCard>) videoRepository.getVideo(videoId);
+
+        // Call the repository to handle comment insertion
+        videoRepository.insertComment(videoLiveData, videoId, commentText, currentDate);  // <-- Pass the LiveData instead of just videoId
+
+        // Refresh the video to update the comment section UI
+        setVideo(videoId);
+    }
+
+
+    public void deleteComment(String videoId, String commentId, String userId) {
+        videoRepository.deleteComment(videoId, commentId, userId); // Pass commentId as String
+    }
+
+    public void refreshVideo(String videoId) {
+        setVideo(videoId); // This should fetch the latest data from the server or Room
+    }
+
+
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.repository.VideoRepository;
@@ -40,4 +41,5 @@ public class VideoViewModel extends AndroidViewModel {
     public LiveData<List<PreviewVideoCard>> getVideosByUser(String userId) {
         return videoRepository.getVideosByUser(userId);
     }
+
 }

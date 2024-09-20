@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -35,7 +36,10 @@ import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 import com.example.crispycrumbs.viewModel.VideoPlayerViewModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
@@ -113,45 +117,39 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         videoPlayerViewModel.setVideo(bundle.getString("videoId"));
         videoCardLiveData = videoPlayerViewModel.getVideo();
         videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
-            if (null == video) {
+            if (video == null) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
-//                MainPage.getInstance().getSupportFragmentManager().popBackStack();
                 return;
             }
+
+            // Log when the LiveData receives an update
+            Log.d("LiveData update", "Observed LiveData update for videoId: " + video.getVideoId());
+
             if (null != this.video && this.video.getVideoId().equals(video.getVideoId())) {
                 this.video = video;
+                Log.d("LiveData update", "Video now has " + video.getComments().size() + " comments");
                 updateVideoDetails();
-                return;
-            }
-
-            this.video = video;
-            videoId = video.getVideoId();
-
-            initializeVideo(video);
-            initializeVideoDetails(video);
-
-            profilePicture.setOnClickListener(v -> {
-                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
-            });
-
-            if (null == LoggedInUser.getUser().getValue()) {
-                likeButton.setOnClickListener(v -> {
-                    MainPage.getInstance().showLoginSnackbar(view);
-                });
-
-                unlikeButton.setOnClickListener(v -> {
-                    MainPage.getInstance().showLoginSnackbar(view);
-                });
+                initializeCommentsSection(video.getComments());  // Update the comment section
             } else {
-                likeButton.setOnClickListener(v -> {
-                    videoPlayerViewModel.likeVideo();
-                });
+                this.video = video;
+                videoId = video.getVideoId();
 
-                unlikeButton.setOnClickListener(v -> {
-                    videoPlayerViewModel.dislikeVideo();
-                });
+                initializeVideo(video);
+                initializeVideoDetails(video);
+                initializeCommentsSection(video.getComments());
             }
+
+            // Log when UI refreshes with the updated video
+            Log.d("LiveData update", "Refreshing UI for updated video data");
         });
+
+
+
+        Log.e("Comment update", "End of oncreateview in Fragment");
+        commentButton.setOnClickListener(v -> {
+            showAddCommentDialog();
+        });
+
         return view;
     }
 
@@ -203,26 +201,32 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         shareButton.setOnClickListener(v -> showShareMenu());
 
 
-        // Initialize the comments section
-        initializeCommentsSection(video.getComments());
+
     }
 
     private void initializeCommentsSection(ArrayList<CommentItem> comments) {
+        Log.d("Comment update", "Initializing comment section. Comments size: " + (comments != null ? comments.size() : 0));
+
         if (comments == null || comments.isEmpty()) {
             commentSectionContainer.setVisibility(View.GONE);
             return;
         }
 
-        UserItem currentUser = LoggedInUser.getUser().getValue();
-        String currentUserId = currentUser != null ? currentUser.getUserId() : null;
+        if (adapter == null) {
+            UserItem currentUser = LoggedInUser.getUser().getValue();
+            String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
-        adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            Log.d("Comment update", "Setting up adapter with comments: " + comments.size());
+            adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        } else {
+            Log.d("Comment update", "Updating existing adapter with new comments: " + comments.size());
+            adapter.updateComments(comments);
+        }
 
-        description.setVisibility(View.GONE);
-        buttonBar.setVisibility(View.VISIBLE);
         commentSectionContainer.setVisibility(View.VISIBLE);
+        Log.e("Comment update", "End of Initialize comment section in Fragment");
     }
 
     private void toggleDescriptionComments() {
@@ -269,7 +273,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
         }
     }
-
 
     private void showShareMenu() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -342,6 +345,42 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         outState.putInt(KEY_POSITION, currentPosition);
     }
 
+    private void showAddCommentDialog() {
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "Please log in to add a comment.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.add_comment_box, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        EditText inputContent = dialogView.findViewById(R.id.comment_input);
+        Button positiveButton = dialogView.findViewById(R.id.positive_button);
+        Button negativeButton = dialogView.findViewById(R.id.negative_button);
+
+        positiveButton.setOnClickListener(v -> {
+            String content = inputContent.getText().toString();
+
+            if (!content.isEmpty()) {
+                videoPlayerViewModel.insertComment(video.getVideoId(), content);
+                videoPlayerViewModel.refreshVideo(video.getVideoId()); // Explicitly refresh video after adding comment
+                dialog.dismiss();
+            } else {
+                Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        negativeButton.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+
     @Override
     public void onEditComment(int position) {
         // Implement the edit comment dialog
@@ -349,7 +388,22 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public void onDeleteComment(int position) {
-        // Implement the delete comment functionality
+        Log.d("Comment deletion", "Attempting to delete comment at position: " + position + ". Total comments: " + adapter.getItemCount());
+        CommentItem comment = video.getComments().get(position);
+
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+        if (currentUser != null && comment.getUserId().equals(currentUser.getUserId())) {
+            // Ensure only the user who made the comment can delete it
+
+            if (position >= 0 && position < video.getComments().size()) {
+                adapter.removeComment(position);
+                videoPlayerViewModel.deleteComment(video.getVideoId(), comment.getId(), currentUser.getUserId()); // Use String commentId
+            } else {
+                Log.e("Comment deletion", "Attempted to delete a comment at invalid position: " + position);
+            }
+        } else {
+            Toast.makeText(getContext(), "You can only delete your own comments", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void hideMediaController() {

@@ -1,7 +1,10 @@
 package com.example.crispycrumbs.serverAPI;
 
+import android.util.Log;
+
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
@@ -24,6 +27,8 @@ public class ServerAPI {
     private ServerAPInterface serverAPInterface = null;
     //private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
    private String IP = "192.168.0.220";
+    private Retrofit retrofitWithoutAPI;
+    private ServerAPInterface serverAPInterfaceWithoutAPI;
 
 
     private ServerAPI() {
@@ -35,19 +40,32 @@ public class ServerAPI {
     }
 
     private void buildRetrofit() {
-        if (null == retrofit || !retrofit.baseUrl().toString().equals("http://" + IP + ":" + port + "/api/")) {
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(new authInterceptor())
-                    .build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new authInterceptor())
+                .build();
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl("http://" + IP + ":" + port + "/api/")
-                    .client(client)
-                    .callbackExecutor(Executors.newSingleThreadExecutor())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            serverAPInterface = retrofit.create(ServerAPInterface.class);
-        }
+        // Retrofit instance with /api/ in the base URL
+        retrofit = new Retrofit.Builder()
+                .baseUrl("http://" + IP + ":" + port + "/api/")
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        serverAPInterface = retrofit.create(ServerAPInterface.class);
+
+        // Retrofit instance without /api/ in the base URL
+        retrofitWithoutAPI = new Retrofit.Builder()
+                .baseUrl("http://" + IP + ":" + port + "/")
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        serverAPInterfaceWithoutAPI = retrofitWithoutAPI.create(ServerAPInterface.class);
+    }
+
+
+    public ServerAPInterface getAPIWithoutAPI() {
+        return serverAPInterfaceWithoutAPI;
     }
 
     public void setIP(String IP) {
@@ -85,25 +103,5 @@ public class ServerAPI {
         });
     }
 
-    // Additional methods for video and comment interactions
-    public void getAllVideos(Callback<VideoListsResponse> callback) {
-        Call<VideoListsResponse> call = serverAPInterface.getAllVideos();
-        call.enqueue(callback);
-    }
-
-    public void getVideoById(String videoId, Callback<PreviewVideoCard> callback) {
-        Call<PreviewVideoCard> call = serverAPInterface.getVideoById(videoId);
-        call.enqueue(callback);
-    }
-
-    public void getCommentsForVideo(String videoId, Callback<List<CommentItem>> callback) {
-        Call<List<CommentItem>> call = serverAPInterface.getCommentsForVideo(videoId);
-        call.enqueue(callback);
-    }
-
-    public void postComment(String videoId, CommentItem comment, Callback<CommentItem> callback) {
-        Call<CommentItem> call = serverAPInterface.postComment(videoId, comment);
-        call.enqueue(callback);
-    }
 }
 

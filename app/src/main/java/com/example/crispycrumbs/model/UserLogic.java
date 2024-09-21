@@ -93,26 +93,6 @@ public class UserLogic {
         return null;
     }
 
-
-    public static UserItem ValidateLogin(String username, String password) {
-        if (username == null || username.isEmpty()) {
-            return null;
-        }
-        if (password == null || password.isEmpty()) {
-            return null;
-        }
-
-        for (UserItem user : getDataManager().getUserList()) {
-            if (user == null) {
-                continue;
-            }
-            if (user.getUserName().equals(username) && user.checkPassword(password)) {
-                return user;
-            }
-        }
-        return null;
-    }
-
     //todo debug math
     public static String nextId(String last) {
         Boolean succeeded = false;

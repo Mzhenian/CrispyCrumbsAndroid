@@ -1,11 +1,16 @@
 package com.example.crispycrumbs.serverAPI;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
+import com.example.crispycrumbs.view.MainPage;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -19,14 +24,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServerAPI {
     private static final ServerAPI serverAPI = new ServerAPI();
-    private String port = "1324";
     private Retrofit retrofit = null;
     private ServerAPInterface serverAPInterface = null;
-    private String IP = DEFAULT_IP ;
+    private String IP;
+//    private MainPage mainPage = MainPage.getInstance();
+    private SharedPreferences sharedPreferences = MainPage.getInstance().getPreferences(Context.MODE_PRIVATE);
 
-    public static final String DEFAULT_IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
+    public static final String DEFAULT_IP = "10.0.2.2"; // the emulator's host IP
+    public static final String port = "1324";
+    public static final String IP_KEY = "IP_KEY";
 
     private ServerAPI() {
+        IP = sharedPreferences.getString(IP_KEY, DEFAULT_IP);
         buildRetrofit();
     }
 
@@ -53,6 +62,7 @@ public class ServerAPI {
 
     public void setIP(String IP) {
         this.IP = IP;
+        sharedPreferences.edit().putString(IP_KEY, IP).apply();
         buildRetrofit();
     }
 

@@ -2,6 +2,11 @@ package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 
+import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_ID_KEY;
+import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_TOKEN_KEY;
+
+import android.app.Application;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +44,7 @@ import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.repository.VideoRepository;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
@@ -52,18 +58,19 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
-    ImageButton connectToServerAlertIcon;
-    Animation flickerAnimation;
-
+    private ImageButton connectToServerAlertIcon;
+    private Animation flickerAnimation;
+    private SharedPreferences sharedPreferences;
     private Observer<UserItem> LoggedInUserObserver = null;
 
     public static DataManager getDataManager() {
         return dataManager;
     }
-
     public static UserLogic getUserLogic() {
         return userLogic;
     }
+
+    public static String THEME_KEY = "THEME_KEY";
 
     public static MainPage getInstance() {
         if (instance == null) {
@@ -85,7 +92,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.page_main);
         instance = this;
-
+        sharedPreferences = getPreferences(MODE_PRIVATE);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -125,19 +132,16 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
 
-        //todo testme, need to explicitly LoggedInUser.getUser().removeObservers(LoggedInUserObserver); ?
-        LoggedInUserObserver = getLoggedInUserObserver();
-        LoggedInUser.getUser().observe(this, LoggedInUserObserver);
-        LoggedInUser.setLoggedInUser(LoggedInUser.getUser().getValue());
+        initLoggedInUser();
 
         userLogic = UserLogic.getInstance();
         dataManager = DataManager.getInstance();
         dataManager.loadVideosFromJson(this);
         dataManager.loadUsersFromJson(this);
 
-        for (UserItem user : dataManager.getUserList()) {
-            Log.d("User", "ID: " + user.getUserId() + ", Name: " + user.getUserName());
-        }
+//        for (UserItem user : dataManager.getUserList()) {
+//            Log.d("User", "ID: " + user.getUserId() + ", Name: " + user.getUserName());
+//        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
@@ -155,8 +159,22 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        initDarkMode();
     }
 
+    private void initLoggedInUser() {
+        Application application = MainPage.getInstance().getApplication();
+        AppDB db = AppDB.getDatabase(application);
+        UserRepository userRepository = new UserRepository(db);
+
+        LoggedInUserObserver = getLoggedInUserObserver();
+        LoggedInUser.getUser().observe(this, LoggedInUserObserver);
+        String userId = sharedPreferences.getString(LIU_ID_KEY, null);
+        LoggedInUser.setLoggedInUser(userId);
+        LoggedInUser.setToken(sharedPreferences.getString(LIU_TOKEN_KEY, ""));
+
+    }
     @Override
     public void onBackPressed() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
@@ -214,19 +232,28 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         return true;
     }
 
+    private void initDarkMode() {
+        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        int savedNightMode = sharedPreferences.getInt(THEME_KEY, Configuration.UI_MODE_NIGHT_NO);
+        if (currentNightMode != savedNightMode) {
+            toggleDarkTheme();
+        }
+    }
+
     private void toggleDarkTheme() {
-        Configuration configuration = getResources().getConfiguration();
-        int currentNightMode = configuration.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (currentNightMode) {
             case Configuration.UI_MODE_NIGHT_NO:
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_YES).apply();
                 break;
             case Configuration.UI_MODE_NIGHT_YES:
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_NO).apply();
                 break;
             default:
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-
+                sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_YES).apply();
                 break;
         }
     }
@@ -322,7 +349,9 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         IPOKButton.setOnClickListener(v -> {
             String content = inputIP.getText().toString();
 
-            serverAPI.setIP(content);
+            if (!content.isEmpty()) {
+                serverAPI.setIP(content);
+            }
             refreshfragment();
             dialog.dismiss();
             //request videos

@@ -16,6 +16,7 @@ import com.example.crispycrumbs.serverAPI.ServerAPInterface;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.DeleteCommentRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.EditCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
@@ -29,7 +30,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class VideoRepository {
-    private final ServerAPInterface serverAPINOAPI;
     private VideoDao videoDao;
     private ServerAPInterface serverAPI;
     private Executor executor = Executors.newSingleThreadExecutor();
@@ -38,7 +38,6 @@ public class VideoRepository {
     public VideoRepository(AppDB db) {
         videoDao = db.videoDao();
         serverAPI = ServerAPI.getInstance().getAPI();
-        serverAPINOAPI = ServerAPI.getInstance().getAPIWithoutAPI();
     }
 
     public LiveData<List<PreviewVideoCard>> getMostViewedVideos() {
@@ -236,12 +235,52 @@ public class VideoRepository {
         });
     }
 
+    public void editComment(MutableLiveData<PreviewVideoCard> videoLiveData, String commentId, String newContent, String date) {
+        if (videoLiveData.getValue() == null) {
+            Log.e("Comment edit", "Video is null. Edit action is not permitted.");
+            return;
+        }
 
+        String videoId = videoLiveData.getValue().getVideoId();
+        Log.d("Comment edit", "Editing comment for videoId: " + videoId + ", commentId: " + commentId);
 
-    public void deleteComment(String videoId, String commentId, String userId) {
-        Log.d("Comment delete", "Sending delete request with videoId: " + videoId + ", commentId: " + commentId + ", userId: " + userId);
+        // Create the new EditCommentRequest object
+        EditCommentRequest editCommentRequest = new EditCommentRequest(videoId, commentId, LoggedInUser.getUser().getValue().getUserId(), newContent, date);
 
-        DeleteCommentRequest request = new DeleteCommentRequest(videoId, commentId, userId); // Pass commentId as String
+        // Send the edit request to the server
+        serverAPI.editComment(editCommentRequest).enqueue(new Callback<PreviewVideoCard>() {
+            @Override
+            public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PreviewVideoCard updatedVideo = response.body();
+                    Log.d("Comment edit", "Successfully edited comment on the server");
+
+                    // Update Room database with the new video (including the edited comment)
+                    executor.execute(() -> {
+                        // Update the Room database
+                        videoDao.insertVideo(updatedVideo);
+                        Log.d("Comment edit", "Updated video in Room with the edited comment");
+
+                        // Post the updated video to LiveData to update the UI
+                        videoLiveData.postValue(updatedVideo);
+                        Log.d("Comment edit", "Posted updated video to LiveData");
+                    });
+                } else {
+                    Log.e("Comment edit", "Failed to edit comment on the server: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PreviewVideoCard> call, Throwable t) {
+                Log.e("Comment edit", "Error while editing comment", t);
+            }
+        });
+    }
+
+    public void deleteComment(MutableLiveData<PreviewVideoCard> videoLivaData, String commentId, String userId) {
+        Log.d("Comment delete", "Sending delete request with videoId: " + videoLivaData.getValue().getVideoId() + ", commentId: " + commentId + ", userId: " + userId);
+
+        DeleteCommentRequest request = new DeleteCommentRequest(videoLivaData.getValue().getVideoId(), commentId, userId); // Pass commentId as String
 
         serverAPI.deleteComment(request).enqueue(new Callback<Void>() {
             @Override
@@ -250,10 +289,11 @@ public class VideoRepository {
                     Log.d("Comment delete", "Successfully deleted comment from the server");
 
                     executor.execute(() -> {
-                        PreviewVideoCard video = videoDao.getVideoByIdSync(videoId);
+                        PreviewVideoCard video = videoDao.getVideoByIdSync(videoLivaData.getValue().getVideoId());
                         if (video != null) {
                             video.getComments().removeIf(comment -> comment.getId().equals(commentId)); // Use String equals
                             videoDao.insertVideo(video); // Update Room after comment removal
+                            videoLivaData.postValue(video);
                         }
                     });
                 } else {

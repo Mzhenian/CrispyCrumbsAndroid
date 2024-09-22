@@ -90,8 +90,16 @@ public class VideoPlayerViewModel extends AndroidViewModel {
 //        setVideo(videoLiveData);
     }
 
+    public void editComment(LiveData videoLiveData, String commentId, String newContent) {
+        // Get the current date in the correct format
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(new Date());
 
-    public void deleteComment(String videoId, String commentId, String userId) {
-        videoRepository.deleteComment(videoId, commentId, userId); // Pass commentId as String
+        // Call the repository to handle comment editing
+        videoRepository.editComment((MutableLiveData<PreviewVideoCard>) videoLiveData, commentId, newContent, currentDate);
+    }
+
+
+    public void deleteComment(LiveData videoLiveData, String commentId, String userId) {
+        videoRepository.deleteComment((MutableLiveData<PreviewVideoCard>) videoLiveData, commentId, userId); // Pass commentId as String
     }
 }

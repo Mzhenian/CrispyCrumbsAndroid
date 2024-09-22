@@ -26,10 +26,7 @@ public class ServerAPI {
     private Retrofit retrofit = null;
     private ServerAPInterface serverAPInterface = null;
     //private String IP = "10.0.2.2"; // Default IP, assuming the server is running on the same machine as the emulator
-   private String IP = "192.168.0.220";
-    private Retrofit retrofitWithoutAPI;
-    private ServerAPInterface serverAPInterfaceWithoutAPI;
-
+   private String IP = "192.168.7.220";
 
     private ServerAPI() {
         buildRetrofit();
@@ -53,19 +50,6 @@ public class ServerAPI {
                 .build();
         serverAPInterface = retrofit.create(ServerAPInterface.class);
 
-        // Retrofit instance without /api/ in the base URL
-        retrofitWithoutAPI = new Retrofit.Builder()
-                .baseUrl("http://" + IP + ":" + port + "/")
-                .client(client)
-                .callbackExecutor(Executors.newSingleThreadExecutor())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        serverAPInterfaceWithoutAPI = retrofitWithoutAPI.create(ServerAPInterface.class);
-    }
-
-
-    public ServerAPInterface getAPIWithoutAPI() {
-        return serverAPInterfaceWithoutAPI;
     }
 
     public void setIP(String IP) {

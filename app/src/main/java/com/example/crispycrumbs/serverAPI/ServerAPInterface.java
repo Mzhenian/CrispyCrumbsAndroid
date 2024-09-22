@@ -5,6 +5,7 @@ import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.DeleteCommentRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.EditCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
@@ -48,6 +49,11 @@ public interface ServerAPInterface {
 
     @POST("videos/comment")
     Call<CommentItem> postComment(@Body CommentRequest commentRequest);
+
+    @PUT("videos/comment")
+    Call<PreviewVideoCard> editComment(@Body EditCommentRequest request);
+
+
 
     @HTTP(method = "DELETE", path = "videos/comment", hasBody = true)
     Call<Void> deleteComment(@Body DeleteCommentRequest request);

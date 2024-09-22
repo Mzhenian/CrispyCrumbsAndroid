@@ -114,7 +114,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         videoPlayerViewModel.setVideo(bundle.getString("videoId"));
         videoCardLiveData = videoPlayerViewModel.getVideo();
-        videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
+        videoCardLiveData.observeForever(video -> {
             if (null == video) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
                 return;
@@ -160,8 +160,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             Log.d("LiveData update", "Refreshing UI for updated video data");
         });
 
-
-        Log.e("Comment update", "End of oncreateview in Fragment");
         commentButton.setOnClickListener(v -> {
             showAddCommentDialog();
         });
@@ -372,6 +370,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.add_comment_box, null);
         builder.setView(dialogView);
+
         AlertDialog dialog = builder.create();
 
         EditText inputContent = dialogView.findViewById(R.id.comment_input);
@@ -397,8 +396,44 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public void onEditComment(int position) {
-        // Implement the edit comment dialog
+        CommentItem comment = video.getComments().get(position);
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+
+        if (currentUser != null && comment.getUserId().equals(currentUser.getUserId())) {
+            // Open the dialog to edit the comment
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.add_comment_box, null);
+            builder.setView(dialogView);
+
+            AlertDialog dialog = builder.create();
+
+            EditText inputContent = dialogView.findViewById(R.id.comment_input);
+            inputContent.setText(comment.getComment()); // Pre-fill with the current comment text
+
+            Button positiveButton = dialogView.findViewById(R.id.positive_button);
+            Button negativeButton = dialogView.findViewById(R.id.negative_button);
+
+            positiveButton.setOnClickListener(v -> {
+                String newContent = inputContent.getText().toString();
+
+                if (!newContent.isEmpty()) {
+                    videoPlayerViewModel.editComment(videoCardLiveData, comment.getId(), newContent);
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            negativeButton.setOnClickListener(v -> dialog.dismiss());
+
+            dialog.show();
+        } else {
+            Toast.makeText(getContext(), "You can only edit your own comments", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     @Override
     public void onDeleteComment(int position) {
@@ -410,8 +445,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             // Ensure only the user who made the comment can delete it
 
             if (position >= 0 && position < video.getComments().size()) {
-                adapter.removeComment(position);
-                videoPlayerViewModel.deleteComment(video.getVideoId(), comment.getId(), currentUser.getUserId()); // Use String commentId
+                videoPlayerViewModel.deleteComment(videoCardLiveData, comment.getId(), currentUser.getUserId()); // Use String commentId
             } else {
                 Log.e("Comment deletion", "Attempted to delete a comment at invalid position: " + position);
             }

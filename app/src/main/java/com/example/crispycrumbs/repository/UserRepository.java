@@ -12,6 +12,7 @@ import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 
 import java.io.File;
 import java.util.HashMap;
@@ -92,19 +93,22 @@ public class UserRepository {
         executor.execute(() -> userDao.updateUser(user)); // Update Room
     }
 
-    public void updateUserOnServer(UserItem updatedUser, File profilePhotoFile) {
+    public void updateUserOnServer(UserItem updatedUser, File profilePhotoFile, UserUpdateCallback callback) {
+        Log.d("Update user", "Updating user on server: " + updatedUser.getUserId());
+
         // Convert user fields to RequestBody Map
         Map<String, RequestBody> userFields = new HashMap<>();
-        userFields.put("userName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getUserName()));  // Use getUserName()
+        userFields.put("userName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getUserName()));
         userFields.put("email", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getEmail()));
         userFields.put("phoneNumber", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPhoneNumber()));
-        userFields.put("fullName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getDisplayedName()));  // Use getDisplayedName()
+        userFields.put("fullName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getDisplayedName()));
 
         // Convert profile photo file to MultipartBody.Part
         MultipartBody.Part profilePhotoPart = null;
         if (profilePhotoFile != null) {
             RequestBody profilePhotoRequestBody = RequestBody.create(MediaType.parse("image/*"), profilePhotoFile);
             profilePhotoPart = MultipartBody.Part.createFormData("profilePhoto", profilePhotoFile.getName(), profilePhotoRequestBody);
+            Log.d("Update user", "Profile photo part created: " + profilePhotoFile.getName());
         }
 
         // Retrieve the user ID from the logged-in user
@@ -115,20 +119,30 @@ public class UserRepository {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful()) {
+                    Log.d("Update user", "User updated successfully on server.");
                     // Update Room after successful server update using the server's response
-                    executor.execute(() -> userDao.updateUser(response.body().toUserItem()));
+                    executor.execute(() -> {
+                        userDao.updateUser(response.body().toUserItem());
+                        Log.d("Update user", "User updated successfully in Room.");
+                    });
+                    LoggedInUser.setLoggedInUser(response.body().toUserItem());
+                    // Call success callback
+                    callback.onSuccess();
+                } else {
+                    Log.e("Update user", "Failed to update user on server. Response: " + response.message());
+                    // Call failure callback with the error message
+                    callback.onFailure(response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Log.e("UserRepository", "Error updating user on server", t);
+                Log.e("Update user", "Error updating user on server", t);
+                // Call failure callback with the error
+                callback.onFailure(t.getMessage());
             }
         });
     }
-
-
-
 
 
 

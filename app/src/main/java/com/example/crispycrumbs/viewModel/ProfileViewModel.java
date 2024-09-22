@@ -12,6 +12,7 @@ import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.repository.UserRepository;
+import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 import com.example.crispycrumbs.view.MainPage;
 
 import java.io.File;
@@ -41,21 +42,24 @@ public class ProfileViewModel extends AndroidViewModel {
         return user;
     }
 
-    public void updateUser(UserItem updatedUser, File profilePhotoFile) {
-        Log.d("ProfileViewModel", "Updating user: " + updatedUser.getUserId());
-        Log.d("ProfileViewModel", "Updated user details: " + updatedUser.toString());
+    public void updateUser(UserItem updatedUser, File profilePhotoFile, UserUpdateCallback callback) {
+        Log.d("Update user", "Updating user: " + updatedUser.getUserId());
+        Log.d("Update user", "Updated user details: " + updatedUser.toString());
+
         if (profilePhotoFile != null) {
-            Log.d("ProfileViewModel", "Profile photo file: " + profilePhotoFile.getAbsolutePath());
+            Log.d("Update user", "Profile photo file: " + profilePhotoFile.getAbsolutePath());
         } else {
-            Log.d("ProfileViewModel", "No profile photo to update.");
+            Log.d("Update user", "No profile photo to update.");
         }
 
         // Update Room database
         userRepository.updateUser(updatedUser);
 
-        // Update on server with optional profile photo
-        userRepository.updateUserOnServer(updatedUser, profilePhotoFile);
+        // Update on server with optional profile photo and callback
+        userRepository.updateUserOnServer(updatedUser, profilePhotoFile, callback);
     }
+
+
 
     public void refreshUser(String userId) {
         // Force re-fetching from Room or server

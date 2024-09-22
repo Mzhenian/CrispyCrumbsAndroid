@@ -3,7 +3,6 @@ package com.example.crispycrumbs.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,12 +19,11 @@ import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentEditProfileBinding;
-import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
+import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
 
 import java.io.File;
-import java.io.IOException;
 
 public class EditProfileFragment extends Fragment {
 
@@ -33,6 +31,7 @@ public class EditProfileFragment extends Fragment {
     private ProfileViewModel viewModel;
     private FragmentEditProfileBinding binding;
     private String currentPhotoPath;  // Path to the selected image
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,6 +44,8 @@ public class EditProfileFragment extends Fragment {
         // Observe logged-in user's data
         viewModel.getUser(null).observe(getViewLifecycleOwner(), userItem -> {
             if (userItem != null) {
+                Log.d("Update user", "Loading user data: " + userItem.getUserName());
+
                 // Initialize currentPhotoPath to the existing photo path
                 currentPhotoPath = userItem.getProfilePhoto();  // Set to existing photo
 
@@ -53,7 +54,6 @@ public class EditProfileFragment extends Fragment {
                         .load(userItem.getProfilePhoto() != null ? ServerAPI.getInstance().constructUrl(userItem.getProfilePhoto()) : R.drawable.default_profile_picture)
                         .circleCrop()  // Ensures the image is loaded as a circle
                         .into(binding.profilePicture);
-
 
                 binding.editUserName.setText(userItem.getUserName());
                 binding.editUserEmail.setText(userItem.getEmail());
@@ -75,7 +75,8 @@ public class EditProfileFragment extends Fragment {
                         Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Log.d("EditProfile", "Current photo path: " + currentPhotoPath);
+
+                    Log.d("Update user", "Save button clicked. Updated user data: Username = " + newUserName + ", Email = " + newUserEmail);
 
                     // Create updated UserItem
                     UserItem updatedUser = new UserItem(
@@ -95,23 +96,28 @@ public class EditProfileFragment extends Fragment {
                         String realPath = getRealPathFromUri(Uri.parse(currentPhotoPath));
                         if (realPath != null) {
                             profilePhotoFile = new File(realPath);  // Create the file only if realPath is valid
+                            Log.d("Update user", "Profile photo file path: " + realPath);
                         }
                     }
 
                     // Call ViewModel to update Room and Server
-                    viewModel.updateUser(updatedUser, profilePhotoFile);
-                    Toast.makeText(getContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    viewModel.updateUser(updatedUser, profilePhotoFile, new UserUpdateCallback() {
+                        @Override
+                        public void onSuccess() {
+                            // Navigate to ProfileFragment on success
+                            Log.d("Update user", "Update successful. Navigating to ProfileFragment.");
+                            MainPage.getInstance().getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new ProfileFragment())
+                                    .commit();
+                        }
 
-                    updatedUser.setUserId(LoggedInUser.getUser().getValue().getUserId());
-                    updatedUser.setProfilePhoto(currentPhotoPath);
-                    Log.d("EditProfile", "Updated User ID: " + updatedUser.getUserId());
-                    Log.d("EditProfile", "Updated User image path: " + updatedUser.getProfilePhoto());
-
-                    // Update the logged-in user
-                    LoggedInUser.setLoggedInUser(updatedUser);
-
-                    // Refresh user data
-                    viewModel.refreshUser(updatedUser.getUserId());
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            // Show error message on failure
+                            Log.e("Update user", "Update failed: " + errorMessage);
+                            Toast.makeText(getContext(), "Update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 });
             }
         });
@@ -141,13 +147,13 @@ public class EditProfileFragment extends Fragment {
 
                     // Save the photo URI
                     currentPhotoPath = photoUri.toString();
+                    Log.d("Update user", "Photo selected: " + currentPhotoPath);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Update user", "Error loading selected photo", e);
                 }
             }
         }
     }
-
 
     // Helper method to get the real file path from Uri
     private String getRealPathFromUri(Uri uri) {
@@ -158,6 +164,7 @@ public class EditProfileFragment extends Fragment {
             cursor.moveToFirst();
             String filePath = cursor.getString(columnIndex);
             cursor.close();
+            Log.d("Update user", "Real path from Uri: " + filePath);
             return filePath;
         }
         return null;

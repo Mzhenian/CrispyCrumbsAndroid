@@ -16,9 +16,11 @@ public class CommentItemTypeConverter {
         if (list == null) {
             return null;
         }
+        // Clone the list before converting to JSON to avoid modification issues
+        ArrayList<CommentItem> safeList = new ArrayList<>(list);
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<CommentItem>>() {}.getType();
-        return gson.toJson(list, type);
+        return gson.toJson(safeList, type);
     }
 
     @TypeConverter
@@ -31,3 +33,4 @@ public class CommentItemTypeConverter {
         return gson.fromJson(json, type);
     }
 }
+

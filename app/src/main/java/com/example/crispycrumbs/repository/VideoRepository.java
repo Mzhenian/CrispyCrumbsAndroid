@@ -21,6 +21,7 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -210,10 +211,15 @@ public class VideoRepository {
                     executor.execute(() -> {
                         PreviewVideoCard video = videoLiveData.getValue();
 
-                        Log.d("Comment update", "Current number of comments before adding: " + video.getComments().size());
+                        // Clone the comments list to avoid concurrent modification issues
+                        ArrayList<CommentItem> updatedComments = new ArrayList<>(video.getComments());
+                        Log.d("Comment update", "Current number of comments before adding: " + updatedComments.size());
 
-                        video.getComments().add(newComment);
-                        Log.d("Comment update", "New comment added. Total comments now: " + video.getComments().size());
+                        updatedComments.add(newComment);
+                        Log.d("Comment update", "New comment added. Total comments now: " + updatedComments.size());
+
+                        // Update the video with the cloned list
+                        video.setComments(updatedComments);
 
                         // Post the updated video to LiveData and ensure it reflects in the UI
                         videoLiveData.postValue(video);

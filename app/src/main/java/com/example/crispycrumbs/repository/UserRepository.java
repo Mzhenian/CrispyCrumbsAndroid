@@ -144,7 +144,4 @@ public class UserRepository {
         });
     }
 
-
-
-    // Additional methods for interacting with the server and handling sessions could be added here
 }

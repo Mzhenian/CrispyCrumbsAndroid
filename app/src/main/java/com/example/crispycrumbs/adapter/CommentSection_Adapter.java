@@ -63,21 +63,25 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        // Instead of using position directly:
-        int adapterPosition = holder.getAdapterPosition();  // This ensures the correct position is always retrieved
+        int adapterPosition = holder.getAdapterPosition();
+        CommentItem item = commentItemArrayList.get(adapterPosition);
 
-        CommentItem item = commentItemArrayList.get(adapterPosition); // Use adapterPosition here
         if (item != null) {
-            Log.d(TAG, "Binding comment at position: " + adapterPosition + ", CommentId: " + item.getId());
+            // Reset views before binding new data
+            holder.profilePicture.setImageResource(R.drawable.default_profile_picture); // Reset profile image
+            holder.userName.setText(""); // Clear previous username
 
             // Get UserViewModel
             UserViewModel userViewModel = new ViewModelProvider((AppCompatActivity) context).get(UserViewModel.class);
+
+            // Detach any previous observer before attaching a new one
+            userViewModel.getUser(item.getUserId()).removeObservers((AppCompatActivity) context);
 
             // Observe user information using LiveData
             userViewModel.getUser(item.getUserId()).observe((AppCompatActivity) context, new Observer<UserItem>() {
                 @Override
                 public void onChanged(UserItem user) {
-                    if (user != null) {
+                    if (user != null && user.getUserName() != null) {
                         Log.d(TAG, "Found user for comment at position: " + adapterPosition + ", UserId: " + item.getUserId() + ", UserName: " + user.getUserName());
 
                         // Load user profile image
@@ -86,36 +90,33 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                                 .load(userProfileUrl)
                                 .placeholder(R.drawable.default_profile_picture)
                                 .into(holder.profilePicture);
+
                         // Set user name
                         holder.userName.setText(user.getUserName());
                     } else {
-                        // Handle case where user is not found (e.g., deleted user)
-                        Log.e(TAG, "User not found for comment at position: " + adapterPosition + ", UserId: " + item.getUserId());
+                        // Fallback for deleted user
+                        Log.d(TAG, "User not found or deleted for comment at position: " + adapterPosition + ", UserId: " + item.getUserId());
 
                         holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
-                        holder.userName.setText("[deleted user]");
+                        holder.userName.setText("[Deleted user]"); // Display '[Deleted user]'
                     }
                 }
             });
 
             // Set comment content and date
             holder.content.setText(item.getComment());
-            Log.d(TAG, "Setting comment text at position: " + adapterPosition + ", Comment: " + item.getComment());
 
-            // Format and set the video date
+            // Format and set the comment date
             String formattedDate = formatDateString(item.getDate());
             holder.date.setText(formattedDate);
-            Log.d(TAG, "Formatted date for comment at position: " + adapterPosition + ": " + formattedDate);
 
             // Show or hide edit/delete buttons based on the current user
             if (item.getUserId().equals(currentUserId)) {
-                Log.d(TAG, "Current user owns comment at position: " + adapterPosition + ". Showing edit/delete buttons.");
                 holder.editButton.setVisibility(View.VISIBLE);
                 holder.deleteButton.setVisibility(View.VISIBLE);
                 holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(adapterPosition));
-                holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(holder.getAdapterPosition()));
+                holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(adapterPosition));
             } else {
-                Log.d(TAG, "Current user does not own comment at position: " + adapterPosition + ". Hiding edit/delete buttons.");
                 holder.editButton.setVisibility(View.GONE);
                 holder.deleteButton.setVisibility(View.GONE);
             }

@@ -115,7 +115,9 @@ public class EditProfileFragment extends Fragment {
                         public void onFailure(String errorMessage) {
                             // Show error message on failure
                             Log.e("Update user", "Update failed: " + errorMessage);
-                            Toast.makeText(getContext(), "Update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            getActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), "Update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            });
                         }
                     });
                 });

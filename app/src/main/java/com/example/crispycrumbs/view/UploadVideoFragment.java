@@ -174,21 +174,6 @@ public class UploadVideoFragment extends Fragment {
             builder.show();
             return false;
         }
-
-        // Test that previewVideoCard.getVideoFile() is playable by VideoPlayerFragment
-//        MediaPlayer mediaPlayer = new MediaPlayer();
-//        if (!DataManager.checkStoragePermissions()) {
-//            Log.e("UploadVideoFragment", "no storage permissions");
-//            return false;
-//        }
-//        try {
-//            mediaPlayer.setDataSource(MainPage.getInstance(), getUriFromResOrFile(currentVideoPath));
-//            mediaPlayer.prepare();
-//            mediaPlayer.release();
-//        } catch (IOException e) {
-//            Log.e("UploadVideoFragment", "Video not playable: " + videoUri, e);
-//            return false;
-//        }
         return true;
     }
 
@@ -240,11 +225,6 @@ public class UploadVideoFragment extends Fragment {
                                 Toast.makeText(getContext(), "Failed to get video from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-//                            currentVideoPath = getRealPathFromURI(videoUri);
-//                            if (currentVideoPath == null) {
-//                                Toast.makeText(getContext(), "Failed to get video from user", Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
                             //todo call Bitmap thumbnail = getVideoThumbnail(videoUri); and set it to the thumbnail
                             binding.videoHolder.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
                             txtChooseVideo.setText("");
@@ -270,11 +250,6 @@ public class UploadVideoFragment extends Fragment {
                                 Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-//                        currentThumbnailPath = getRealPathFromURI(thumbnailUri);
-//                            if (currentThumbnailPath == null) {
-//                                Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
-//                                return;
-//                            }
                             ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
                             Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
                             binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);

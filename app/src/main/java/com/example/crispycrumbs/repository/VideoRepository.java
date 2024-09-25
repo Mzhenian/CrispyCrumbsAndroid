@@ -286,16 +286,8 @@ public class VideoRepository {
         videoDataBuilder.addFormDataPart("userId", userId);
 
         MultipartBody videoData = videoDataBuilder.build();
-//        MultipartBody.Part videoPart = videoData.part(0);
-//        MultipartBody.Part thumbnailPart = videoData.part(1);
-//        RequestBody titlePart = videoData.part(2).body();
-//        RequestBody descriptionPart = videoData.part(3).body();
-//        RequestBody categoryPart = videoData.part(4).body();
-//        RequestBody tagsPart = videoData.part(5).body();
-//        RequestBody userIdPart = videoData.part(6).body();
 
         try {
-//            serverAPInterface.upload(userId, videoPart, thumbnailPart, titlePart, descriptionPart, categoryPart, tagsPart, userIdPart).enqueue(new Callback<PreviewVideoCard>() {
             serverAPInterface.upload(userId, videoData.part(0), videoData.part(1), videoData.part(2).body(), videoData.part(3).body(),
                     videoData.part(4).body(), videoData.part(5).body(), videoData.part(6).body()).enqueue(new Callback<PreviewVideoCard>() {
                 @Override
@@ -335,7 +327,6 @@ public class VideoRepository {
             }
         });
 
-        // Step 2: Fetch the video from the server and update Room and LiveData
         serverAPInterface.getVideoById(videoId).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {

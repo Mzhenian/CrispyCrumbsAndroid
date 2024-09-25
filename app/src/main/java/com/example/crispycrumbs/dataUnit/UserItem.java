@@ -199,10 +199,6 @@ public class UserItem implements Serializable {
         return userId.equals(userItem.userId);
     }
 
-    public Boolean checkPassword(String password) {
-        return this.password.equals(password);
-    }
-
     public void likeVideo(String videoId) {
         likedVideoIds.add(videoId);
     }

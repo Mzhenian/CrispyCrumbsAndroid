@@ -1,18 +1,24 @@
 package com.example.crispycrumbs.model;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.crispycrumbs.List.UserList;
 import com.example.crispycrumbs.List.VideoList;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.CommentItem;
-import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.view.MainPage;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -23,13 +29,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DataManager {
     public static final String PACKAGE_NAME = MainPage.getInstance().getPackageName();
     public static final int NO_LIKE_DISLIKE = 0, LIKE = 1, DISLIKE = -1;
     private static final String TAG = "DataManager";
+    private static final int PERMISSION_REQUEST_CODE = 100;
     private static DataManager instance;
     private final VideoList videoList;
     private final Map<String, ArrayList<CommentItem>> commentsMap;
@@ -73,12 +79,21 @@ public class DataManager {
         }
     }
 
-    public List<PreviewVideoCard> getVideoList() {
-        return videoList.getVideos();
+    public static String getDefaultProfilePhoto() {
+        return Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_profile_picture).toString();
     }
 
-    public List<PreviewVideoCard> getpersonalVideoList() {
-        return personalVideoList.getVideos();
+    public static Boolean checkStoragePermissions() {
+        if (ContextCompat.checkSelfPermission(MainPage.getInstance(), READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(MainPage.getInstance(),
+                    new String[]{READ_EXTERNAL_STORAGE},
+                    PERMISSION_REQUEST_CODE);
+
+            return (ContextCompat.checkSelfPermission(MainPage.getInstance(), READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            return true;
+        }
     }
 
     public ArrayList<UserItem> getUserList() {
@@ -202,39 +217,6 @@ public class DataManager {
         UserList.add(user);
     }
 
-    public void addVideo(PreviewVideoCard video) {
-        getVideoList().add(video);
-        commentsMap.put(video.getVideoId(), video.getComments());
-        dislikesMap.put(video.getVideoId(), video.getDislikes());
-        likesMap.put(video.getVideoId(), video.getLikes());
-    }
-
-    public String getLastUserId() {
-        if (lastUserId != null) {
-            return lastUserId;
-        }
-        String last = "";
-        for (UserItem user : UserList) {
-            if (user.getUserId().compareTo(last) > 0) {
-                last = user.getUserId();
-            }
-        }
-        return last;
-    }
-
-    public String getLastVideoId() {
-        if (lastVideoId != null) {
-            return lastVideoId;
-        }
-        String last = "";
-        for (PreviewVideoCard video : videoList.getVideos()) {
-            if (video.getVideoId().compareTo(last) > 0) {
-                last = video.getVideoId();
-            }
-        }
-        return last;
-    }
-
     public String getFileExtension(Uri uri) {
         ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
@@ -332,10 +314,6 @@ public class DataManager {
 
     public int getDislikesCount(String videoId) {
         return dislikesMap.getOrDefault(videoId, 0);
-    }
-
-    public static String getDefaultProfilePhoto() {
-        return Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_profile_picture).toString();
     }
 }
 

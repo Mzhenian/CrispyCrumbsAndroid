@@ -19,12 +19,16 @@ public class PingServerInterceptor implements Interceptor {
         try {
             Response response = chain.proceed(request);
             if (mainPage != null) {
-                mainPage.runOnUiThread(() -> mainPage.stopConnectToServerAlert());
+                if (response.isSuccessful()) {
+                    mainPage.runOnUiThread(() -> mainPage.stopConnectToServerAlert());
+                } else {
+                    mainPage.runOnUiThread(() -> mainPage.startConnectToServerAlert());
+                }
             }
             return response;
         } catch (IOException e) {
             if (mainPage != null) {
-                mainPage.runOnUiThread(() ->  mainPage.startConnectToServerAlert());
+                mainPage.runOnUiThread(() -> mainPage.startConnectToServerAlert());
                 Log.e("PingServerInterceptor", "Failed to connect to server");
             }
             throw e;

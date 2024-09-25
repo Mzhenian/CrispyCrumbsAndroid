@@ -43,7 +43,7 @@ public class EditVideoFragment extends Fragment {
     private TextView txtChooseVideo;
     private TextView txtChooseThumbnail;
     private TextView TitleEditVideo;
-    private ImageView imageView, thumbnailImageHolder;
+    private ImageView videoHolder, thumbnailImageHolder;
     private Button btnOpenCamera, btnChooseFromGallery;
     private ProgressBar progressBar;
     private String currentThumbnailPath;
@@ -82,8 +82,8 @@ public class EditVideoFragment extends Fragment {
         etVideoDescription = view.findViewById(R.id.etVideoDescription);
         etVideoDescription.setText(video.getDescription());
 
-        imageView = view.findViewById(R.id.imageView);
-        binding.imageView.setImageURI(getUriFromResOrFile(video.getThumbnail()));
+        videoHolder = view.findViewById(R.id.video_holder);
+        binding.videoHolder.setImageURI(getUriFromResOrFile(video.getThumbnail()));
 
         thumbnailImageHolder = view.findViewById(R.id.thumbnailImageHolder);
         progressBar = view.findViewById(R.id.progressBar);

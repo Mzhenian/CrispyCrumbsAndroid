@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.CrispyCrumbs" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
-<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-<!--        <item name="colorAccent">@color/colorAccent</item>-->
-
+        <item name="colorPrimary">@color/ofek_black</item>
+        <item name="colorPrimaryDark">@color/ofek_white</item>
+        <item name="colorAccent">@color/crispy_orange</item>
     </style>
+<!--        <item name="android:statusBarColor">#000000</item>-->
+<!--        <item name="android:windowLightStatusBar">true</item>-->
+<!--        <item name="android:enforceStatusBarContrast">true</item>-->
 
     <style name="TextAppearance.BoldText" parent="TextAppearance.AppCompat">
         <item name="android:textSize">18sp</item>
@@ -13,7 +15,7 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
-    <style name="custom_button" parent="Widget.AppCompat.Button">
+    <style name="round_corners_button" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/small_button_style_light</item>
         <item name="android:textColor">@android:color/holo_orange_light</item>
         <item name="android:padding">8dp</item>

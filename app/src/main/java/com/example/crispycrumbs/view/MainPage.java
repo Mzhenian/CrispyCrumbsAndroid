@@ -29,6 +29,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -237,6 +238,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         int savedNightMode = sharedPreferences.getInt(THEME_KEY, Configuration.UI_MODE_NIGHT_NO);
         if (currentNightMode != savedNightMode) {
             toggleDarkTheme();
+        } else if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            getWindow().getDecorView().setSystemUiVisibility(0);
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
     }
 
@@ -245,16 +250,23 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         switch (currentNightMode) {
             case Configuration.UI_MODE_NIGHT_NO:
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                getWindow().getDecorView().setSystemUiVisibility(0);
                 sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_YES).apply();
                 break;
             case Configuration.UI_MODE_NIGHT_YES:
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                 sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_NO).apply();
                 break;
             default:
                 setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                getWindow().getDecorView().setSystemUiVisibility(0);
                 sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_YES).apply();
                 break;
+
+//            getWindow().getStatusBarColor(ContextCompat.getColor(this, R.color.crispy_orange));
+//            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.crispy_orange));
+
         }
     }
 

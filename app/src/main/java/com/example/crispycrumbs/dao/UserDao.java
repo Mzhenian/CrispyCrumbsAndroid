@@ -20,9 +20,10 @@ public interface UserDao {
     @Update
     void updateUser(UserItem user);
 
-    @Query("SELECT * FROM users WHERE userId = :userId")
+    @Query("SELECT * FROM users WHERE userId = :userId LIMIT 1")
     LiveData<UserItem> getUserById(String userId);
 
+    //todo limit to 10 plus the loggedin user
     @Query("SELECT * FROM users")
     LiveData<List<UserItem>> getAllUsers();
 

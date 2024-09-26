@@ -33,7 +33,7 @@
     <string name="btn_sign_up">Sign up!</string>
     <string name="et_username">* username</string>
     <string name="et_last_mame">last mame</string>
-    <string name="et_phone_number">phone number</string>
+    <string name="et_phone_number">Phone number</string>
     <string name="et_date_of_birth">birth date (dd/mm/yyyy)</string>
     <string name="forgot_my_password">forgot my password?</string>
     <string name="btn_already_have_a_user">already have a user?</string>
@@ -82,6 +82,9 @@
     <string name="birth_date">Birth Date:</string>
     <string name="more">more</string>
     <string name="less">less</string>
+    <string name="my_videos">My videos</string>
+    <string name="toggle_theme">Toggle theme</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
     <string name="deleted_user">[deleted user]</string>
     <string name="default_views">\? views</string>
 </resources>

@@ -2,6 +2,9 @@ package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 
+import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_ID_KEY;
+import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_TOKEN_KEY;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -263,6 +266,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     public Observer<UserItem> getLoggedInUserObserver() {
         Menu menu = navigationView.getMenu();
 
+        // Get references to the header view and its components
         NavigationView navigationView = findViewById(R.id.nav_Bar);
         View headerView = navigationView.getHeaderView(0);
         ImageView profilePicture = headerView.findViewById(R.id.profile_picture);
@@ -270,37 +274,33 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         TextView userEmail = headerView.findViewById(R.id.user_email);
 
         return user -> {
-            menu.findItem(R.id.nav_home).setVisible(true);
-            menu.findItem(R.id.theme_setter).setVisible(true);
-            String message;
+            if (user != null) {
+                // User is logged in
+                Log.d("MainPage", "User is logged in: " + user.getUserName());
 
-                // Check if profilePhoto is a content URI or server URL
+                // Update the profile picture
                 String profilePhoto = user.getProfilePhoto();
                 if (profilePhoto != null && profilePhoto.startsWith("content://")) {
-                    Log.d("MainPage", "Loading profile picture from content URI");
-                    // Load directly from content URI (local image)
+                    // Local URI (content URI)
                     Glide.with(MainPage.this)
                             .load(Uri.parse(profilePhoto))
                             .placeholder(R.drawable.default_profile_picture)
                             .into(profilePicture);
                 } else {
-                    Log.d("MainPage", "Loading profile picture from server URL");
-                    // Load from server URL
+                    // Remote server URL
                     String userProfilePicUrl = ServerAPI.getInstance().constructUrl(profilePhoto);
                     Glide.with(MainPage.this)
                             .load(userProfilePicUrl)
-                        .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
-                        .skipMemoryCache(true)
-                        .into(profilePicture);
+                            .placeholder(R.drawable.default_profile_picture)
+                            .skipMemoryCache(true)
+                            .into(profilePicture);
                 }
 
+                // Update UI with user information
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
-                profilePicture.setOnClickListener(v -> {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
-//                drawerLayout.closeDrawer(GravityCompat.START);
-                });
 
+                // Set the correct visibility for menu items when logged in
                 menu.findItem(R.id.nav_profile).setVisible(true);
                 menu.findItem(R.id.nav_my_videos).setVisible(true);
                 menu.findItem(R.id.nav_logout).setVisible(true);
@@ -309,15 +309,26 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 menu.findItem(R.id.nav_login).setVisible(false);
                 menu.findItem(R.id.nav_signup).setVisible(false);
 
-                Toast.makeText(MainPage.getInstance(), "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainPage.this, "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
+
+                // Navigate to profile page on profile picture click
+                profilePicture.setOnClickListener(v -> {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .addToBackStack(null)
+                            .commit();
+                });
 
             } else {
-                Log.d("MainPage", "No user detected. Setting default guest values.");
+                // User is not logged in
+                Log.d("MainPage", "No user logged in, setting guest UI.");
 
+                // Reset profile picture and user details
                 profilePicture.setImageResource(R.drawable.default_profile_picture);
                 userName.setText(R.string.guest);
                 userEmail.setText("");
 
+                // Set the correct visibility for menu items when logged out
                 menu.findItem(R.id.nav_profile).setVisible(false);
                 menu.findItem(R.id.nav_edit_profile).setVisible(false);
                 menu.findItem(R.id.nav_my_videos).setVisible(false);
@@ -326,9 +337,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 menu.findItem(R.id.nav_login).setVisible(true);
                 menu.findItem(R.id.nav_signup).setVisible(true);
 
-                Toast.makeText(MainPage.getInstance(), "Goodbye", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainPage.this, "Goodbye", Toast.LENGTH_SHORT).show();
             }
-            //Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
         };
     }
 

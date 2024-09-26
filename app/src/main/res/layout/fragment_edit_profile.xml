@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Profile Picture -->
+    <ImageView
+        android:id="@+id/profile_picture"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/default_profile_picture"
+        android:scaleType="centerCrop"/>
+
+    <!-- User Name Edit Text -->
+    <EditText
+        android:id="@+id/edit_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/user_name"
+        android:layout_marginTop="16dp"/>
+
+    <!-- User Email Edit Text -->
+    <EditText
+        android:id="@+id/edit_user_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/prompt_email"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editFullName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Full Name"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/editPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:layout_marginTop="16dp"/>
+
+    <ImageButton
+        android:id="@+id/btn_change_profile_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/open_camera"
+        android:contentDescription="@string/change_profile_picture"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"/>
+
+
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/crispy_orange"
+        android:textColor="@color/white"/>
+
+
+</LinearLayout>

@@ -7,8 +7,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.repository.VideoRepository;
 
 import java.text.ParseException;
@@ -63,5 +67,31 @@ public class VideoPlayerViewModel extends AndroidViewModel {
             return dateString; // Return the original string if parsing fails
         }
         return outputFormat.format(date);
+    }
+
+    public void insertComment(LiveData videoLiveData, String commentText) {
+        Log.d("VideoPlayerViewModel", "Inserting comment for videoLiveData: " + videoLiveData);
+
+        // Get the current date in the correct format
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(new Date());
+
+        // Call the repository to handle comment insertion
+        videoRepository.insertComment((MutableLiveData<PreviewVideoCard>) videoLiveData, commentText, currentDate);  // <-- Pass the LiveData instead of just videoLiveData
+
+        // Refresh the video to update the comment section UI
+//        setVideo(videoLiveData);
+    }
+
+    public void editComment(LiveData videoLiveData, String commentId, String newContent) {
+        // Get the current date in the correct format
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(new Date());
+
+        // Call the repository to handle comment editing
+        videoRepository.editComment((MutableLiveData<PreviewVideoCard>) videoLiveData, commentId, newContent, currentDate);
+    }
+
+
+    public void deleteComment(LiveData videoLiveData, String commentId, String userId) {
+        videoRepository.deleteComment((MutableLiveData<PreviewVideoCard>) videoLiveData, commentId, userId); // Pass commentId as String
     }
 }

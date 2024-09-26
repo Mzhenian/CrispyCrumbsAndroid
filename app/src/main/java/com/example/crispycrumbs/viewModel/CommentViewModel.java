@@ -44,11 +44,5 @@ public class CommentViewModel extends AndroidViewModel {
         return comments;
     }
 
-    public void insertComment(CommentItem comment, String videoId) {
-        // Insert the comment via the repository and update the comments LiveData
-        videoRepository.insertComment(comment, videoId);
 
-        // Fetch updated video data and update the comments LiveData
-        loadVideoData(videoId);
-    }
 }

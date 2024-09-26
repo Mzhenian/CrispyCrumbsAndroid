@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="User Name"
-                android:textColor="@android:color/black"
+                android:textColor="@color/ofek_black"
                 android:textStyle="bold" />
 
             <TextView
@@ -43,14 +43,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="This is a sample comment."
-                android:textColor="@android:color/black" />
+                android:textColor="@color/ofek_black" />
 
             <TextView
                 android:id="@+id/comment_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@color/gray_dark"
                 android:textSize="12sp" />
 
             <LinearLayout
@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="Edit"
                     style="@style/BUTTON"
+                    android:textColor="@android:color/white"
                     android:layout_marginEnd="8dp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -73,6 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Delete"
+                    android:textColor="@android:color/white"
                     style="@style/BUTTON"/>
             </LinearLayout>
 

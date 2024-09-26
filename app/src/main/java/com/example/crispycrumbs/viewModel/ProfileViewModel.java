@@ -53,7 +53,7 @@ public class ProfileViewModel extends AndroidViewModel {
         }
 
         // Update Room database
-        userRepository.updateUser(updatedUser);
+        userRepository.updateUserFromRoom(updatedUser);
 
         // Update on server with optional profile photo and callback
         userRepository.updateUserOnServer(updatedUser, profilePhotoFile, callback);

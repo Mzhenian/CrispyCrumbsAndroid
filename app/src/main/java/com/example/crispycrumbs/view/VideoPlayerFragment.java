@@ -114,7 +114,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         videoPlayerViewModel.setVideo(bundle.getString("videoId"));
         videoCardLiveData = videoPlayerViewModel.getVideo();
-        videoCardLiveData.observeForever(video -> {
+        videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
             if (null == video) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
                 return;

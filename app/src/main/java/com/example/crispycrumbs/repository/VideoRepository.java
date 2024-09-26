@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.example.crispycrumbs.serverAPI.ServerAPI;
 
 import com.example.crispycrumbs.List.VideoList;
 import com.example.crispycrumbs.R;
@@ -367,7 +368,7 @@ public class VideoRepository {
 
         CommentRequest commentRequest = new CommentRequest(videoId, commentText, date);
 
-        serverAPI.postComment(commentRequest).enqueue(new Callback<CommentItem>() {
+        serverAPInterface.postComment(commentRequest).enqueue(new Callback<CommentItem>() {
             @Override
             public void onResponse(Call<CommentItem> call, Response<CommentItem> response) {
                 Log.d("Comment update", "Server response: isSuccessful=" + response.isSuccessful() + ", body=" + response.body());
@@ -422,7 +423,7 @@ public class VideoRepository {
         EditCommentRequest editCommentRequest = new EditCommentRequest(videoId, commentId, LoggedInUser.getUser().getValue().getUserId(), newContent, date);
 
         // Send the edit request to the server
-        serverAPI.editComment(editCommentRequest).enqueue(new Callback<PreviewVideoCard>() {
+        serverAPInterface.editComment(editCommentRequest).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -456,7 +457,7 @@ public class VideoRepository {
 
         DeleteCommentRequest request = new DeleteCommentRequest(videoLivaData.getValue().getVideoId(), commentId, userId); // Pass commentId as String
 
-        serverAPI.deleteComment(request).enqueue(new Callback<Void>() {
+        serverAPInterface.deleteComment(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {

@@ -94,11 +94,6 @@ public interface ServerAPInterface {
             @Part("userId") RequestBody loggedInUserId
     );
 
-
-    // Comment endpoints
-    @GET("videos/{videoId}/comments")
-    Call<List<CommentItem>> getCommentsForVideo(@Path("videoId") String videoId);
-
     @POST("videos/{videoId}/comments")
     Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
     // Update user via PUT request (with profile photo)

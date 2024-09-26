@@ -2,12 +2,10 @@ package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 
-import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_ID_KEY;
-import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_TOKEN_KEY;
-
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +40,7 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
 import com.example.crispycrumbs.repository.UserRepository;
@@ -227,7 +226,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             showUpdateIPDialog();
         } else if (itemId == R.id.theme_setter) {
             toggleDarkTheme();
+        } else if (itemId == R.id.nav_edit_profile) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new EditProfileFragment()).addToBackStack(null).commit();
         }
+
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -272,13 +274,26 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             menu.findItem(R.id.theme_setter).setVisible(true);
             String message;
 
-            if (null != user) { // not guest
-                String userProfilePicUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
-                Glide.with(MainPage.this)
-                        .load(userProfilePicUrl)
+                // Check if profilePhoto is a content URI or server URL
+                String profilePhoto = user.getProfilePhoto();
+                if (profilePhoto != null && profilePhoto.startsWith("content://")) {
+                    Log.d("MainPage", "Loading profile picture from content URI");
+                    // Load directly from content URI (local image)
+                    Glide.with(MainPage.this)
+                            .load(Uri.parse(profilePhoto))
+                            .placeholder(R.drawable.default_profile_picture)
+                            .into(profilePicture);
+                } else {
+                    Log.d("MainPage", "Loading profile picture from server URL");
+                    // Load from server URL
+                    String userProfilePicUrl = ServerAPI.getInstance().constructUrl(profilePhoto);
+                    Glide.with(MainPage.this)
+                            .load(userProfilePicUrl)
                         .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
                         .skipMemoryCache(true)
                         .into(profilePicture);
+                }
+
                 userName.setText(user.getDisplayedName());
                 userEmail.setText(user.getEmail());
                 profilePicture.setOnClickListener(v -> {
@@ -290,28 +305,30 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 menu.findItem(R.id.nav_my_videos).setVisible(true);
                 menu.findItem(R.id.nav_logout).setVisible(true);
                 menu.findItem(R.id.nav_upload_video).setVisible(true);
+                menu.findItem(R.id.nav_edit_profile).setVisible(true);
                 menu.findItem(R.id.nav_login).setVisible(false);
                 menu.findItem(R.id.nav_signup).setVisible(false);
-                message = "Welcome back " + user.getDisplayedName();
-            } else { // guest
-                if (userName.getText().equals(getResources().getString(R.string.guest))) {
-                    message = "Welcome back";
-                } else {
-                    message = "Goodbye " + userName.getText();
-                }
+
+                Toast.makeText(MainPage.getInstance(), "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
+
+            } else {
+                Log.d("MainPage", "No user detected. Setting default guest values.");
 
                 profilePicture.setImageResource(R.drawable.default_profile_picture);
                 userName.setText(R.string.guest);
                 userEmail.setText("");
 
                 menu.findItem(R.id.nav_profile).setVisible(false);
+                menu.findItem(R.id.nav_edit_profile).setVisible(false);
                 menu.findItem(R.id.nav_my_videos).setVisible(false);
                 menu.findItem(R.id.nav_logout).setVisible(false);
                 menu.findItem(R.id.nav_upload_video).setVisible(false);
                 menu.findItem(R.id.nav_login).setVisible(true);
                 menu.findItem(R.id.nav_signup).setVisible(true);
+
+                Toast.makeText(MainPage.getInstance(), "Goodbye", Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
         };
     }
 

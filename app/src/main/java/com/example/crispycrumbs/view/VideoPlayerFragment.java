@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -64,10 +65,11 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private UserViewModel userViewModel;
     private LiveData<PreviewVideoCard> videoCardLiveData;
     private ProgressBar progressBar;
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_video_player, container, false);
+        view = inflater.inflate(R.layout.fragment_video_player, container, false);
 
         userNameTextView = view.findViewById(R.id.user_name);
         videoView = view.findViewById(R.id.video_view);
@@ -112,18 +114,18 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         videoPlayerViewModel.setVideo(bundle.getString("videoId"));
         videoCardLiveData = videoPlayerViewModel.getVideo();
-        videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
+        videoCardLiveData.observeForever(video -> {
             if (null == video) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
-//                MainPage.getInstance().getSupportFragmentManager().popBackStack();
-                return;
-            }
-            if (null != this.video && this.video.getVideoId().equals(video.getVideoId())) {
-                this.video = video;
-                updateVideoDetails();
                 return;
             }
 
+            if (null != this.video && this.video.getVideoId().equals(video.getVideoId())) {
+                this.video = video;
+                updateVideoDetails();
+                initializeCommentsSection(video.getComments());  // Update the comment section
+                return;
+            }
             this.video = video;
             videoId = video.getVideoId();
 
@@ -151,7 +153,17 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                     videoPlayerViewModel.dislikeVideo();
                 });
             }
+
+            initializeCommentsSection(video.getComments());  // Update the comment section
+
+            // Log when UI refreshes with the updated video
+            Log.d("LiveData update", "Refreshing UI for updated video data");
         });
+
+        commentButton.setOnClickListener(v -> {
+            showAddCommentDialog();
+        });
+
         return view;
     }
 
@@ -200,36 +212,42 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         });
 
         String formattedDate = videoPlayerViewModel.formatDate(video.getUploadDate());
-        date.setText(formattedDate);        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
+        date.setText(formattedDate);
+        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
         shareButton.setOnClickListener(v -> showShareMenu());
 
 
-        // Initialize the comments section
-        initializeCommentsSection(video.getComments());
     }
 
     private void initializeCommentsSection(ArrayList<CommentItem> comments) {
+        Log.d("Comment update", "Initializing comment section. Comments size: " + (comments != null ? comments.size() : 0));
+
         if (comments == null || comments.isEmpty()) {
             commentSectionContainer.setVisibility(View.GONE);
             return;
         }
 
-        UserItem currentUser = LoggedInUser.getUser().getValue();
-        String currentUserId = currentUser != null ? currentUser.getUserId() : null;
+        if (adapter == null) {
+            UserItem currentUser = LoggedInUser.getUser().getValue();
+            String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
-        adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            Log.d("Comment update", "Setting up adapter with comments: " + comments.size());
+            adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        } else {
+            Log.d("Comment update", "Updating existing adapter with new comments: " + comments.size());
+            adapter.updateComments(comments);
+        }
 
-        description.setVisibility(View.GONE);
-        buttonBar.setVisibility(View.VISIBLE);
         commentSectionContainer.setVisibility(View.VISIBLE);
+        Log.e("Comment update", "End of Initialize comment section in Fragment");
     }
 
     private void toggleDescriptionComments() {
         if (description.getVisibility() == View.VISIBLE) {
             descriptionButton.setText(getString(R.string.more));
-            //initializeComments();
+            initializeCommentsSection(video.getComments());
         } else {
             descriptionButton.setText(getString(R.string.less));
             initializeDescription();
@@ -270,7 +288,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
         }
     }
-
 
     private void showShareMenu() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -343,14 +360,99 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         outState.putInt(KEY_POSITION, currentPosition);
     }
 
+    private void showAddCommentDialog() {
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+        if (currentUser == null) {
+            MainPage.getInstance().showLoginSnackbar(view);
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.add_comment_box, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        EditText inputContent = dialogView.findViewById(R.id.comment_input);
+        Button positiveButton = dialogView.findViewById(R.id.positive_button);
+        Button negativeButton = dialogView.findViewById(R.id.negative_button);
+
+        positiveButton.setOnClickListener(v -> {
+            String content = inputContent.getText().toString();
+
+            if (!content.isEmpty()) {
+                videoPlayerViewModel.insertComment(videoCardLiveData, content);
+                dialog.dismiss();
+            } else {
+                Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        negativeButton.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+
     @Override
     public void onEditComment(int position) {
-        // Implement the edit comment dialog
+        CommentItem comment = video.getComments().get(position);
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+
+        if (currentUser != null && comment.getUserId().equals(currentUser.getUserId())) {
+            // Open the dialog to edit the comment
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            LayoutInflater inflater = getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.add_comment_box, null);
+            builder.setView(dialogView);
+
+            AlertDialog dialog = builder.create();
+
+            EditText inputContent = dialogView.findViewById(R.id.comment_input);
+            inputContent.setText(comment.getComment()); // Pre-fill with the current comment text
+
+            Button positiveButton = dialogView.findViewById(R.id.positive_button);
+            Button negativeButton = dialogView.findViewById(R.id.negative_button);
+
+            positiveButton.setOnClickListener(v -> {
+                String newContent = inputContent.getText().toString();
+
+                if (!newContent.isEmpty()) {
+                    videoPlayerViewModel.editComment(videoCardLiveData, comment.getId(), newContent);
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            negativeButton.setOnClickListener(v -> dialog.dismiss());
+
+            dialog.show();
+        } else {
+            Toast.makeText(getContext(), "You can only edit your own comments", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     @Override
     public void onDeleteComment(int position) {
-        // Implement the delete comment functionality
+        Log.d("Comment deletion", "Attempting to delete comment at position: " + position + ". Total comments: " + adapter.getItemCount());
+        CommentItem comment = video.getComments().get(position);
+
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+        if (currentUser != null && comment.getUserId().equals(currentUser.getUserId())) {
+            // Ensure only the user who made the comment can delete it
+
+            if (position >= 0 && position < video.getComments().size()) {
+                videoPlayerViewModel.deleteComment(videoCardLiveData, comment.getId(), currentUser.getUserId()); // Use String commentId
+            } else {
+                Log.e("Comment deletion", "Attempted to delete a comment at invalid position: " + position);
+            }
+        } else {
+            Toast.makeText(getContext(), "You can only delete your own comments", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void hideMediaController() {

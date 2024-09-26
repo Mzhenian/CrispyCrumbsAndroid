@@ -17,7 +17,7 @@ import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 
-@Database(entities = {UserItem.class, PreviewVideoCard.class, CommentItem.class}, version = 1)
+@Database(entities = {UserItem.class, PreviewVideoCard.class, CommentItem.class}, version = 2) // Updated version
 @TypeConverters({SetTypeConverter.class, StringListTypeConverter.class, CommentItemTypeConverter.class})
 public abstract class AppDB extends RoomDatabase {
     public abstract UserDao userDao();
@@ -32,6 +32,7 @@ public abstract class AppDB extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDB.class, "app_database")
+                            .fallbackToDestructiveMigration() // This will clear the database on schema change
                             .build();
                 }
             }
@@ -39,4 +40,5 @@ public abstract class AppDB extends RoomDatabase {
         return INSTANCE;
     }
 }
+
 

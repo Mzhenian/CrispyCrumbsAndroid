@@ -63,16 +63,27 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        CommentItem item = commentItemArrayList.get(position);
+        int adapterPosition = holder.getAdapterPosition();
+        CommentItem item = commentItemArrayList.get(adapterPosition);
+
         if (item != null) {
+            // Reset views before binding new data
+            holder.profilePicture.setImageResource(R.drawable.default_profile_picture); // Reset profile image
+            holder.userName.setText(""); // Clear previous username
+
             // Get UserViewModel
             UserViewModel userViewModel = new ViewModelProvider((AppCompatActivity) context).get(UserViewModel.class);
+
+            // Detach any previous observer before attaching a new one
+            userViewModel.getUser(item.getUserId()).removeObservers((AppCompatActivity) context);
 
             // Observe user information using LiveData
             userViewModel.getUser(item.getUserId()).observe((AppCompatActivity) context, new Observer<UserItem>() {
                 @Override
                 public void onChanged(UserItem user) {
-                    if (user != null) {
+                    if (user != null && user.getUserName() != null) {
+                        Log.d(TAG, "Found user for comment at position: " + adapterPosition + ", UserId: " + item.getUserId() + ", UserName: " + user.getUserName());
+
                         // Load user profile image
                         String userProfileUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
                         Glide.with(context)
@@ -80,13 +91,15 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                                 .placeholder(R.drawable.default_profile_picture)
                                 .skipMemoryCache(true)
                                 .into(holder.profilePicture);
+
                         // Set user name
                         holder.userName.setText(user.getUserName());
                     } else {
-                        // Handle case where user is not found (e.g., deleted user)
+                        // Fallback for deleted user
+                        Log.d(TAG, "User not found or deleted for comment at position: " + adapterPosition + ", UserId: " + item.getUserId());
+
                         holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
-                        holder.userName.setText("[deleted user]");
-                        Log.e(TAG, "User not found");
+                        holder.userName.setText("[Deleted user]"); // Display '[Deleted user]'
                     }
                 }
             });
@@ -94,7 +107,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             // Set comment content and date
             holder.content.setText(item.getComment());
 
-            // Format and set the video date
+            // Format and set the comment date
             String formattedDate = formatDateString(item.getDate());
             holder.date.setText(formattedDate);
 
@@ -102,32 +115,40 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             if (item.getUserId().equals(currentUserId)) {
                 holder.editButton.setVisibility(View.VISIBLE);
                 holder.deleteButton.setVisibility(View.VISIBLE);
-                holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(position));
-                holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(holder.getAdapterPosition()));
+                holder.editButton.setOnClickListener(v -> commentActionListener.onEditComment(adapterPosition));
+                holder.deleteButton.setOnClickListener(v -> commentActionListener.onDeleteComment(adapterPosition));
             } else {
                 holder.editButton.setVisibility(View.GONE);
                 holder.deleteButton.setVisibility(View.GONE);
             }
-
-            // Handle profile picture click to open user's profile
-            holder.profilePicture.setOnClickListener(v -> {
-                MainPage.getInstance().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment(item.getUserId()))
-                        .commit();
-            });
+        } else {
+            Log.e(TAG, "Comment item is null at position: " + adapterPosition);
         }
+    }
+
+
+
+    public void updateComments(ArrayList<CommentItem> newComments) {
+        Log.d("CommentSection_Adapter", "Updating comment list. Old size: " + this.commentItemArrayList.size() + ", New size: " + newComments.size());
+        this.commentItemArrayList.clear();
+        this.commentItemArrayList.addAll(newComments);
+        notifyDataSetChanged();
+        Log.d("CommentSection_Adapter", "Comments updated. Total new size: " + this.commentItemArrayList.size());
+    }
+
+
+    public void removeComment(int position) {
+        Log.d(TAG, "Removing comment at position: " + position + ". Current total comments: " + getItemCount());
+        commentItemArrayList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, getItemCount());
+        Log.d(TAG, "Comment removed. New total comments: " + getItemCount());
     }
 
 
     @Override
     public int getItemCount() {
         return commentItemArrayList.size();
-    }
-
-    public void removeComment(int position) {
-        commentItemArrayList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
     }
 
     private String formatDateString(String originalDate) {
@@ -157,6 +178,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             date = itemView.findViewById(R.id.comment_date);
             editButton = itemView.findViewById(R.id.edit_button);
             deleteButton = itemView.findViewById(R.id.delete_button);
+
         }
     }
 }

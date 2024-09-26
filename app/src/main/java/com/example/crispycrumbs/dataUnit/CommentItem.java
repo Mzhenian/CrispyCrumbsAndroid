@@ -1,5 +1,6 @@
 package com.example.crispycrumbs.dataUnit;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
@@ -9,7 +10,8 @@ import android.os.Parcelable;
 import java.io.Serializable;
 
 @Entity(tableName = "comments")
-public class CommentItem implements Serializable,  Parcelable  {
+public class CommentItem implements Serializable, Parcelable {
+
     public static final Creator<CommentItem> CREATOR = new Creator<CommentItem>() {
         @Override
         public CommentItem createFromParcel(Parcel in) {
@@ -21,8 +23,11 @@ public class CommentItem implements Serializable,  Parcelable  {
             return new CommentItem[size];
         }
     };
-    @PrimaryKey(autoGenerate = true)
-    private int id;  // Room requires a primary key
+
+    @PrimaryKey
+    @SerializedName("commentId") // Use this to match the field name from the server response, assuming MongoDB's ObjectId field is called `_id`
+    @NonNull
+    private String id; // Now it's a String instead of int
 
     private int avatarResId;
     private String userId;
@@ -30,12 +35,13 @@ public class CommentItem implements Serializable,  Parcelable  {
     private String date;
     private String comment;
 
-    public CommentItem(int avatarResId, String userId, String userName, String comment, String date) {
+    public CommentItem(int avatarResId, String userId, String userName, String comment, String date, String id) {
         this.avatarResId = avatarResId;
         this.userId = userId;
         this.userName = userName;
         this.comment = comment;
         this.date = date;
+        this.id = id; // Initialize with String id
     }
 
     protected CommentItem(Parcel in) {
@@ -44,6 +50,7 @@ public class CommentItem implements Serializable,  Parcelable  {
         userName = in.readString();
         comment = in.readString();
         date = in.readString();
+        id = in.readString(); // Read the String id from Parcel
     }
 
     @Override
@@ -53,6 +60,7 @@ public class CommentItem implements Serializable,  Parcelable  {
         dest.writeString(userName);
         dest.writeString(comment);
         dest.writeString(date);
+        dest.writeString(id); // Write the String id to Parcel
     }
 
     @Override
@@ -84,11 +92,11 @@ public class CommentItem implements Serializable,  Parcelable  {
         return date;
     }
 
-    public int getId() {
+    public String getId() { // Now returns a String
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) { // Now accepts a String
         this.id = id;
     }
 }

@@ -3,8 +3,11 @@ package com.example.crispycrumbs.serverAPI;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import android.util.Log;
+
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
@@ -48,16 +51,16 @@ public class ServerAPI {
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(new authInterceptor())
                     .addInterceptor(new PingServerInterceptor())
-                    .build();
+                .build();
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl("http://" + IP + ":" + port + "/api/")
-                    .client(client)
-                    .callbackExecutor(Executors.newSingleThreadExecutor())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            serverAPInterface = retrofit.create(ServerAPInterface.class);
-        }
+        retrofit = new Retrofit.Builder()
+                .baseUrl("http://" + IP + ":" + port + "/api/")
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        serverAPInterface = retrofit.create(ServerAPInterface.class);
+
     }
 
     public void setIP(String IP) {
@@ -100,25 +103,5 @@ public class ServerAPI {
         });
     }
 
-    // Additional methods for video and comment interactions
-    public void getAllVideos(Callback<VideoListsResponse> callback) {
-        Call<VideoListsResponse> call = serverAPInterface.getAllVideos();
-        call.enqueue(callback);
-    }
-
-    public void getVideoById(String videoId, Callback<PreviewVideoCard> callback) {
-        Call<PreviewVideoCard> call = serverAPInterface.getVideoById(videoId);
-        call.enqueue(callback);
-    }
-
-    public void getCommentsForVideo(String videoId, Callback<List<CommentItem>> callback) {
-        Call<List<CommentItem>> call = serverAPInterface.getCommentsForVideo(videoId);
-        call.enqueue(callback);
-    }
-
-    public void postComment(String videoId, CommentItem comment, Callback<CommentItem> callback) {
-        Call<CommentItem> call = serverAPInterface.postComment(videoId, comment);
-        call.enqueue(callback);
-    }
 }
 

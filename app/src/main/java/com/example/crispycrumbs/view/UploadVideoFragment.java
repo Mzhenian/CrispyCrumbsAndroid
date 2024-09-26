@@ -2,10 +2,12 @@ package com.example.crispycrumbs.view;
 
 
 import static android.app.Activity.RESULT_OK;
+import static androidx.core.content.ContextCompat.getSystemService;
 import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,9 +18,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -112,6 +117,22 @@ public class UploadVideoFragment extends Fragment {
         tagsAdapter = new TagsAdapter(tags);
         rvTagsPreview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvTagsPreview.setAdapter(tagsAdapter);
+
+//        etVideoTag.setOnEditorActionListener((v, actionId, event) -> {
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                String tagText = etVideoTag.getText().toString().trim();
+//                if (tagText.isEmpty()) {
+//                    // Close the keyboard
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(etVideoTag.getWindowToken(), 0);
+//                } else {
+//                    // Trigger the button's onClick event
+//                    btnAddVideoTag.performClick();
+//                }
+//                return true;
+//            }
+//            return false;
+//        });
 
         btnAddVideoTag.setOnClickListener(v -> {
             String tag = etVideoTag.getText().toString().trim();

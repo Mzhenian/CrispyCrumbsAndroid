@@ -75,7 +75,7 @@ public class EditVideoFragment extends Fragment {
             return view;
         }
 
-        TitleEditVideo = view.findViewById(R.id.TitleEditVideo);
+        TitleEditVideo = view.findViewById(R.id.title_edit_video_edit);
         TitleEditVideo.setText("Editing: " + video.getTitle() + " #" + video.getVideoId());
         etVideoTitle = view.findViewById(R.id.etVideoTitle);
         etVideoTitle.setText(video.getTitle());
@@ -83,14 +83,14 @@ public class EditVideoFragment extends Fragment {
         etVideoDescription.setText(video.getDescription());
 
         videoHolder = view.findViewById(R.id.video_holder);
-        binding.videoHolder.setImageURI(getUriFromResOrFile(video.getThumbnail()));
+        binding.videoHolderEdit.setImageURI(getUriFromResOrFile(video.getThumbnail()));
 
         thumbnailImageHolder = view.findViewById(R.id.thumbnailImageHolder);
         progressBar = view.findViewById(R.id.progressBar);
         txtChooseVideo = view.findViewById(R.id.txtChooseVideo);
         txtChooseThumbnail = view.findViewById(R.id.txtChooseThumbnail);
 
-        binding.btnChooseThumbnail.setOnClickListener(v -> uploadPhoto());
+        binding.btnChooseThumbnailEdit.setOnClickListener(v -> uploadPhoto());
         binding.btnUpdate.setOnClickListener(v -> update());
         binding.btnDelete.setOnClickListener(v -> delete());
 
@@ -118,7 +118,7 @@ public class EditVideoFragment extends Fragment {
                 Uri photoUri = data.getData();
                 try {
                     Bitmap thumbnailBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-                    binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
+                    binding.thumbnailImageHolderEdit.setImageBitmap(thumbnailBitmap);
 
 //                    currentThumbnailPath = thumbnailBitmap.toString(); // Update the photo path to the selected image's URI
                     currentThumbnailPath = photoUri.toString();

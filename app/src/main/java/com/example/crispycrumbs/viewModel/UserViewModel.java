@@ -24,10 +24,10 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void updateUser(UserItem updatedUser) {
-        userRepository.updateUser(updatedUser);
+        userRepository.updateUserFromRoom(updatedUser);
     }
 
     public void insertUser(UserItem newUser) {
-        userRepository.insertUser(newUser);
+        userRepository.insertUserToRoom(newUser);
     }
 }

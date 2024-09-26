@@ -63,11 +63,11 @@ public class UserRepository {
     }
 
 
-    public void insertUser(UserItem user) {
+    public void insertUserToRoom(UserItem user) {
         executor.execute(() -> userDao.insertUser(user));
     }
 
-    public void updateUser(UserItem user) {
+    public void updateUserFromRoom(UserItem user) {
         executor.execute(() -> userDao.updateUser(user));
     }
 

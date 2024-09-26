@@ -16,13 +16,16 @@
         tools:ignore="MissingConstraints"
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp">
+
         <ImageView
             android:id="@+id/video_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/background_gray"
             android:contentDescription="VIDEO_THUMBNAIL"
-            tools:ignore="MissingConstraints" />
+            android:scaleType="fitCenter"
+            tools:ignore="MissingConstrints"
+            tools:srcCompat="@drawable/default_video_thumbnail" />
 
         <ImageView
             android:id="@+id/img_edit_mode"

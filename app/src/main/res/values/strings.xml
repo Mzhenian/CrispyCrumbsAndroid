@@ -84,4 +84,7 @@
     <string name="less">less</string>
     <string name="deleted_user">[deleted user]</string>
     <string name="default_views">\? views</string>
+    <string name="editing_video_title">Editing [video title]</string>
+    <string name="original_thumbnail">original thumbnail:</string>
+    <string name="video_title">Video title:</string>
 </resources>

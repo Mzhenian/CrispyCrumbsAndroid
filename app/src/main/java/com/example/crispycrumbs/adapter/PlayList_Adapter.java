@@ -32,10 +32,10 @@ public class PlayList_Adapter extends VideoList_Adapter {
 
 
         ImageView imgEditMode = holder.itemView.findViewById(R.id.img_edit_mode);
-        if (user != null && user.equals(LoggedInUser.getUser())) {
+        if (user != null && user.equals(LoggedInUser.getUser().getValue())) {
             imgEditMode.setVisibility(View.VISIBLE);
 
-            holder.itemView.setOnClickListener(v -> {
+            imgEditMode.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
                 PreviewVideoCard previewVideoCard = filteredVideoList.get(position);
                 bundle.putString("videoId", previewVideoCard.getVideoId());
@@ -54,6 +54,7 @@ public class PlayList_Adapter extends VideoList_Adapter {
             });
         } else {
             imgEditMode.setVisibility(View.GONE);
+        }
             holder.itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
                 PreviewVideoCard previewVideoCard = filteredVideoList.get(position);
@@ -69,7 +70,6 @@ public class PlayList_Adapter extends VideoList_Adapter {
                         .addToBackStack(null)
                         .commit();
             });
-        }
     }
 
     public interface OnItemClickListener {

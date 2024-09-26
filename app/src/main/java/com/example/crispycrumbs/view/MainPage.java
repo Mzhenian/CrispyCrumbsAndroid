@@ -137,12 +137,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
         userLogic = UserLogic.getInstance();
         dataManager = DataManager.getInstance();
-        dataManager.loadVideosFromJson(this);
-        dataManager.loadUsersFromJson(this);
-
-//        for (UserItem user : dataManager.getUserList()) {
-//            Log.d("User", "ID: " + user.getUserId() + ", Name: " + user.getUserName());
-//        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();

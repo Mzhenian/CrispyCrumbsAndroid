@@ -68,14 +68,11 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
         if (item != null) {
             // Reset views before binding new data
-            holder.profilePicture.setImageResource(R.drawable.default_profile_picture); // Reset profile image
-            holder.userName.setText(""); // Clear previous username
+            holder.profilePicture.setImageResource(R.drawable.default_profile_picture); // Default profile image
+            holder.userName.setText("[Deleted user]"); // Default to "[Deleted user]" for deleted accounts
 
             // Get UserViewModel
             UserViewModel userViewModel = new ViewModelProvider((AppCompatActivity) context).get(UserViewModel.class);
-
-            // Detach any previous observer before attaching a new one
-            userViewModel.getUser(item.getUserId()).removeObservers((AppCompatActivity) context);
 
             // Observe user information using LiveData
             userViewModel.getUser(item.getUserId()).observe((AppCompatActivity) context, new Observer<UserItem>() {
@@ -95,11 +92,11 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
                         // Set user name
                         holder.userName.setText(user.getUserName());
                     } else {
-                        // Fallback for deleted user
+                        // Ensure fallback for deleted user
                         Log.d(TAG, "User not found or deleted for comment at position: " + adapterPosition + ", UserId: " + item.getUserId());
 
                         holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
-                        holder.userName.setText("[Deleted user]"); // Display '[Deleted user]'
+                        holder.userName.setText("[Deleted user]"); // Fallback to '[Deleted user]'
                     }
                 }
             });
@@ -125,6 +122,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             Log.e(TAG, "Comment item is null at position: " + adapterPosition);
         }
     }
+
 
 
 

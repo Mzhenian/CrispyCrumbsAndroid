@@ -140,6 +140,11 @@ public class UserRepository {
         userFields.put("phoneNumber", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPhoneNumber()));
         userFields.put("fullName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getDisplayedName()));
 
+        // Include the password if it has been changed
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            userFields.put("password", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPassword()));
+        }
+
         // Convert profile photo file to MultipartBody.Part
         MultipartBody.Part profilePhotoPart = null;
         if (profilePhotoFile != null) {

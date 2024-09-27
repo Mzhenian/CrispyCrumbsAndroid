@@ -70,18 +70,30 @@ public class EditProfileFragment extends Fragment {
                     String newFullName = binding.editFullName.getText().toString();
                     String newPhoneNumber = binding.editPhoneNumber.getText().toString();
 
-                    // Validate fields
+                    // Get password input
+                    String newPassword = binding.editUserPassword.getText().toString();  // New password field
+                    String confirmPassword = binding.confirmPassword.getText().toString();  // Confirmation field
+
+                    // Validate required fields
                     if (newUserName.isEmpty() || newUserEmail.isEmpty() || newFullName.isEmpty() || newPhoneNumber.isEmpty()) {
                         Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
+                    // Validate password
+                    if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
+                        if (!newPassword.equals(confirmPassword)) {
+                            Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
                     Log.d("Update user", "Save button clicked. Updated user data: Username = " + newUserName + ", Email = " + newUserEmail);
 
-                    // Create updated UserItem
+                    // Create updated UserItem, leaving the password empty if not updated
                     UserItem updatedUser = new UserItem(
                             newUserName,
-                            userItem.getPassword(),
+                            newPassword.isEmpty() ? userItem.getPassword() : newPassword,  // If no new password, retain the existing one
                             newFullName,
                             newUserEmail,
                             newPhoneNumber,
@@ -121,6 +133,7 @@ public class EditProfileFragment extends Fragment {
                         }
                     });
                 });
+
             }
         });
 

@@ -87,4 +87,5 @@
     <string name="change_profile_picture">Change Profile Picture</string>
     <string name="deleted_user">[deleted user]</string>
     <string name="default_views">\? views</string>
+    <string name="confirm_password">Confirm Password</string>
 </resources>

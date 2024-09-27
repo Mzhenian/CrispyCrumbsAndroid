@@ -60,6 +60,18 @@ public class UserRepository {
             UserItem localUser = userDao.getUserByIdSync(finalUserId);
             if (localUser != null) {
                 userLiveData.postValue(localUser);
+            } else {
+                // If the user is not found locally, set it as deleted user
+                userLiveData.postValue(new UserItem(
+                        "[Deleted user]",          // userName
+                        "",                        // password
+                        "[Deleted user]",          // displayedName
+                        "",                        // email
+                        "",                        // phoneNumber
+                        null,                      // dateOfBirth
+                        "",                        // country
+                        "default_profile_picture"  // profilePhoto
+                ));
             }
         });
 
@@ -73,17 +85,42 @@ public class UserRepository {
 
                     // Update Room database with the new data
                     executor.execute(() -> userDao.insertUser(userItem));
+                } else {
+                    // Handle the case where the user is deleted or not found on the server
+                    userLiveData.postValue(new UserItem(
+                            "[Deleted user]",          // userName
+                            "",                        // password
+                            "[Deleted user]",          // displayedName
+                            "",                        // email
+                            "",                        // phoneNumber
+                            null,                      // dateOfBirth
+                            "",                        // country
+                            "default_profile_picture"  // profilePhoto
+                    ));
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 Log.e("UserRepository", "Failed to fetch user from server", t);
+                // Set the fallback for deleted user or failed network
+                userLiveData.postValue(new UserItem(
+                        "[Deleted user]",          // userName
+                        "",                        // password
+                        "[Deleted user]",          // displayedName
+                        "",                        // email
+                        "",                        // phoneNumber
+                        null,                      // dateOfBirth
+                        "",                        // country
+                        "default_profile_picture"  // profilePhoto
+                ));
             }
+
         });
 
         return userLiveData;
     }
+
 
     public void insertUserToRoom(UserItem user) {
         executor.execute(() -> userDao.insertUser(user));
@@ -102,6 +139,11 @@ public class UserRepository {
         userFields.put("email", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getEmail()));
         userFields.put("phoneNumber", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPhoneNumber()));
         userFields.put("fullName", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getDisplayedName()));
+
+        // Include the password if it has been changed
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            userFields.put("password", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPassword()));
+        }
 
         // Convert profile photo file to MultipartBody.Part
         MultipartBody.Part profilePhotoPart = null;

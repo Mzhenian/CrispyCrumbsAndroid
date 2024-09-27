@@ -44,7 +44,6 @@ public class ProfileViewModel extends AndroidViewModel {
 
     public void updateUser(UserItem updatedUser, File profilePhotoFile, UserUpdateCallback callback) {
         Log.d("Update user", "Updating user: " + updatedUser.getUserId());
-        Log.d("Update user", "Updated user details: " + updatedUser.toString());
 
         if (profilePhotoFile != null) {
             Log.d("Update user", "Profile photo file: " + profilePhotoFile.getAbsolutePath());
@@ -58,6 +57,7 @@ public class ProfileViewModel extends AndroidViewModel {
         // Update on server with optional profile photo and callback
         userRepository.updateUserOnServer(updatedUser, profilePhotoFile, callback);
     }
+
 
 
 

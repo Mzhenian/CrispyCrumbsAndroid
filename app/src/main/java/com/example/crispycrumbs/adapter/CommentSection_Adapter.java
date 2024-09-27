@@ -68,8 +68,8 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
         if (item != null) {
             // Reset views before binding new data
-            holder.profilePicture.setImageResource(R.drawable.default_profile_picture); // Default profile image
-            holder.userName.setText("[Deleted user]"); // Default to "[Deleted user]" for deleted accounts
+            holder.profilePicture.setImageResource(R.drawable.default_profile_picture); // Reset profile image
+            holder.userName.setText("[Deleted user]"); // Default to "[Deleted user]" to handle missing users
 
             // Get UserViewModel
             UserViewModel userViewModel = new ViewModelProvider((AppCompatActivity) context).get(UserViewModel.class);
@@ -91,12 +91,20 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
                         // Set user name
                         holder.userName.setText(user.getUserName());
-                    } else {
-                        // Ensure fallback for deleted user
-                        Log.d(TAG, "User not found or deleted for comment at position: " + adapterPosition + ", UserId: " + item.getUserId());
 
+                        // Set click listener on the profile picture to open the profile fragment
+                        holder.profilePicture.setOnClickListener(v -> {
+                            // Navigate to ProfileFragment with the user's id
+                            MainPage.getInstance().getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragment_container, new ProfileFragment(user.getUserId()))
+                                    .addToBackStack(null) // Optional: Adds to backstack so you can go back
+                                    .commit();
+                        });
+                    } else {
+                        // Fallback for deleted user
                         holder.profilePicture.setImageResource(R.drawable.default_profile_picture);
-                        holder.userName.setText("[Deleted user]"); // Fallback to '[Deleted user]'
+                        holder.userName.setText("[Deleted user]");
                     }
                 }
             });
@@ -122,6 +130,7 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
             Log.e(TAG, "Comment item is null at position: " + adapterPosition);
         }
     }
+
 
 
 

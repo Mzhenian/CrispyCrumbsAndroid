@@ -32,28 +32,23 @@ public class PlayList_Adapter extends VideoList_Adapter {
 
 
         ImageView imgEditMode = holder.itemView.findViewById(R.id.img_edit_mode);
-        if (user != null && user.equals(LoggedInUser.getUser().getValue())) {
+        if (user == null || !user.equals(LoggedInUser.getUser().getValue())) {
+            imgEditMode.setVisibility(View.GONE);
+        } else {
             imgEditMode.setVisibility(View.VISIBLE);
 
             imgEditMode.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
-                PreviewVideoCard previewVideoCard = filteredVideoList.get(position);
-                bundle.putString("videoId", previewVideoCard.getVideoId());
-
-
+                PreviewVideoCard video = filteredVideoList.get(position);
+                bundle.putSerializable("video", video);
                 EditVideoFragment editVideoFragment = new EditVideoFragment();
                 editVideoFragment.setArguments(bundle);
 
-                MainPage.getInstance().getSupportFragmentManager()
-                        .beginTransaction()
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, editVideoFragment)
                         .addToBackStack(null)
                         .commit();
-//                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
-
             });
-        } else {
-            imgEditMode.setVisibility(View.GONE);
         }
             holder.itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();

@@ -44,6 +44,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.fragment:fragment-ktx:1.8.3")
     implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation ("com.fasterxml.jackson.core:jackson-databind:2.13.3")
     implementation(libs.gson)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -63,5 +64,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.gson)
     annotationProcessor(libs.room.compiler)
+
 
 }

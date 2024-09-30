@@ -29,5 +29,8 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE userId = :userId LIMIT 1")
     UserItem getUserByIdSync(String userId);
+
+    @Query("DELETE FROM users WHERE userId = :userId")
+    void deleteUserById(String userId);
 }
 

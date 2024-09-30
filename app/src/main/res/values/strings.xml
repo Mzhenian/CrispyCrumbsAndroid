@@ -91,4 +91,5 @@
     <string name="editing_video_title">Editing [video title]</string>
     <string name="original_thumbnail">original thumbnail:</string>
     <string name="video_title">Video title:</string>
+    <string name="video_category">Video category:</string>
 </resources>

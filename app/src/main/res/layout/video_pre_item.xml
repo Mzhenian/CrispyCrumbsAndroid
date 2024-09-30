@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:background="@color/background_gray"
             android:contentDescription="VIDEO_THUMBNAIL"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             tools:ignore="MissingConstrints"
             tools:srcCompat="@drawable/default_video_thumbnail" />
 

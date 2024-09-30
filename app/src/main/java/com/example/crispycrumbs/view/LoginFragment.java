@@ -1,5 +1,6 @@
 package com.example.crispycrumbs.view;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
@@ -26,6 +29,9 @@ public class LoginFragment extends Fragment {
     EditText userName;
     EditText password;
     TextView newUser;
+    Application application = MainPage.getInstance().getApplication();
+    AppDB db = AppDB.getDatabase(application);
+    UserRepository userRepository = new UserRepository(db);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,8 +61,7 @@ public class LoginFragment extends Fragment {
 
     //with server
     void loginAttempt() {
-        ServerAPI serverAPI = ServerAPI.getInstance();
-        serverAPI.login(userName.getText().toString(), password.getText().toString(), true, new LoginCallback() {
+        userRepository.login(userName.getText().toString(), password.getText().toString(), true, new LoginCallback() {
             @Override
             public void onSuccess(LoginResponse loginResponse) {
                 LoggedInUser.setLoggedInUser(loginResponse.getUser());

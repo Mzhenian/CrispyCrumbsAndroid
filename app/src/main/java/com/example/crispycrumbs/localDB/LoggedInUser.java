@@ -66,8 +66,4 @@ public class LoggedInUser {
                 .remove(LIU_TOKEN_KEY)
                 .apply();
     }
-
-    public static void removeVideo(PreviewVideoCard videoItem) {
-        loggedInUser.getValue().delUploadedVideo(videoItem.getVideoId());
-    }
 }

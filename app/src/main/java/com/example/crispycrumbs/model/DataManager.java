@@ -5,7 +5,9 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -65,6 +67,26 @@ public class DataManager {
         return instance;
     }
 
+    public static  String getFileNameFromUri(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = MainPage.getInstance().getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                result = cursor.getString(nameIndex);
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
     public static Uri getUriFromResOrFile(String path) {
         try {
             int resId = MainPage.getInstance().getResources().getIdentifier(path, "raw", PACKAGE_NAME);
@@ -110,38 +132,6 @@ public class DataManager {
         return null;
     }
 
-    public PreviewVideoCard getVideoById(String videoId) {
-        for (PreviewVideoCard video : videoList.getVideos()) {
-            if (video.getVideoId().equals(videoId)) {
-                return video;
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<CommentItem> getCommentsForVideo(String videoId) {
-        return commentsMap.getOrDefault(videoId, new ArrayList<>());
-    }
-
-    public void addCommentToVideo(String videoId, CommentItem comment) {
-        if (!commentsMap.containsKey(videoId)) {
-            commentsMap.put(videoId, new ArrayList<>());
-        }
-        // Avoid adding duplicate comments
-        if (!commentsMap.get(videoId).contains(comment)) {
-            commentsMap.get(videoId).add(comment);
-        }
-    }
-
-    public void removeCommentFromVideo(String videoId, int position) {
-        if (commentsMap.containsKey(videoId)) {
-            ArrayList<CommentItem> comments = commentsMap.get(videoId);
-            if (comments != null && position >= 0 && position < comments.size()) {
-                comments.remove(position);
-            }
-        }
-    }
-
     public UserItem createUser(Context context, String username, String password, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePicPath) {
         UserItem newUser = new UserItem(username, password, displayedName, email, phoneNumber, dateOfBirth, country, profilePicPath);
         return newUser;
@@ -160,94 +150,6 @@ public class DataManager {
 
     public void deleteVideo(PreviewVideoCard video) {
         videoList.getVideos().remove(video);
-    }
-
-    public int likeClick(String videoId) {
-        UserItem user = LoggedInUser.getUser().getValue();
-        if (user == null) {
-            return NO_LIKE_DISLIKE;
-        }
-        if (user.hasLiked(videoId)) {
-            user.removeLike(videoId);
-
-            int newLikes = likesMap.get(videoId) - 1;
-            likesMap.put(videoId, newLikes);
-            getVideoById(videoId).setLikes(newLikes);
-
-            return NO_LIKE_DISLIKE;
-        } else if (user.hasDisliked(videoId)) {
-            user.delDislike(videoId);
-            user.likeVideo(videoId);
-
-            int newLikes = likesMap.get(videoId) + 1;
-            int newDisLikes = dislikesMap.get(videoId) - 1;
-            likesMap.put(videoId, newLikes);
-            dislikesMap.put(videoId, newDisLikes);
-            getVideoById(videoId).setLikes(newLikes);
-            getVideoById(videoId).setDislikes(newDisLikes);
-            return LIKE;
-        } else { //didn't like or dislike
-            user.likeVideo(videoId);
-            int newLikes = likesMap.get(videoId) + 1;
-            likesMap.put(videoId, newLikes);
-            getVideoById(videoId).setLikes(newLikes);
-            return LIKE;
-        }
-    }
-
-    public int dislikeClick(String videoId) {
-        UserItem user = LoggedInUser.getUser().getValue();
-        if (user == null) {
-            return NO_LIKE_DISLIKE;
-        }
-        if (user.hasDisliked(videoId)) {
-            user.removeDislike(videoId);
-
-            int newDisLikes = dislikesMap.get(videoId) - 1;
-            dislikesMap.put(videoId, newDisLikes);
-            getVideoById(videoId).setDislikes(newDisLikes);
-
-            return NO_LIKE_DISLIKE;
-        } else if (user.hasLiked(videoId)) {
-            user.delLike(videoId);
-            user.dislikeVideo(videoId);
-
-            int newDisLikes = dislikesMap.get(videoId) + 1;
-            int newLikes = likesMap.get(videoId) - 1;
-            dislikesMap.put(videoId, newDisLikes);
-            likesMap.put(videoId, newLikes);
-            getVideoById(videoId).setDislikes(newDisLikes);
-            getVideoById(videoId).setLikes(newLikes);
-            return DISLIKE;
-        } else { //didn't like or dislike
-            user.dislikeVideo(videoId);
-            int newDisLikes = dislikesMap.get(videoId) + 1;
-            dislikesMap.put(videoId, newDisLikes);
-            getVideoById(videoId).setDislikes(newDisLikes);
-            return DISLIKE;
-        }
-    }
-
-    public int getLikeDislike(String videoId) {
-        UserItem user = LoggedInUser.getUser().getValue();
-        if (user == null) {
-            return NO_LIKE_DISLIKE;
-        }
-        if (user.hasLiked(videoId)) {
-            return LIKE;
-        } else if (user.hasDisliked(videoId)) {
-            return DISLIKE;
-        } else {
-            return NO_LIKE_DISLIKE;
-        }
-    }
-
-    public int getLikesCount(String videoId) {
-        return likesMap.getOrDefault(videoId, 0);
-    }
-
-    public int getDislikesCount(String videoId) {
-        return dislikesMap.getOrDefault(videoId, 0);
     }
 }
 

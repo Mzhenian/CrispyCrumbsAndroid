@@ -2,6 +2,7 @@ package com.example.crispycrumbs.dataUnit;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -13,6 +14,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(tableName = "users")
 public class UserItem implements Serializable {
@@ -60,7 +63,20 @@ public class UserItem implements Serializable {
         this.dateOfBirth = dateOfBirth;
         this.country = country;
         this.profilePhoto = profilePhoto;
-        this.userId = "tempUserId"; //official ID recieved from the server
+        this.userId = "tempUserId"; //official ID received from the server
+    }
+
+    //constructor without password to upload to server without corrupting it
+    @Ignore
+    public UserItem(String userName, String displayedName, String email, String phoneNumber, Date dateOfBirth, String country, String profilePhoto) {
+        this.userName = userName;
+        this.displayedName = displayedName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.dateOfBirth = dateOfBirth;
+        this.country = country;
+        this.profilePhoto = profilePhoto;
+        this.userId = "tempUserId";
     }
 
 

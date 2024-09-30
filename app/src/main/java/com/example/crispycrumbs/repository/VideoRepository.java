@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 
 import com.example.crispycrumbs.List.VideoList;
@@ -30,9 +32,12 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.DeleteCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.EditCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SuccessErrorResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
+import com.example.crispycrumbs.view.HomeFragment;
 import com.example.crispycrumbs.view.MainPage;
+import com.example.crispycrumbs.view.PlayListFragment;
 
 import java.util.ArrayList;
 import java.io.File;
@@ -41,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -194,24 +200,28 @@ public class VideoRepository {
         return userVideosLiveData;
     }
 
-    private String getFileNameFromUri(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = MainPage.getInstance().getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                result = cursor.getString(nameIndex);
-                cursor.close();
+    public LiveData<List<PreviewVideoCard>> searchVideos(String query) {
+        MutableLiveData<List<PreviewVideoCard>> queryVideosLiveData = new MutableLiveData<>();
+
+        serverAPInterface.searchVideos(query).enqueue(new Callback<List<PreviewVideoCard>>() {
+            @Override
+            public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<PreviewVideoCard> videoList = response.body();
+                    queryVideosLiveData.postValue(videoList);
+
+                    // Update Room database with the new data
+                    executor.execute(() -> videoDao.insertVideos(videoList));
+                }
             }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
+
+            @Override
+            public void onFailure(Call<List<PreviewVideoCard>> call, Throwable t) {
+                // Handle the error
             }
-        }
-        return result;
+        });
+
+        return queryVideosLiveData;
     }
 
     public void upload(Uri videoUri, Uri thumbnailUri, String title, String description, String category, List<String> tags, MutableLiveData<Boolean> uploadStatus) {
@@ -252,7 +262,7 @@ public class VideoRepository {
                 }
             };
             // Build the multipart form data
-            videoDataBuilder.addFormDataPart("videoFile", getFileNameFromUri(videoUri), requestBodyVideo);
+            videoDataBuilder.addFormDataPart("videoFile", DataManager.getFileNameFromUri(videoUri), requestBodyVideo);
 
             if (thumbnailUri == null) {
                 thumbnailUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_video_thumbnail);
@@ -277,7 +287,7 @@ public class VideoRepository {
                     }
                 }
             };
-            videoDataBuilder.addFormDataPart("thumbnail", getFileNameFromUri(thumbnailUri), requestBodyImage);
+            videoDataBuilder.addFormDataPart("thumbnail", DataManager.getFileNameFromUri(thumbnailUri), requestBodyImage);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -631,5 +641,60 @@ public class VideoRepository {
                 Log.e(TAG, "Error while liking video", t);
             }
         });
+    }
+
+    public void updateVideo(String userId, String videoId, Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail) {
+        serverAPInterface.updateVideo(userId, videoId, videoFields, thumbnail).enqueue(new Callback<PreviewVideoCard>() {
+            @Override
+            public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "Video updated successfully on server: " + response.body().toString());
+
+                    executor.execute(() -> {
+                        videoDao.insertVideo(response.body());
+                        Log.d(TAG, "Video updated successfully in Room DB.");
+                        MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
+
+                    });
+                } else {
+                    Log.e(TAG, "Failed to update video on server: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PreviewVideoCard> call, Throwable t) {
+                Log.e(TAG, "Error updating video on server", t);
+            }
+        });
+    }
+
+    public void deleteVideo(String videoId) {
+        if (null == LoggedInUser.getUser().getValue()) {
+            Log.e(TAG, "User is not logged in. Delete action is not permitted.");
+            return;
+        }
+
+        serverAPInterface.deleteVideo(videoId).enqueue(new Callback<SuccessErrorResponse>() {
+            @Override
+            public void onResponse(Call<SuccessErrorResponse> call, Response<SuccessErrorResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    executor.execute(() -> {
+                        videoDao.deleteVideoById(videoId);
+                        MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
+
+
+                    });
+                } else {
+                    Log.e(TAG, "Failed to delete video on server: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SuccessErrorResponse> call, Throwable t) {
+                Log.e(TAG, "Error deleting video on server", t);
+            }
+        });
+
     }
 }

@@ -12,7 +12,7 @@ import com.example.crispycrumbs.repository.VideoRepository;
 import java.util.List;
 
 public class UploadVideoViewModel extends AndroidViewModel {
-    public static final String TAG = "UploadVideoViewModel";
+//    public static final String TAG = "UploadVideoViewModel";
     public static final List<String> CATEGORIES = List.of(
             "Schnitzel",
             "Crispy Chicken",

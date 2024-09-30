@@ -10,6 +10,8 @@ import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 
 import java.util.List;
 
+import retrofit2.http.DELETE;
+
 @Dao
 public interface VideoDao {
 
@@ -42,4 +44,13 @@ public interface VideoDao {
 
     @Query("SELECT * FROM videos WHERE userId = :userId")
     LiveData<List<PreviewVideoCard>> getVideosByUserId(String userId);
+
+    @Query("DELETE FROM videos WHERE videoId = :videoId")
+    void deleteVideoById(String videoId);
+
+//    @DELETE("DELETE FROM videos WHERE videoId = :videoId")
+//    void deleteVideo(String videoId);
+//
+//    @DELETE
+//    void deleteVideo(PreviewVideoCard video);
 }

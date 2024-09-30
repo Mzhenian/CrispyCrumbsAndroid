@@ -12,7 +12,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="101dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -140,9 +142,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/diff_round_top_right_corner_orange"
-                android:text="Video category:    "
+                android:text="@string/video_category"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
+
             <Spinner
                 android:id="@+id/spinnerCategory"
                 android:layout_width="match_parent"
@@ -154,23 +157,23 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/etVideoTag"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Add tag(s)"
                     android:background="@drawable/round_corners_white"
+                    android:hint="Add tag(s)"
                     android:padding="10dp"
                     android:textColor="@color/black" />
 
                 <Button
                     android:id="@+id/btnAddVideoTag"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.2"
                     android:backgroundTint="@color/crispy_orange_dark"
                     android:text="+"
@@ -184,9 +187,9 @@
                 android:id="@+id/rvTagsPreview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:layoutManager="GridLayoutManager"
                 tools:listitem="@layout/recycler_view_item"
-                tools:spanCount="5"
-                tools:layoutManager="GridLayoutManager" />
+                tools:spanCount="5" />
 
             <RelativeLayout
                 android:id="@+id/chooseThumbnail"

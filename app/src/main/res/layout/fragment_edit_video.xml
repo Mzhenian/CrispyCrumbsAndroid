@@ -12,7 +12,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="89dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,6 +39,17 @@
                 android:textColor="@color/black_div"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="15dp"
+                android:paddingTop="5dp"
+
+                android:text="Leave blank to keep unchanged"
+                android:textColor="@color/gray_dark"
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/txt_choose_video_edit"
@@ -68,7 +81,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/video_holder_edit"
+                    android:id="@+id/img_original_thumbail_edit"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_centerInParent="true"
@@ -123,9 +136,27 @@
                 android:textColor="@color/black" />
 
 
+            <TextView
+                android:id="@+id/tv_category_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/diff_round_top_right_corner_orange"
+                android:text="@string/video_category"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinner_category_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_corners_white"
+                android:padding="10dp"
+                android:spinnerMode="dropdown" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
@@ -142,7 +173,7 @@
                 <Button
                     android:id="@+id/btn_add_video_tag_edit"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0.2"
                     android:backgroundTint="@color/crispy_orange_dark"
                     android:text="+"
@@ -155,29 +186,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_tags_preview_edit"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 tools:layoutManager="GridLayoutManager"
                 tools:listitem="@layout/recycler_view_item"
                 tools:spanCount="5" />
-
-            <TextView
-                android:id="@+id/tv_category2_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/diff_round_top_right_corner_orange"
-                android:text="Video category:    "
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txt_choose_thumbnail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="new thumbnail:"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
 
             <RelativeLayout
                 android:id="@+id/choose_thumbnail_edit"
@@ -197,9 +209,19 @@
                     android:clickable="true"
                     android:focusable="true" />
 
+                <TextView
+                    android:id="@+id/txt_choose_thumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="new thumbnail:"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
                 <ImageView
                     android:id="@+id/thumbnail_image_holder_edit"
-
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
                     android:layout_centerInParent="true"

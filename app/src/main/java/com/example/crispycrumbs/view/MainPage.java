@@ -42,6 +42,7 @@ import androidx.lifecycle.Observer;
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.databinding.PageMainBinding;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.dataUnit.UserItem;
@@ -54,14 +55,13 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
+    private PageMainBinding binding;
     private static MainPage instance = null;
     private static DataManager dataManager = null;
     private static UserLogic userLogic = null;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
-    private ImageButton connectToServerAlertIcon;
     private Animation flickerAnimation;
     private SharedPreferences sharedPreferences;
     private Observer<UserItem> LoggedInUserObserver = null;
@@ -93,6 +93,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = PageMainBinding.inflate(getLayoutInflater());
+
         setContentView(R.layout.page_main);
         instance = this;
         sharedPreferences = getPreferences(MODE_PRIVATE);
@@ -111,9 +113,8 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_Bar);
 
-        connectToServerAlertIcon = findViewById(R.id.connectToServerAlertIcon);
         flickerAnimation = AnimationUtils.loadAnimation(this, R.anim.flicker_effect);
-        connectToServerAlertIcon.setOnClickListener(v -> {
+        binding.connectToServerAlertIcon.setOnClickListener(v -> {
             showUpdateIPDialog();
         });
 
@@ -349,19 +350,25 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     public void showLoginSnackbar(View view) {
-        Snackbar.make(view, "Please login to interact", Snackbar.LENGTH_LONG)
+        showLoginSnackbar(view, "Please login to interact");
+    }
+
+    public void showLoginSnackbar(View view, String text) {
+        Snackbar.make(view, text, Snackbar.LENGTH_LONG)
                 .setAction("Login", v -> {
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
                 }).show();
     }
 
     public void startConnectToServerAlert() {
-        connectToServerAlertIcon.setVisibility(View.VISIBLE);
-        connectToServerAlertIcon.startAnimation(flickerAnimation);
+        binding.connectToServerAlertIcon.setVisibility(View.VISIBLE);
+        binding.connectToServerAlertIcon.startAnimation(flickerAnimation);
+//        binding.connectToServerAlertIcon.invalidate();
     }
     public void stopConnectToServerAlert() {
-        connectToServerAlertIcon.setVisibility(View.GONE);
-        connectToServerAlertIcon.clearAnimation();
+        binding.connectToServerAlertIcon.setVisibility(View.GONE);
+        binding.connectToServerAlertIcon.clearAnimation();
+//        binding.connectToServerAlertIcon.invalidate();
     }
     private void showUpdateIPDialog() {
         ServerAPI serverAPI =  ServerAPI.getInstance();

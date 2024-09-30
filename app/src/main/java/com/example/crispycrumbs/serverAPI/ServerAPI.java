@@ -3,28 +3,13 @@ package com.example.crispycrumbs.serverAPI;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import android.util.Log;
+import com.example.crispycrumbs.view.MainPage;
 
-import com.example.crispycrumbs.dataUnit.CommentItem;
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
-import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
-import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
-
-
-import java.util.List;
 import java.util.concurrent.Executors;
 
 import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import com.example.crispycrumbs.view.MainPage;
 
 public class ServerAPI {
     public static final String DEFAULT_IP = "10.0.2.2"; // the emulator's host IP
@@ -68,42 +53,19 @@ public class ServerAPI {
         return IP;
     }
 
-        public void setIP (String IP){
-            this.IP = IP;
-            sharedPreferences.edit().putString(IP_KEY, IP).apply();
-            buildRetrofit();
-        }
+    public void setIP(String IP) {
+        this.IP = IP;
+        sharedPreferences.edit().putString(IP_KEY, IP).apply();
+        buildRetrofit();
+    }
 
-        public ServerAPInterface getAPI () {
-            return serverAPInterface;
-        }
+    public ServerAPInterface getAPI() {
+        return serverAPInterface;
+    }
 
-        // Method to dynamically construct URLs based on the current IP for server assets
-        public String constructUrl (String path){
-            return "http://" + IP + ":" + port + "/api/db/" + path;
-        }
-
-        public void login (String userName, String password,boolean rememberMe, LoginCallback
-        callback){
-            LoginRequest loginRequest = new LoginRequest(userName, password, rememberMe);
-            Call<LoginResponse> call = serverAPInterface.login(loginRequest);
-            call.enqueue(new Callback<LoginResponse>() {
-                @Override
-                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                    if (response.isSuccessful()) {
-                        callback.onSuccess(response.body());
-                    } else {
-                        String errorMessage = response.body() != null ? response.body().toString() : response.message();
-                        callback.onFailure(new Exception(errorMessage), response.code());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LoginResponse> call, Throwable t) {
-                    callback.onFailure(t, -1); // -1 indicates that the failure was not due to an HTTP error
-                }
-            });
-        }
-
+    // Method to dynamically construct URLs based on the current IP for server assets
+    public String constructUrl(String path) {
+        return "http://" + IP + ":" + port + "/api/db/" + path;
+    }
 }
 

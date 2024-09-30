@@ -2,7 +2,8 @@ package com.example.crispycrumbs.view;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,14 +26,15 @@ import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
 
-import java.io.File;
+import java.io.IOException;
 
 public class EditProfileFragment extends Fragment {
-
-    private static final int REQUEST_IMAGE_PICK = 3;
+    private static final String TAG = "EditProfileFragment";
     private ProfileViewModel viewModel;
     private FragmentEditProfileBinding binding;
-    private String currentPhotoPath;  // Path to the selected image
+
+    private ActivityResultLauncher<Intent> photoPickerLauncher;
+    private Uri PhotoUri = null;
 
 
     @Override
@@ -41,147 +45,136 @@ public class EditProfileFragment extends Fragment {
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
+        initializeProfilePhotoPicker();
+
         // Observe logged-in user's data
         viewModel.getUser(null).observe(getViewLifecycleOwner(), userItem -> {
-            if (userItem != null) {
-                Log.d("Update user", "Loading user data: " + userItem.getUserName());
+            if (null == userItem) {
+                return;
+            }
+            Log.d(TAG, "Loading user data: " + userItem.getUserName());
 
-                // Initialize currentPhotoPath to the existing photo path
-                currentPhotoPath = userItem.getProfilePhoto();  // Set to existing photo
+            // Initialize currentPhotoPath to the existing photo path
+            String currentPhotoUrl = ServerAPI.getInstance().constructUrl(userItem.getProfilePhoto());
 
-                // Prepopulate the fields with current user data
-                Glide.with(this)
-                        .load(userItem.getProfilePhoto() != null ? ServerAPI.getInstance().constructUrl(userItem.getProfilePhoto()) : R.drawable.default_profile_picture)
-                        .circleCrop()  // Ensures the image is loaded as a circle
-                        .into(binding.profilePicture);
+            // Prepopulate the fields with current user data
+            Glide.with(MainPage.getInstance())
+                    .load(currentPhotoUrl)
+                    .placeholder(R.drawable.default_profile_picture)
+                    .into(binding.profilePicture);
 
-                binding.editUserName.setText(userItem.getUserName());
-                binding.editUserEmail.setText(userItem.getEmail());
-                binding.editFullName.setText(userItem.getDisplayedName());
-                binding.editPhoneNumber.setText(userItem.getPhoneNumber());
 
-                // Set onClickListener for the button to change profile picture
-                binding.btnChangeProfileImg.setOnClickListener(v -> uploadPhoto());
+            PhotoUri = Uri.parse(currentPhotoUrl); //todo test me
 
-                // Set onClickListener for Save button
-                binding.btnSave.setOnClickListener(v -> {
-                    String newUserName = binding.editUserName.getText().toString();
-                    String newUserEmail = binding.editUserEmail.getText().toString();
-                    String newFullName = binding.editFullName.getText().toString();
-                    String newPhoneNumber = binding.editPhoneNumber.getText().toString();
+            binding.editUserName.setText(userItem.getUserName());
+            binding.editUserEmail.setText(userItem.getEmail());
+            binding.editFullName.setText(userItem.getDisplayedName());
+            binding.editPhoneNumber.setText(userItem.getPhoneNumber());
 
-                    // Get password input
-                    String newPassword = binding.editUserPassword.getText().toString();  // New password field
-                    String confirmPassword = binding.confirmPassword.getText().toString();  // Confirmation field
+            // Set onClickListener for the button to change profile picture
+            binding.btnChangeProfileImg.setOnClickListener(v -> uploadPhoto());
 
-                    // Validate required fields
-                    if (newUserName.isEmpty() || newUserEmail.isEmpty() || newFullName.isEmpty() || newPhoneNumber.isEmpty()) {
-                        Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            // Set onClickListener for Save button
+            binding.btnSave.setOnClickListener(v -> {
+                String newUserName = binding.editUserName.getText().toString();
+                String newUserEmail = binding.editUserEmail.getText().toString();
+                String newFullName = binding.editFullName.getText().toString();
+                String newPhoneNumber = binding.editPhoneNumber.getText().toString();
+
+                // Get password input
+                String newPassword = binding.editUserPassword.getText().toString();  // New password field
+                String confirmPassword = binding.confirmPassword.getText().toString();  // Confirmation field
+
+                // Validate required fields
+                if (newUserName.isEmpty() || newUserEmail.isEmpty() || newFullName.isEmpty() || newPhoneNumber.isEmpty()) {
+                    Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Validate password
+                if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
+                    if (!newPassword.equals(confirmPassword)) {
+                        Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                }
 
-                    // Validate password
-                    if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
-                        if (!newPassword.equals(confirmPassword)) {
-                            Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                Log.d("Update user", "Save button clicked. Updated user data: Username = " + newUserName + ", Email = " + newUserEmail);
+
+                // Create updated UserItem, leaving the password empty if not updated
+                UserItem updatedUser = new UserItem(
+                        newUserName,
+                        newFullName,
+                        newUserEmail,
+                        newPhoneNumber,
+                        userItem.getDateOfBirth(),
+                        userItem.getCountry(),
+                        currentPhotoUrl //todo test it's in the right format
+                );
+                if (!newPassword.isEmpty()) {
+                    updatedUser.setPassword(newPassword);
+                }
+
+                // Call ViewModel to update Room and Server
+                viewModel.updateUser(updatedUser, PhotoUri, new UserUpdateCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // Navigate to ProfileFragment on success
+                        Log.d("Update user", "Update successful. Navigating to ProfileFragment.");
+                        MainPage.getInstance().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new ProfileFragment())
+                                .commit();
                     }
 
-                    Log.d("Update user", "Save button clicked. Updated user data: Username = " + newUserName + ", Email = " + newUserEmail);
-
-                    // Create updated UserItem, leaving the password empty if not updated
-                    UserItem updatedUser = new UserItem(
-                            newUserName,
-                            newPassword.isEmpty() ? userItem.getPassword() : newPassword,  // If no new password, retain the existing one
-                            newFullName,
-                            newUserEmail,
-                            newPhoneNumber,
-                            userItem.getDateOfBirth(),
-                            userItem.getCountry(),
-                            currentPhotoPath  // Use the current photo path
-                    );
-
-                    // Only create the File if currentPhotoPath is not null
-                    File profilePhotoFile = null;
-                    if (currentPhotoPath != null) {
-                        String realPath = getRealPathFromUri(Uri.parse(currentPhotoPath));
-                        if (realPath != null) {
-                            profilePhotoFile = new File(realPath);  // Create the file only if realPath is valid
-                            Log.d("Update user", "Profile photo file path: " + realPath);
-                        }
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        // Show error message on failure
+                        Log.e("Update user", "Update failed: " + errorMessage);
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        });
                     }
-
-                    // Call ViewModel to update Room and Server
-                    viewModel.updateUser(updatedUser, profilePhotoFile, new UserUpdateCallback() {
-                        @Override
-                        public void onSuccess() {
-                            // Navigate to ProfileFragment on success
-                            Log.d("Update user", "Update successful. Navigating to ProfileFragment.");
-                            MainPage.getInstance().getSupportFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, new ProfileFragment())
-                                    .commit();
-                        }
-
-                        @Override
-                        public void onFailure(String errorMessage) {
-                            // Show error message on failure
-                            Log.e("Update user", "Update failed: " + errorMessage);
-                            getActivity().runOnUiThread(() -> {
-                                Toast.makeText(getContext(), "Update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    });
                 });
+            });
 
-            }
+            binding.btnDelete.setOnClickListener(v -> viewModel.deleteUser());
         });
 
         return view;
     }
 
+    public void initializeProfilePhotoPicker() {
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        try {
+                            PhotoUri = result.getData().getData();
+                            if (PhotoUri == null) {
+                                Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), PhotoUri);
+                            Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
+                            binding.profilePicture.setImageBitmap(thumbnailBitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
 
     // Launch gallery to pick an image
     private void uploadPhoto() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_IMAGE_PICK);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            if (requestCode == REQUEST_IMAGE_PICK) {
-                Uri photoUri = data.getData();
-                try {
-                    // Use Glide to load the selected image with circle crop
-                    Glide.with(this)
-                            .load(photoUri)
-                            .circleCrop()  // Ensures the image is circular
-                            .into(binding.profilePicture);
-
-                    // Save the photo URI
-                    currentPhotoPath = photoUri.toString();
-                    Log.d("Update user", "Photo selected: " + currentPhotoPath);
-                } catch (Exception e) {
-                    Log.e("Update user", "Error loading selected photo", e);
-                }
-            }
+        if (photoPickerLauncher != null) {
+            photoPickerLauncher.launch(intent);
+        } else {
+            Log.e(TAG, "photoPickerLauncher is not initialized.");
         }
     }
 
-    // Helper method to get the real file path from Uri
-    private String getRealPathFromUri(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
-            Log.d("Update user", "Real path from Uri: " + filePath);
-            return filePath;
-        }
-        return null;
-    }
 }

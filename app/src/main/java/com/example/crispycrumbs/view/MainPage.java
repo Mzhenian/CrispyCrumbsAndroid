@@ -5,7 +5,6 @@ import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
 import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_ID_KEY;
 import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_TOKEN_KEY;
 
-import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +28,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -45,10 +42,8 @@ import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.PageMainBinding;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
-import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
-import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.repository.VideoRepository;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
@@ -65,6 +60,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     private Animation flickerAnimation;
     private SharedPreferences sharedPreferences;
     private Observer<UserItem> LoggedInUserObserver = null;
+    private boolean alertedServerDisconnected = false;
 
     public static DataManager getDataManager() {
         return dataManager;
@@ -361,12 +357,18 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         binding.connectToServerAlertIcon.startAnimation(flickerAnimation);
 //        binding.connectToServerAlertIcon.invalidate();
 //        binding.connectToServerAlertIcon.requestLayout();
+
+        if(!alertedServerDisconnected) {
+            showUpdateIPDialog();
+            alertedServerDisconnected = true;
+        }
     }
     public void stopConnectToServerAlert() {
         binding.connectToServerAlertIcon.setVisibility(View.GONE);
         binding.connectToServerAlertIcon.clearAnimation();
 //        binding.connectToServerAlertIcon.invalidate();
 //        binding.connectToServerAlertIcon.requestLayout();
+        alertedServerDisconnected = false;
     }
     private void showUpdateIPDialog() {
         ServerAPI serverAPI =  ServerAPI.getInstance();

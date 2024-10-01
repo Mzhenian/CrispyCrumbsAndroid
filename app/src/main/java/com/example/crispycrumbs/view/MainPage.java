@@ -95,7 +95,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         super.onCreate(savedInstanceState);
         binding = PageMainBinding.inflate(getLayoutInflater());
 
-        setContentView(R.layout.page_main);
+        setContentView(binding.getRoot());
         instance = this;
         sharedPreferences = getPreferences(MODE_PRIVATE);
 
@@ -359,12 +359,14 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     public void startConnectToServerAlert() {
         binding.connectToServerAlertIcon.setVisibility(View.VISIBLE);
         binding.connectToServerAlertIcon.startAnimation(flickerAnimation);
-        binding.connectToServerAlertIcon.invalidate();
+//        binding.connectToServerAlertIcon.invalidate();
+//        binding.connectToServerAlertIcon.requestLayout();
     }
     public void stopConnectToServerAlert() {
         binding.connectToServerAlertIcon.setVisibility(View.GONE);
         binding.connectToServerAlertIcon.clearAnimation();
-        binding.connectToServerAlertIcon.invalidate();
+//        binding.connectToServerAlertIcon.invalidate();
+//        binding.connectToServerAlertIcon.requestLayout();
     }
     private void showUpdateIPDialog() {
         ServerAPI serverAPI =  ServerAPI.getInstance();

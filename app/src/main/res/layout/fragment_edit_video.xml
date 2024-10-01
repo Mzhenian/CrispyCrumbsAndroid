@@ -132,7 +132,7 @@
                 android:ems="10"
                 android:gravity="top"
                 android:hint="Video description...\n\n\n\n"
-                android:inputType="text"
+                android:inputType="text|textMultiLine"
                 android:textColor="@color/black" />
 
 

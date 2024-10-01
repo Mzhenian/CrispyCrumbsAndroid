@@ -1,5 +1,6 @@
 package com.example.crispycrumbs.repository;
 
+import android.app.Application;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.util.Log;
@@ -8,9 +9,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.dao.UserDao;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
-import com.example.crispycrumbs.dao.UserDao;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
@@ -18,13 +20,11 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SuccessErrorResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
-import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
 import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 import com.example.crispycrumbs.view.HomeFragment;
 import com.example.crispycrumbs.view.MainPage;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,10 +48,20 @@ public class UserRepository {
     private UserDao userDao;
     private ServerAPInterface serverAPInterface;
     private Executor executor = Executors.newSingleThreadExecutor();
+    private static final UserRepository INSTANCE = new UserRepository(AppDB.getDatabase(MainPage.getInstance().getApplication()));
+    public static final int HTTP_ERROR = -1;
 
-    public UserRepository(AppDB db) {
+    private UserRepository(AppDB db) {
         userDao = db.userDao();
         serverAPInterface = ServerAPI.getInstance().getAPI();
+    }
+    public static UserRepository getInstance() {
+//        if (null == INSTANCE) {
+//            Application application = MainPage.getInstance().getApplication();
+//            AppDB db = AppDB.getDatabase(application);
+//            INSTANCE = new UserRepository(db);
+//        }
+        return INSTANCE;
     }
 
     public LiveData<UserItem> getUser(String userId) {
@@ -67,7 +77,7 @@ public class UserRepository {
 
         // If we still have no userId, return early (could log out the user)
         if (userId == null) {
-            Log.e("UserRepository", "No userId available to fetch the user.");
+            Log.e("UserRepository", "requested user with userId = null.");
             return userLiveData;  // Return empty LiveData
         }
 
@@ -87,7 +97,7 @@ public class UserRepository {
                         "",                        // phoneNumber
                         null,                      // dateOfBirth
                         "",                        // country
-                        "default_profile_picture"  // profilePhoto
+                        DataManager.getDefaultProfilePhoto()  // profilePhoto
                 ));
             }
         });
@@ -112,7 +122,7 @@ public class UserRepository {
                             "",                        // phoneNumber
                             null,                      // dateOfBirth
                             "",                        // country
-                            "default_profile_picture"  // profilePhoto
+                            DataManager.getDefaultProfilePhoto() // profilePhoto
                     ));
                 }
             }
@@ -129,7 +139,7 @@ public class UserRepository {
                         "",                        // phoneNumber
                         null,                      // dateOfBirth
                         "",                        // country
-                        "default_profile_picture"  // profilePhoto
+                        DataManager.getDefaultProfilePhoto()  // profilePhoto
                 ));
             }
 
@@ -164,38 +174,8 @@ public class UserRepository {
             userFields.put("password", RequestBody.create(MediaType.parse("text/plain"), updatedUser.getPassword()));
         }
 
-        // Convert profile photo Uri to MultipartBody.Part
-        try {
-            if (profilePhotoUri == null) {
-                profilePhotoUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_user_pic);
-            }
+        profilePhotoPart = setProfilePhotoPart(contentResolver, profilePhotoUri);
 
-            InputStream profilePhotoInputStream = contentResolver.openInputStream(profilePhotoUri);
-            if (profilePhotoInputStream == null) {
-                throw new FileNotFoundException("Unable to open input stream for thumbnail URI");
-            }
-
-            RequestBody requestBodyImage = new RequestBody() {
-
-                @Override
-                public MediaType contentType() {
-                    return MediaType.parse("image/*");  // Set the media type to video
-                }
-
-                @Override
-                public void writeTo(BufferedSink sink) throws IOException {
-                    // Write the InputStream to the BufferedSink
-                    try (Source source = Okio.source(profilePhotoInputStream)) {
-                        sink.writeAll(source);
-                    }
-                }
-            };
-            profilePhotoPart = MultipartBody.Part.createFormData("thumbnail", DataManager.getFileNameFromUri(profilePhotoUri), requestBodyImage);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
 
         // Retrieve the user ID from the logged-in user
         String userId = LoggedInUser.getUser().getValue().getUserId();
@@ -230,6 +210,41 @@ public class UserRepository {
         });
     }
 
+    public MultipartBody.Part setProfilePhotoPart(ContentResolver contentResolver, Uri profilePhotoUri){
+        // Convert profile photo Uri to MultipartBody.Part
+        try {
+            if (profilePhotoUri == null) {
+                return null;
+            }
+
+            InputStream profilePhotoInputStream = contentResolver.openInputStream(profilePhotoUri);
+            if (profilePhotoInputStream == null) {
+                throw new FileNotFoundException("Unable to open input stream for thumbnail URI");
+            }
+
+            RequestBody requestBodyImage = new RequestBody() {
+
+                @Override
+                public MediaType contentType() {
+                    return MediaType.parse("image/*");  // Set the media type to video
+                }
+
+                @Override
+                public void writeTo(BufferedSink sink) throws IOException {
+                    // Write the InputStream to the BufferedSink
+                    try (Source source = Okio.source(profilePhotoInputStream)) {
+                        sink.writeAll(source);
+                    }
+                }
+            };
+            return MultipartBody.Part.createFormData("profilePhoto", DataManager.getFileNameFromUri(profilePhotoUri), requestBodyImage);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public void deleteUser(String userId) {
         if (null == LoggedInUser.getUser().getValue() || !userId.equals(LoggedInUser.getUser().getValue().getUserId())) {
             Log.e(TAG, "Requested user is not logged in. Delete action is not permitted.");
@@ -244,7 +259,7 @@ public class UserRepository {
                     executor.execute(() -> {
                         userDao.deleteUserById(userId);
                         MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).addToBackStack(null).commit();
-
+                        LoggedInUser.logOut();
                     });
                 } else {
                     Log.e(TAG, "Failed to delete video on server: " + response.message());
@@ -258,8 +273,8 @@ public class UserRepository {
         });
     }
 
-    public void login (String userName, String password,boolean rememberMe, LoginCallback
-            callback){
+    public void login(String userName, String password, boolean rememberMe, LoginCallback
+            callback) {
         LoginRequest loginRequest = new LoginRequest(userName, password, rememberMe);
         Call<LoginResponse> call = serverAPInterface.login(loginRequest);
         call.enqueue(new Callback<LoginResponse>() {
@@ -275,7 +290,7 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-                callback.onFailure(t, -1); // -1 indicates that the failure was not due to an HTTP error
+                callback.onFailure(t, HTTP_ERROR);
             }
         });
     }

@@ -44,16 +44,9 @@ public class DataManager {
     private final ArrayList<UserItem> UserList;
     private final Map<String, Integer> likesMap;
     private final Map<String, Integer> dislikesMap;
-    String lastUserId;
-    String lastVideoId;
-    int nextUserId;
-    private VideoList personalVideoList;
 
     private DataManager() {
         videoList = new VideoList();
-        if (LoggedInUser.getUser() != null) {
-            personalVideoList = new VideoList();
-        }
         commentsMap = new HashMap<>();
         UserList = new ArrayList<>();
         likesMap = new HashMap<>();

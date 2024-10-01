@@ -31,8 +31,7 @@ public class ProfileViewModel extends AndroidViewModel {
     // Constructor that accepts an Application
     public ProfileViewModel(Application application) {
         super(application);
-        AppDB db = AppDB.getDatabase(application); // Use application to initialize the DB
-        userRepository = new UserRepository(db); // Initialize repository with DB instance
+        userRepository = UserRepository.getInstance();
     }
 
     public LiveData<UserItem> getUser(String userId) {

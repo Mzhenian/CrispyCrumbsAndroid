@@ -1,8 +1,6 @@
 package com.example.crispycrumbs.view;
 
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -36,11 +34,15 @@ import com.example.crispycrumbs.viewModel.UploadVideoViewModel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class UploadVideoFragment extends Fragment {
     private final static String TAG = "UploadVideoFragment";
     private FragmentUploadVideoBinding binding;
     private UploadVideoViewModel uploadVideoViewModel;
+    private Executor executor = Executors.newSingleThreadExecutor();
+
 
     private Uri thumbnailUri,
             videoUri;
@@ -91,14 +93,7 @@ public class UploadVideoFragment extends Fragment {
 //            return false;
 //        });
 
-        binding.btnAddVideoTag.setOnClickListener(v -> {
-            String tag = binding.etVideoTag.getText().toString().trim();
-            if (!tag.isEmpty()) {
-                tags.add(tag);
-                tagsAdapter.notifyItemInserted(tags.size() - 1);
-                binding.etVideoTag.setText("");
-            }
-        });
+        binding.btnAddVideoTag.setOnClickListener(v -> addTag());
 
         return view;
     }
@@ -114,6 +109,15 @@ public class UploadVideoFragment extends Fragment {
 //        return thumbnail;
 //    }
 
+    public void addTag() {
+        String tag = binding.etVideoTag.getText().toString().trim();
+        if (!tag.isEmpty()) {
+            tags.add(tag);
+            tagsAdapter.notifyItemInserted(tags.size() - 1);
+            binding.etVideoTag.setText("");
+        }
+    }
+
     public void setVideo() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         if (videoPickerLauncher != null) {
@@ -128,7 +132,7 @@ public class UploadVideoFragment extends Fragment {
         if (photoPickerLauncher != null) {
             photoPickerLauncher.launch(intent);
         } else {
-            Log.e(TAG,  "photoPickerLauncher is not initialized.");
+            Log.e(TAG, "photoPickerLauncher is not initialized.");
         }
     }
 
@@ -243,12 +247,47 @@ public class UploadVideoFragment extends Fragment {
                 }
         );
     }
+// todo fix or remove, currently may crush the app
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if (videoUri != null) {
+//            outState.putString("videoUri", videoUri.toString());
+//        }
+//        if (thumbnailUri != null) {
+//            outState.putString("thumbnailUri", thumbnailUri.toString());
+//        }
+//        outState.putStringArrayList("tags", new ArrayList<>(tags));
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        if (savedInstanceState != null) {
+//            if (savedInstanceState.containsKey("videoUri")) {
+//                videoUri = Uri.parse(savedInstanceState.getString("videoUri"));
+//                binding.videoHolder.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
+//                binding.txtChooseVideo.setText("");
+//            }
+//            if (savedInstanceState.containsKey("thumbnailUri")) {
+//                thumbnailUri = Uri.parse(savedInstanceState.getString("thumbnailUri"));
+//                executor.execute(() -> {
+//                    try {
+//                        ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
+//                        Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
+//                        MainPage.getInstance().runOnUiThread(() -> {
+//                            binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
+//                            binding.txtChooseThumbnail.setText("");
+//                        });
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+//            }
+//            if (savedInstanceState.containsKey("tags")) {
+//                tags = savedInstanceState.getStringArrayList("tags");
+//                tagsAdapter.notifyDataSetChanged();
+//            }
+//        }
+//    }
 }
-
-
-
-
-
-
-
-

@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
@@ -86,8 +87,6 @@ public class EditVideoFragment extends Fragment {
             return view;
         }
 
-        tagsAdapter = new TagsAdapter(tags);
-
         binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + " #" + video.getVideoId());
 
         String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
@@ -105,9 +104,15 @@ public class EditVideoFragment extends Fragment {
         binding.spinnerCategoryEdit.setAdapter(categoryAdapter);
         binding.spinnerCategoryEdit.setSelection(categoryAdapter.getPosition(video.getCategory()));
 
+        tagsAdapter = new TagsAdapter(tags);
+
         for (String tag : video.getTags()) {
             addTag(tag);
         }
+
+        binding.rvTagsPreviewEdit.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvTagsPreviewEdit.setAdapter(tagsAdapter);
+
         binding.btnAddVideoTagEdit.setOnClickListener(v -> addTag());
 
         initializeThumbnailPicker();
@@ -125,7 +130,7 @@ public class EditVideoFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         try {
                             thumbnailUri = result.getData().getData();
-                            if (thumbnailUri == null) {
+                            if (null == thumbnailUri) {
                                 Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -177,6 +182,7 @@ public class EditVideoFragment extends Fragment {
         String description = binding.etVideoDescriptionEdit.getText().toString().trim();
         String category = binding.spinnerCategoryEdit.getSelectedItem().toString();
         String tagsString = String.join(",", tags);
+        MultipartBody.Part thumbnailPart = null;
 
         // Create RequestBody for each field
         Map<String, RequestBody> videoFields = new HashMap<>();
@@ -193,37 +199,37 @@ public class EditVideoFragment extends Fragment {
             videoFields.put("tags", RequestBody.create(MediaType.parse("text/plain"), tagsString));
         }
 
-        // Create MultipartBody.Part for the thumbnail if it exists
-        try {
-            ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
-            InputStream thumbnailInputStream = contentResolver.openInputStream(thumbnailUri);
-            if (thumbnailInputStream == null) {
-                throw new FileNotFoundException("Unable to open input stream for thumbnail URI");
-            }
-
-            RequestBody requestBodyImage = new RequestBody() {
-                @Override
-                public MediaType contentType() {
-                    return MediaType.parse("image/*");  // Set the media type to video
+        if (null != thumbnailUri) {
+            // Create MultipartBody.Part for the thumbnail if it exists
+            try {
+                ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
+                InputStream thumbnailInputStream = contentResolver.openInputStream(thumbnailUri);
+                if (thumbnailInputStream == null) {
+                    throw new FileNotFoundException("Unable to open input stream for thumbnail URI");
                 }
 
-                @Override
-                public void writeTo(BufferedSink sink) throws IOException {
-                    // Write the InputStream to the BufferedSink
-                    try (Source source = Okio.source(thumbnailInputStream)) {
-                        sink.writeAll(source);
+                RequestBody requestBodyImage = new RequestBody() {
+                    @Override
+                    public MediaType contentType() {
+                        return MediaType.parse("image/*");  // Set the media type to video
                     }
-                }
-            };
 
-            MultipartBody.Part thumbnailPart = MultipartBody.Part.createFormData("thumbnail", DataManager.getFileNameFromUri(thumbnailUri), requestBodyImage);
-            viewModel.updateVideo(videoFields, thumbnailPart);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
+                    @Override
+                    public void writeTo(BufferedSink sink) throws IOException {
+                        // Write the InputStream to the BufferedSink
+                        try (Source source = Okio.source(thumbnailInputStream)) {
+                            sink.writeAll(source);
+                        }
+                    }
+                };
+
+                thumbnailPart = MultipartBody.Part.createFormData("thumbnail", DataManager.getFileNameFromUri(thumbnailUri), requestBodyImage);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
         }
-
-//        viewModel.updateVideo(videoFields, thumbnailPart);
+        viewModel.updateVideo(videoFields, thumbnailPart);
     }
 
     private void delete() {

@@ -162,10 +162,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     }
 
     private void initLoggedInUser() {
-        Application application = MainPage.getInstance().getApplication();
-        AppDB db = AppDB.getDatabase(application);
-        UserRepository userRepository = new UserRepository(db);
-
         LoggedInUserObserver = getLoggedInUserObserver();
         LoggedInUser.getUser().observe(this, LoggedInUserObserver);
         String userId = sharedPreferences.getString(LIU_ID_KEY, null);
@@ -363,12 +359,12 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     public void startConnectToServerAlert() {
         binding.connectToServerAlertIcon.setVisibility(View.VISIBLE);
         binding.connectToServerAlertIcon.startAnimation(flickerAnimation);
-//        binding.connectToServerAlertIcon.invalidate();
+        binding.connectToServerAlertIcon.invalidate();
     }
     public void stopConnectToServerAlert() {
         binding.connectToServerAlertIcon.setVisibility(View.GONE);
         binding.connectToServerAlertIcon.clearAnimation();
-//        binding.connectToServerAlertIcon.invalidate();
+        binding.connectToServerAlertIcon.invalidate();
     }
     private void showUpdateIPDialog() {
         ServerAPI serverAPI =  ServerAPI.getInstance();

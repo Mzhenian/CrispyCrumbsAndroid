@@ -36,14 +36,16 @@ public class LoggedInUser {
     }
 
     public static void setLoggedInUser(String userId) {
-        Application application = MainPage.getInstance().getApplication();
-        AppDB db = AppDB.getDatabase(application);
-        UserRepository userRepository = new UserRepository(db);
-        LiveData<UserItem> user = userRepository.getUser(userId);
-        user.observe(getInstance(), new Observer<UserItem>() {
+
+        if (null == userId) {
+            logOut();
+            return;
+        }
+        LiveData<UserItem> user = UserRepository.getInstance().getUser(userId);
+        user.observe(MainPage.getInstance(), new Observer<UserItem>() {
             @Override
             public void onChanged(UserItem userItem) {
-                loggedInUser.postValue(userItem);
+                setLoggedInUser(userItem);
                 user.removeObserver(this);
             }
         });

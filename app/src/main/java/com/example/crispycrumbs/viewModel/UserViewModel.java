@@ -15,8 +15,7 @@ public class UserViewModel extends AndroidViewModel {
 
     public UserViewModel(Application application) {
         super(application);
-        AppDB db = AppDB.getDatabase(application);
-        userRepository = new UserRepository(db); // Initialize the repository with AppDatabase
+        userRepository = UserRepository.getInstance();
     }
 
     public LiveData<UserItem> getUser(String userId) {

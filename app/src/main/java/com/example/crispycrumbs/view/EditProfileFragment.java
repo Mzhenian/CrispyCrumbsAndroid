@@ -92,11 +92,9 @@ public class EditProfileFragment extends Fragment {
                 }
 
                 // Validate password
-                if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
-                    if (!newPassword.equals(confirmPassword)) {
-                        Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                if ((!newPassword.isEmpty() || !confirmPassword.isEmpty()) && !newPassword.equals(confirmPassword)) {
+                    Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 Log.d("Update user", "Save button clicked. Updated user data: Username = " + newUserName + ", Email = " + newUserEmail);
@@ -109,7 +107,7 @@ public class EditProfileFragment extends Fragment {
                         newPhoneNumber,
                         userItem.getDateOfBirth(),
                         userItem.getCountry(),
-                        currentPhotoUrl //todo test it's in the right format
+                        currentPhotoUrl
                 );
                 if (!newPassword.isEmpty()) {
                     updatedUser.setPassword(newPassword);
@@ -150,7 +148,7 @@ public class EditProfileFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         try {
                             PhotoUri = result.getData().getData();
-                            if (PhotoUri == null) {
+                            if (null == PhotoUri) {
                                 Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }

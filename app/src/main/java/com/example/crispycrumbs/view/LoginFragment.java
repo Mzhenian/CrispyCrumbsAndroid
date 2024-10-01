@@ -11,11 +11,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.databinding.FragmentLoginBinding;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.repository.UserRepository;
@@ -24,29 +26,21 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
 import com.example.crispycrumbs.serverAPI.serverInterface.LoginCallback;
 
 public class LoginFragment extends Fragment {
+    FragmentLoginBinding binding;
     View view;
-    Button loginButton;
-    EditText userName;
-    EditText password;
-    TextView newUser;
-    Application application = MainPage.getInstance().getApplication();
-    AppDB db = AppDB.getDatabase(application);
-    UserRepository userRepository = new UserRepository(db);
+
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_login, container, false);
-        loginButton = view.findViewById(R.id.login_button);
-        userName = view.findViewById(R.id.username_input);
-        password = view.findViewById(R.id.password_input);
-        newUser = view.findViewById(R.id.new_user);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
+        view =binding.getRoot();
 
-        newUser.setOnClickListener(v -> {
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).commit();
+        binding.newUser.setOnClickListener(v -> {
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignUpFragment()).commit();
         });
 
-        password.setOnEditorActionListener((v, actionId, event) -> {
+        binding.passwordInput.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginAttempt();
                 return true;
@@ -54,14 +48,14 @@ public class LoginFragment extends Fragment {
             return false;
         });
 
-        loginButton.setOnClickListener(v -> loginAttempt());
+        binding.loginButton.setOnClickListener(v -> loginAttempt());
 
         return view;
     }
 
     //with server
     void loginAttempt() {
-        userRepository.login(userName.getText().toString(), password.getText().toString(), true, new LoginCallback() {
+        UserRepository.getInstance().login(binding.usernameInput.getText().toString(), binding.passwordInput.getText().toString(), true, new LoginCallback() {
             @Override
             public void onSuccess(LoginResponse loginResponse) {
                 LoggedInUser.setLoggedInUser(loginResponse.getUser());

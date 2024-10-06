@@ -50,7 +50,7 @@ public class PlayListFragment extends Fragment {
             binding.playlistTitle.setText(user.getDisplayedName() + " Videos");
         }
 
-        RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_video);
 
         adapter = new PlayList_Adapter(getContext(), new ArrayList<>(), null, user != null ? user : LoggedInUser.getUser().getValue());
         recyclerView.setAdapter(adapter);
@@ -67,7 +67,6 @@ public class PlayListFragment extends Fragment {
             } else {
                 Log.e(TAG, "Video list is null");
             }
-//            adapter.updateVideoList(videoList)
         });
 
         // Search functionality

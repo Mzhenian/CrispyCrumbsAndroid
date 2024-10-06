@@ -1,6 +1,9 @@
 package com.example.crispycrumbs.view;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +34,7 @@ import com.example.crispycrumbs.adapter.CommentSection_Adapter;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
+import com.example.crispycrumbs.databinding.FragmentVideoPlayerBinding;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
@@ -41,55 +45,28 @@ import java.util.ArrayList;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
     private static final String TAG = "VideoPlayerFragment";
+    private FragmentVideoPlayerBinding binding;
+    private VideoPlayerViewModel videoPlayerViewModel;
+    private UserViewModel userViewModel;
+
+
     private static final String KEY_POSITION = "position";
-    private static final String KEY_COMMENTS = "comments";
-    private final ArrayList<CommentItem> commentItemArrayList = new ArrayList<>();
-    TextView date;
     private MediaController mediaController;
-    private VideoView videoView;
     private int currentPosition = 0;
     private String videoId;
     private PreviewVideoCard video;
-    private ImageView profilePicture;
-    private TextView userNameTextView;
-    private TextView description, descriptionButton, titleTextView;
-    private Button shareButton, commentButton;
-    private ConstraintLayout buttonBar, commentSectionContainer;
-    private RecyclerView recyclerView;
+//    private ConstraintLayout buttonBar, commentSectionContainer;
     private CommentSection_Adapter adapter;
-    private ImageButton likeButton;
-    private ImageButton unlikeButton;
-    private TextView likesTextView;
-    private TextView views;
-    private VideoPlayerViewModel videoPlayerViewModel;
-    private UserViewModel userViewModel;
     private LiveData<PreviewVideoCard> videoCardLiveData;
-    private ProgressBar progressBar;
     private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_video_player, container, false);
+        binding = FragmentVideoPlayerBinding.inflate(getLayoutInflater());
+        view = binding.getRoot();
 
-        userNameTextView = view.findViewById(R.id.user_name);
-        videoView = view.findViewById(R.id.video_view);
-        titleTextView = view.findViewById(R.id.video_title);
-        description = view.findViewById(R.id.txt_video_description);
-        likesTextView = view.findViewById(R.id.video_likes);
-        views = view.findViewById(R.id.video_views);
-        profilePicture = view.findViewById(R.id.profile_picture);
-        commentButton = view.findViewById(R.id.comment_button);
-        shareButton = view.findViewById(R.id.share_button);
-        likeButton = view.findViewById(R.id.like_button);
-        unlikeButton = view.findViewById(R.id.unlike_button);
-        recyclerView = view.findViewById(R.id.comment_section);
-        descriptionButton = view.findViewById(R.id.btn_video_description);
-        buttonBar = view.findViewById(R.id.button_bar);
-        commentSectionContainer = view.findViewById(R.id.comment_section_container);
-        progressBar = view.findViewById(R.id.progressBar2);
         videoPlayerViewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        date = view.findViewById(R.id.video_date);
 
 
         // Get videoId from arguments
@@ -99,22 +76,22 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             return view;
         }
 
-        profilePicture.setOnClickListener(v -> {
+        binding.profilePicture.setOnClickListener(v -> {
             loadingMessage();
         });
 
-        likeButton.setOnClickListener(v -> {
+        binding.likeButton.setOnClickListener(v -> {
             loadingMessage();
         });
 
-        unlikeButton.setOnClickListener(v -> {
+        binding.unlikeButton.setOnClickListener(v -> {
             loadingMessage();
         });
 
 
         videoPlayerViewModel.setVideo(bundle.getString("videoId"));
         videoCardLiveData = videoPlayerViewModel.getVideo();
-        videoCardLiveData.observeForever(video -> {
+        videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
             if (null == video) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
                 return;
@@ -132,24 +109,24 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             initializeVideo(video);
             initializeVideoDetails(video);
 
-            profilePicture.setOnClickListener(v -> {
+            binding.profilePicture.setOnClickListener(v -> {
                 MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
             });
 
             if (null == LoggedInUser.getUser().getValue()) {
-                likeButton.setOnClickListener(v -> {
+                binding.likeButton.setOnClickListener(v -> {
                     MainPage.getInstance().showLoginSnackbar(view);
                 });
 
-                unlikeButton.setOnClickListener(v -> {
+                binding.unlikeButton.setOnClickListener(v -> {
                     MainPage.getInstance().showLoginSnackbar(view);
                 });
             } else {
-                likeButton.setOnClickListener(v -> {
+                binding.likeButton.setOnClickListener(v -> {
                     videoPlayerViewModel.likeVideo();
                 });
 
-                unlikeButton.setOnClickListener(v -> {
+                binding.unlikeButton.setOnClickListener(v -> {
                     videoPlayerViewModel.dislikeVideo();
                 });
             }
@@ -160,7 +137,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             Log.d("LiveData update", "Refreshing UI for updated video data");
         });
 
-        commentButton.setOnClickListener(v -> {
+        binding.commentButton.setOnClickListener(v -> {
             showAddCommentDialog();
         });
 
@@ -174,22 +151,22 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private void initializeVideo(PreviewVideoCard video) {
         String videoUrl = ServerAPI.getInstance().constructUrl(video.getVideoFile());
         Uri videoUri = Uri.parse(videoUrl);
-        videoView.setVideoURI(videoUri);
+        binding.videoView.setVideoURI(videoUri);
 
         mediaController = new MediaController(getContext());
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
+        mediaController.setAnchorView(binding.videoView);
+        binding.videoView.setMediaController(mediaController);
 
-        videoView.setOnPreparedListener(mp -> {
-            progressBar.setVisibility(View.GONE);
-            videoView.start();
+        binding.videoView.setOnPreparedListener(mp -> {
+            binding.progressBar2.setVisibility(View.GONE);
+            binding.videoView.start();
             videoPlayerViewModel.incrementVideoViews(); // Trigger view count increment
         });
     }
 
     private void initializeVideoDetails(PreviewVideoCard video) {
-        titleTextView.setText(video.getTitle());
-        description.setText(video.getDescription());
+        binding.videoTitle.setText(video.getTitle());
+        binding.txtVideoDescription.setText(video.getDescription());
 
         updateVideoDetails();
 
@@ -202,62 +179,64 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                         .load(userProfileUrl)
                         .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
                         .skipMemoryCache(true)
-                        .into(profilePicture);
-                userNameTextView.setText(uploader.getUserName());
+                        .into(binding.profilePicture);
+                binding.userName.setText(uploader.getUserName());
             } else {
-                profilePicture.setImageResource(R.drawable.default_profile_picture);
-                userNameTextView.setText(R.string.deleted_user);
+                binding.profilePicture.setImageResource(R.drawable.default_profile_picture);
+                binding.userName.setText(R.string.deleted_user);
                 Log.e(TAG, "Uploader not found");
             }
         });
 
         String formattedDate = videoPlayerViewModel.formatDate(video.getUploadDate());
-        date.setText(formattedDate);
-        descriptionButton.setOnClickListener(v -> toggleDescriptionComments());
-        shareButton.setOnClickListener(v -> showShareMenu());
-
-
+        binding.videoDate.setText(formattedDate);
+        binding.btnVideoDescription.setOnClickListener(v -> toggleDescriptionComments());
+        binding.shareButton.setOnClickListener(v -> showShareMenu());
     }
 
     private void initializeCommentsSection(ArrayList<CommentItem> comments) {
         Log.d("Comment update", "Initializing comment section. Comments size: " + (comments != null ? comments.size() : 0));
 
+        binding.txtVideoDescription.setVisibility(View.GONE);
+        binding.buttonBar.setVisibility(View.VISIBLE);
+        binding.commentSectionContainer.setVisibility(View.VISIBLE);
+
         if (comments == null || comments.isEmpty()) {
-            commentSectionContainer.setVisibility(View.GONE);
+            binding.commentSectionContainer.setVisibility(View.GONE);
             return;
         }
 
-        if (adapter == null) {
+//        if (adapter != null) {
+//            Log.d("Comment update", "Updating existing adapter with new comments: " + comments.size());
+//            adapter.updateComments(comments);
+//        } else {
             UserItem currentUser = LoggedInUser.getUser().getValue();
             String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
             Log.d("Comment update", "Setting up adapter with comments: " + comments.size());
             adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        } else {
-            Log.d("Comment update", "Updating existing adapter with new comments: " + comments.size());
-            adapter.updateComments(comments);
-        }
+            binding.commentSection.setAdapter(adapter);
+            binding.commentSection.setLayoutManager(new LinearLayoutManager(getContext()));
+//        }
 
-        commentSectionContainer.setVisibility(View.VISIBLE);
+        binding.commentSectionContainer.setVisibility(View.VISIBLE);
         Log.e("Comment update", "End of Initialize comment section in Fragment");
     }
 
     private void toggleDescriptionComments() {
-        if (description.getVisibility() == View.VISIBLE) {
-            descriptionButton.setText(getString(R.string.more));
+        if (binding.txtVideoDescription.getVisibility() == View.VISIBLE) {
+            binding.btnVideoDescription.setText(getString(R.string.more));
             initializeCommentsSection(video.getComments());
         } else {
-            descriptionButton.setText(getString(R.string.less));
+            binding.btnVideoDescription.setText(getString(R.string.less));
             initializeDescription();
         }
     }
 
     private void initializeDescription() {
-        description.setVisibility(View.VISIBLE);
-        buttonBar.setVisibility(View.GONE);
-        commentSectionContainer.setVisibility(View.GONE);
+        binding.txtVideoDescription.setVisibility(View.VISIBLE);
+        binding.buttonBar.setVisibility(View.GONE);
+        binding.commentSectionContainer.setVisibility(View.GONE);
     }
 
     private void updateVideoDetails() {
@@ -265,27 +244,27 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             return;
         }
         Log.d(TAG, "Updating UI with likes: " + video.getLikes() + " and dislikes: " + video.getDislikes());
-        likesTextView.setText(video.getLikes() + " likes");
+        binding.videoLikes.setText(video.getLikes() + " likes");
         // Assuming you have a dislikesTextView for dislikes
         // dislikesTextView.setText(video.getDislikes() + " dislikes");
-        views.setText(video.getViews() + " views");
+        binding.videoViews.setText(video.getViews() + " views");
 
-        likeButton.setSelected(false);
-        likeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
+        binding.likeButton.setSelected(false);
+        binding.likeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
 //            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange));
-        unlikeButton.setSelected(false);
-        unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
+        binding.unlikeButton.setSelected(false);
+        binding.unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
 
         UserItem currentUser = LoggedInUser.getUser().getValue();
         if (currentUser == null) {
             // No user is logged in, so clear the selection like buttons  states
         } else if (video.getLikedBy().contains(currentUser.getUserId())) {
-            likeButton.setSelected(true);
-            likeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
+            binding.likeButton.setSelected(true);
+            binding.likeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
 //            likeButton.setBackgroundColor(getResources().getColor(R.color.crispy_orange_light));
         } else if (video.getDislikedBy().contains(currentUser.getUserId())) {
-            unlikeButton.setSelected(true);
-            unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
+            binding.unlikeButton.setSelected(true);
+            binding.unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
         }
     }
 
@@ -299,26 +278,41 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
         Button shareEmail = dialogView.findViewById(R.id.share_email);
         Button shareFacebook = dialogView.findViewById(R.id.share_facebook);
-        Button shareTwitter = dialogView.findViewById(R.id.share_twitter);
+        Button shareX = dialogView.findViewById(R.id.share_twitter);
         Button shareWhatsapp = dialogView.findViewById(R.id.share_whatsapp);
 
+        String CrispyCrumbsLink = "https://github.com/Mzhenian/CrispyCrumbsAndroid";
+        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(MainPage.CLIPBOARD_SERVICE);
+
         shareEmail.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Share via Email selected", Toast.LENGTH_SHORT).show();
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto", "", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Check out CrispyCrumbs!");
+            emailIntent.putExtra(Intent.EXTRA_TEXT, CrispyCrumbsLink);
+            startActivity(Intent.createChooser(emailIntent, "Send email..."));
             dialog.dismiss();
         });
 
         shareFacebook.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Share on Facebook selected", Toast.LENGTH_SHORT).show();
+            ClipData clip = ClipData.newPlainText("CrispyCrumbs Link", CrispyCrumbsLink);
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(getContext(), "Link copied to clipboard", Toast.LENGTH_SHORT).show();
+
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/"));
+            startActivity(browserIntent);
+
             dialog.dismiss();
         });
 
-        shareTwitter.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Share on X selected", Toast.LENGTH_SHORT).show();
+        shareX.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/intent/tweet?url=" + CrispyCrumbsLink + "&text=Check this out!"));
+            startActivity(browserIntent);
             dialog.dismiss();
         });
 
         shareWhatsapp.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Share on Whatsapp selected", Toast.LENGTH_SHORT).show();
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/?text=" + CrispyCrumbsLink));
+            startActivity(browserIntent);
             dialog.dismiss();
         });
 
@@ -328,30 +322,30 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     @Override
     public void onPause() {
         super.onPause();
-        if (videoView != null && videoView.isPlaying()) {
-            currentPosition = videoView.getCurrentPosition();
-            videoView.pause();
+        if (binding.videoView != null && binding.videoView.isPlaying()) {
+            currentPosition = binding.videoView.getCurrentPosition();
+            binding.videoView.pause();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        videoView.seekTo(currentPosition);
-        videoView.start();
+        binding.videoView.seekTo(currentPosition);
+        binding.videoView.start();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        videoView.stopPlayback();
+        binding.videoView.stopPlayback();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         videoCardLiveData.removeObservers(getViewLifecycleOwner());
-        videoView = null;
+//        binding.videoView = null;
     }
 
     @Override

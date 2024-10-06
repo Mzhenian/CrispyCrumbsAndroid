@@ -5,198 +5,253 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.UploadVideoFragment"
-    android:windowSoftInputMode="adjustPan">
+    android:windowSoftInputMode="adjustPan"
+    tools:context=".view.UploadVideoFragment">
 
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
-<LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="20dp"
-        android:background="@drawable/round_corners_gray"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <TextView
-            android:id="@+id/TitleUploadVideo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/diff_round_corners_orange"
-            android:paddingHorizontal="10dp"
-            android:text="Upload a video"
-            android:textColor="@color/black_div"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <RelativeLayout
-            android:id="@+id/chooseVideo"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-
-            android:gravity="center">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:visibility="invisible"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
-                android:progressDrawable="@android:drawable/progress_horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btnChooseVideo"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_alignTop="@id/imageView"
-                android:layout_alignBottom="@id/imageView"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="@android:color/transparent" />
-
-            <TextView
-                android:id="@+id/txtChooseVideo"
-                android:layout_width="wrap_content"
-                android:layout_height="200dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:text="choose a video"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:clickable="false"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/layer_1"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true" />
-        </RelativeLayout>
-
-
-
-        <TextView
-            android:id="@+id/VideoTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/diff_round_top_right_corner_orange"
-            android:text="Video title:    "
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etVideoTitle"
-            android:hint="* Video title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_corners_white"
-            android:ems="10"
-            android:inputType="text"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/white"
-            android:minHeight="48dp" />
-
-        <TextView
-            android:layout_marginTop="5dp"
-            android:id="@+id/VideoDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/diff_round_top_right_corner_orange"
-            android:text="Video description:    "
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/etVideoDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Video description...\n\n\n\n"
-            android:inputType="text"
-            android:background="@drawable/round_corners_white"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/white"
-            android:gravity="top" />
-
-
-        <RelativeLayout
-            android:id="@+id/chooseThumbnail"
-            android:layout_width="match_parent"
-            android:gravity="center"
-            android:scaleType="fitCenter"
-            android:layout_height="200dp"
-            android:adjustViewBounds="true">
-
-            <Button
-                android:id="@+id/btnChooseThumbnail"
-                android:layout_width="match_parent"
-                android:layout_alignTop="@id/thumbnailImageHolder"
-                android:layout_alignBottom="@id/thumbnailImageHolder"
-                android:focusable="true"
-                android:clickable="true"
-                android:layout_height="200dp"
-                android:background="@android:color/transparent" />
-
-            <TextView
-                android:id="@+id/txtChooseThumbnail"
-                android:layout_width="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:text="choose a thumbnail"
-                android:textStyle="bold"
-                android:layout_height="200dp"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:id="@+id/thumbnailImageHolder"
-
-                android:layout_height="200dp"
-                android:clickable="false"
-                android:layout_width="wrap_content"
-                android:layout_centerInParent="true"
-                android:src="@drawable/layer_1" />
-        </RelativeLayout>
-
-
+        android:fillViewport="true"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="101dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:background="@drawable/round_corners_gray"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageButton
-                android:id="@+id/btnUpload"
+
+            <TextView
+                android:id="@+id/TitleUploadVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/diff_round_corners_orange"
+                android:paddingHorizontal="10dp"
+                android:text="Upload a video"
+                android:textColor="@color/black_div"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/chooseVideo"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+
+                android:gravity="center">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
+                    android:progressDrawable="@android:drawable/progress_horizontal"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnChooseVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_alignTop="@id/video_holder"
+                    android:layout_alignBottom="@id/video_holder"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/txtChooseVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="choose a video"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/video_holder"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_centerInParent="true"
+                    android:adjustViewBounds="true"
+                    android:clickable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/layer_1" />
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/VideoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
-                android:src="@drawable/upload_video" />
+                android:background="@drawable/diff_round_top_right_corner_orange"
+                android:text="Video title:    "
+                android:textColor="@color/black"
+                android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/btnCancleUpload"
+            <EditText
+                android:id="@+id/etVideoTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_corners_white"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:hint="* Video title"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/VideoDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#00FFFFFF"
-                android:src="@drawable/cancel_upload" />
+                android:layout_marginTop="5dp"
+                android:background="@drawable/diff_round_top_right_corner_orange"
+                android:text="Video description:    "
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etVideoDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_corners_white"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:gravity="top"
+                android:hint="Video description...\n\n\n\n"
+                android:inputType="text|textMultiLine"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/diff_round_top_right_corner_orange"
+                android:text="@string/video_category"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_corners_white"
+                android:padding="10dp"
+                android:spinnerMode="dropdown" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etVideoTag"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="Add tag(s)"
+                    android:padding="10dp"
+                    android:textColor="@color/black" />
+
+                <Button
+                    android:id="@+id/btnAddVideoTag"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:backgroundTint="@color/crispy_orange_dark"
+                    android:text="+"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTagsPreview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:layoutManager="GridLayoutManager"
+                tools:listitem="@layout/recycler_view_item"
+                tools:spanCount="5" />
+
+            <RelativeLayout
+                android:id="@+id/chooseThumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:adjustViewBounds="true"
+                android:gravity="center"
+                android:scaleType="fitCenter">
+
+                <Button
+                    android:id="@+id/btnChooseThumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_alignTop="@id/thumbnailImageHolder"
+                    android:layout_alignBottom="@id/thumbnailImageHolder"
+                    android:background="@android:color/transparent"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/txtChooseThumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="choose a thumbnail"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/thumbnailImageHolder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_centerInParent="true"
+                    android:clickable="false"
+                    android:src="@drawable/layer_1" />
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnUpload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/btn_upload_video" />
+
+                <ImageButton
+                    android:id="@+id/btn_cancel_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/cancel_upload" />
+            </LinearLayout>
+
         </LinearLayout>
-
-</LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

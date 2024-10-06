@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,24 +17,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.databinding.FragmentEditVideoBinding;
+import com.example.crispycrumbs.databinding.FragmentHomeBinding;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemClickListener {
-
     private static final String TAG = "HomeFragment";
-    private VideoList_Adapter adapter;
     private VideoViewModel videoViewModel;
+    private FragmentHomeBinding binding;
+
+
+    private VideoList_Adapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.video_recycler_view);
+        binding = FragmentHomeBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
 
         adapter = new VideoList_Adapter(getContext(), new ArrayList<>(), this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvVideo.setAdapter(adapter);
+        binding.rvVideo.setLayoutManager(new LinearLayoutManager(getContext()));
 
         videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
@@ -45,21 +50,20 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
             } else {
                 Log.e(TAG, "Video list is null");
             }
-//            adapter.updateVideoList(videoList);
         });
-//        // Observe the video list LiveData from ViewModel
-//        videoViewModel.getAllVideos().observe(getViewLifecycleOwner(), videoList -> {
-//            // Update the adapter with the new video list
-//            adapter.updateVideoList(videoList);
-//        });
 
-        SearchView searchBar = view.findViewById(R.id.search_bar);
-        customizeSearchViewIcon(searchBar);
 
-        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                adapter.filter(query);
+                videoViewModel.searchVideos(query).observe(getViewLifecycleOwner(), videoList -> {
+                    // Update the adapter with the new video list
+                    if (videoList != null) {
+                        adapter.updateVideoList(videoList);
+                    } else {
+                        Toast.makeText(getContext(), "No video found for:" + query, Toast.LENGTH_LONG).show();
+                    }
+                });
                 return false;
             }
 
@@ -69,6 +73,13 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
                 return false;
             }
         });
+
+        //todo WIP
+//        ImageView searchIcon = binding.searchBar.findViewById(androidx.appcompat.R.id.search_button);
+//        searchIcon.setOnClickListener(v -> {
+//            String query = binding.searchBar.getQuery().toString();
+//            binding.searchBar.setQuery(query, true);
+//        });
 
         return view;
     }
@@ -84,19 +95,5 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
                 .replace(R.id.fragment_container, videoPlayerFragment)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    private void customizeSearchViewIcon(SearchView searchView) {
-        try {
-            int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
-            ImageView searchIcon = searchView.findViewById(searchIconId);
-            if (searchIcon != null) {
-                searchIcon.setImageResource(R.drawable.search_icon);
-            } else {
-                Log.e(TAG, "Search icon ImageView not found");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error customizing search icon", e);
-        }
     }
 }

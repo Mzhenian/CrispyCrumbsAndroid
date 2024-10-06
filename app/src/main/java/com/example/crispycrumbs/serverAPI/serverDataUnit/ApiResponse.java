@@ -12,5 +12,4 @@ public class ApiResponse<T> {
     @SerializedName("data")
     private T data;
 
-    // Getters and Setters
 }

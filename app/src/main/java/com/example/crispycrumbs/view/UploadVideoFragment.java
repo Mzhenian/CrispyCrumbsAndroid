@@ -1,201 +1,155 @@
 package com.example.crispycrumbs.view;
 
 
-import static android.app.Activity.RESULT_OK;
-import static com.example.crispycrumbs.model.DataManager.getUriFromResOrFile;
-import static com.example.crispycrumbs.view.MainPage.getDataManager;
-
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.MediaPlayer;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.localDB.LoggedInUser;
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
+import com.example.crispycrumbs.adapter.TagsAdapter;
 import com.example.crispycrumbs.databinding.FragmentUploadVideoBinding;
-import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.model.UserLogic;
+import com.example.crispycrumbs.viewModel.UploadVideoViewModel;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class UploadVideoFragment extends Fragment {
-    private static final int REQUEST_VIDEO_PICK = 12;
-    private static final int REQUEST_THUMBNAIL_PICK = 13;
+    private final static String TAG = "UploadVideoFragment";
     private FragmentUploadVideoBinding binding;
-    private EditText etVideoTitle, etVideoDescription;
-    private TextView txtChooseVideo;
-    private TextView txtChooseThumbnail;
-    private ImageView thumbnailImageHolder;
-    private Button btnOpenCamera, btnChooseFromGallery;
-    private ImageButton btnUpload, btnCancleUpload;
-    private ProgressBar progressBar;
-    private String currentThumbnailPath;
-    private String currentVideoPath;
-    private Uri thumbnailUri, videoUri;
+    private UploadVideoViewModel uploadVideoViewModel;
+    private Executor executor = Executors.newSingleThreadExecutor();
+
+
+    private Uri thumbnailUri,
+            videoUri;
+    private ActivityResultLauncher<Intent> videoPickerLauncher,
+            photoPickerLauncher;
+    private TagsAdapter tagsAdapter;
+    private List<String> tags;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getContext().getTheme().applyStyle(R.style.Base_Theme_CrispyCrumbs_Light, true);
 
-        binding = FragmentUploadVideoBinding.inflate(inflater, container, false);
+        binding = FragmentUploadVideoBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
+        uploadVideoViewModel = new ViewModelProvider(this).get(UploadVideoViewModel.class);
 
-        etVideoTitle = view.findViewById(R.id.etVideoTitle);
-        thumbnailImageHolder = view.findViewById(R.id.thumbnailImageHolder);
-        progressBar = view.findViewById(R.id.progressBar);
-        etVideoDescription = view.findViewById(R.id.etVideoDescription);
-        txtChooseVideo = view.findViewById(R.id.txtChooseVideo);
-        txtChooseThumbnail = view.findViewById(R.id.txtChooseThumbnail);
+        initializeVideoPicker();
+        initializeThumbnailPicker();
+        binding.btnChooseVideo.setOnClickListener(v -> setVideo());
+        binding.btnChooseThumbnail.setOnClickListener(v -> setPhoto());
 
-        binding.btnChooseVideo.setOnClickListener(v -> uploadVideo());
-        binding.btnChooseThumbnail.setOnClickListener(v -> uploadPhoto());
         binding.btnUpload.setOnClickListener(v -> upload());
-        binding.btnCancleUpload.setOnClickListener(v -> cancelUpload());
+        binding.btnCancelUpload.setOnClickListener(v -> cancelUpload());
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, UploadVideoViewModel.CATEGORIES);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerCategory.setAdapter(categoryAdapter);
+
+        tags = new ArrayList<>();
+        tagsAdapter = new TagsAdapter(tags);
+        binding.rvTagsPreview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvTagsPreview.setAdapter(tagsAdapter);
+
+//        etVideoTag.setOnEditorActionListener((v, actionId, event) -> {
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                String tagText = etVideoTag.getText().toString().trim();
+//                if (tagText.isEmpty()) {
+//                    // Close the keyboard
+//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(etVideoTag.getWindowToken(), 0);
+//                } else {
+//                    // Trigger the button's onClick event
+//                    btnAddVideoTag.performClick();
+//                }
+//                return true;
+//            }
+//            return false;
+//        });
+
+        binding.btnAddVideoTag.setOnClickListener(v -> addTag());
 
         return view;
     }
 
-    private File createVideoFile() throws IOException {
-        // Create an video file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String videoFileName = "VIDEO_" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(null);
-        File video = File.createTempFile(videoFileName,  /* prefix */
-                getDataManager().getFileExtension(videoUri),         /* suffix */
-                storageDir      /* directory */);
+//    private Bitmap getVideoThumbnail(Uri videoUri) {
+//        Bitmap thumbnail = null;
+//        try {
+//            Size size = new Size(binding.videoHolder.getWidth(), binding.videoHolder.getHeight());
+//            thumbnail = MainPage.getInstance().getContentResolver().loadThumbnail(videoUri, size, null);
+//        } catch (Exception e) {
+//            Log.e("Thumbnail", "Could not get thumbnail", e);
+//        }
+//        return thumbnail;
+//    }
 
-        return video;
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-        currentThumbnailPath = image.getAbsolutePath();
-        return image;
-    }
-
-    private Bitmap getVideoThumbnail(Uri videoUri) {
-        Bitmap thumbnail = null;
-        try {
-            thumbnail = MediaStore.Video.Thumbnails.getThumbnail(getContext().getContentResolver(), ContentUris.parseId(videoUri), MediaStore.Video.Thumbnails.MINI_KIND, null);
-        } catch (Exception e) {
-            Log.e("Thumbnail", "Could not get thumbnail", e);
-        }
-        return thumbnail;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && data != null) {
-            if (requestCode == REQUEST_THUMBNAIL_PICK) {
-                Uri photoUri = data.getData();
-                try {
-                    Bitmap thumbnailBitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), photoUri);
-                    binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
-
-//                    currentThumbnailPath = thumbnailBitmap.toString(); // Update the photo path to the selected image's URI
-                    currentThumbnailPath = photoUri.toString();
-                    txtChooseThumbnail.setText("");
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else if (requestCode == REQUEST_VIDEO_PICK) {
-                videoUri = data.getData();
-                try {
-                    Bitmap thumbnail = getVideoThumbnail(videoUri);
-                    saveVideoLocally(videoUri);
-
-                    binding.imageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
-                    txtChooseVideo.setText("");
-//                    binding.thumbnailImageHolder.setImageBitmap(thumbnail);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+    public void addTag() {
+        String tag = binding.etVideoTag.getText().toString().trim();
+        if (!tag.isEmpty()) {
+            tags.add(tag);
+            tagsAdapter.notifyItemInserted(tags.size() - 1);
+            binding.etVideoTag.setText("");
         }
     }
 
-    private void uploadPhoto() {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_THUMBNAIL_PICK);
-    }
-
-    private void uploadVideo() {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_VIDEO_PICK);
-    }
-
-
-    private void saveVideoLocally(Uri videoUri) {
-        try {
-            InputStream in = getContext().getContentResolver().openInputStream(videoUri);
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String videoFileName = "VIDEO_" + timeStamp + getDataManager().getFileExtension(videoUri);
-            File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-            File videoFile = new File(storageDir, videoFileName);
-            OutputStream out = new FileOutputStream(videoFile);
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-
-            currentVideoPath = videoUri.toString();
-            out.close();
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void setVideo() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        if (videoPickerLauncher != null) {
+            videoPickerLauncher.launch(intent);
+        } else {
+            Log.e("UploadVideoFragment", "videoPickerLauncher is not initialized.");
         }
     }
 
+    public void setPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (photoPickerLauncher != null) {
+            photoPickerLauncher.launch(intent);
+        } else {
+            Log.e(TAG, "photoPickerLauncher is not initialized.");
+        }
+    }
 
-    private Boolean validateUploadable() {
-        if (etVideoTitle.getText().toString().trim().isEmpty()) {
-            etVideoTitle.setError("Video title is required");
-            etVideoTitle.requestFocus();
+    //todo move to ViewModel
+    public Boolean validateUploadable() {
+        if (binding.etVideoTitle.getText().toString().trim().isEmpty()) {
+            binding.etVideoTitle.setError("Video title is required");
+            binding.etVideoTitle.requestFocus();
             return false;
-        } else if (currentVideoPath == null) {
+        } else if (videoUri == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Error");
             builder.setMessage("Please select a video to upload");
             builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
             builder.show();
             return false;
-        } else if (currentThumbnailPath == null) {
+        } else if (thumbnailUri == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Error");
             builder.setMessage("Please select a thumbnail for the video");
@@ -203,40 +157,137 @@ public class UploadVideoFragment extends Fragment {
             builder.show();
             return false;
         }
-
-        // Test that previewVideoCard.getVideoFile() is playable by VideoPlayerFragment
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        try {
-            mediaPlayer.setDataSource(getContext(), getUriFromResOrFile(currentVideoPath));
-            mediaPlayer.prepare();
-            mediaPlayer.release();
-        } catch (IOException e) {
-            Log.e("UploadVideoFragment", "Video not playable: " + videoUri, e);
-            return false;
-        }
         return true;
     }
 
     private void upload() {
-        progressBar.setVisibility(View.VISIBLE);
-        String lastVideoId = getDataManager().getLastVideoId();
-
-        PreviewVideoCard previewVideoCard = new PreviewVideoCard(UserLogic.nextId(lastVideoId), etVideoTitle.getText().toString(), currentThumbnailPath, currentVideoPath, etVideoDescription.getText().toString());
-
-
-        if (validateUploadable()) {
-            DataManager.getInstance().addVideo(previewVideoCard);
-            LoggedInUser.getUser().getValue().addVideo(previewVideoCard.getVideoId());
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-            Toast.makeText(getContext(), "uploaded " + previewVideoCard.getTitle() + " successfully", Toast.LENGTH_SHORT).show();
+        if (!validateUploadable()) {
+            return;
         }
-        progressBar.setVisibility(View.GONE);
+        MutableLiveData<Boolean> uploadStatus = new MutableLiveData<>();
+        uploadStatus.observe(getViewLifecycleOwner(), status -> {
+            if (status) {
+                Toast.makeText(getContext(), "Video uploaded successfully", Toast.LENGTH_SHORT).show();
+                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
+            } else {
+                Toast.makeText(getContext(), "Failed to upload video", Toast.LENGTH_SHORT).show();
+            }
+            binding.progressBar.setVisibility(View.GONE);
+        });
 
+        binding.progressBar.setVisibility(View.VISIBLE);
+        uploadVideoViewModel.upload(videoUri, thumbnailUri, binding.etVideoTitle.getText().toString(), binding.etVideoDescription.getText().toString(), binding.spinnerCategory.getSelectedItem().toString(), tags, uploadStatus);
     }
+
 
     private void cancelUpload() {
-        // Navigate back to HomeFragment
-        getActivity().getSupportFragmentManager().popBackStack();
+        MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
     }
 
+//    private String getRealPathFromURI(Uri uri) {
+//        String[] projection = { MediaStore.Video.Media.DATA };
+//        Cursor cursor = getContext().getContentResolver().query(uri, projection, null, null, null);
+//        if (cursor != null) {
+//            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+//            cursor.moveToFirst();
+//            String filePath = cursor.getString(columnIndex);
+//            cursor.close();
+//            return filePath;
+//        }
+//        return null;
+//    }
+
+    private void initializeVideoPicker() {
+        videoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        try {
+                            videoUri = result.getData().getData();
+                            if (videoUri == null) {
+                                Toast.makeText(getContext(), "Failed to get video from user", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            //todo call Bitmap thumbnail = getVideoThumbnail(videoUri); and set it to the thumbnail
+                            binding.videoHolder.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
+                            binding.txtChooseVideo.setText("");
+                            Toast.makeText(getContext(), "Video selected: " + videoUri.toString(), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+    }
+
+    public void initializeThumbnailPicker() {
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        try {
+                            thumbnailUri = result.getData().getData();
+                            if (thumbnailUri == null) {
+                                Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
+                            Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
+                            binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
+                            binding.txtChooseThumbnail.setText("");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+// todo fix or remove, currently may crush the app
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        if (videoUri != null) {
+//            outState.putString("videoUri", videoUri.toString());
+//        }
+//        if (thumbnailUri != null) {
+//            outState.putString("thumbnailUri", thumbnailUri.toString());
+//        }
+//        outState.putStringArrayList("tags", new ArrayList<>(tags));
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        if (savedInstanceState != null) {
+//            if (savedInstanceState.containsKey("videoUri")) {
+//                videoUri = Uri.parse(savedInstanceState.getString("videoUri"));
+//                binding.videoHolder.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.baseline_cloud_done_24));
+//                binding.txtChooseVideo.setText("");
+//            }
+//            if (savedInstanceState.containsKey("thumbnailUri")) {
+//                thumbnailUri = Uri.parse(savedInstanceState.getString("thumbnailUri"));
+//                executor.execute(() -> {
+//                    try {
+//                        ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
+//                        Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
+//                        MainPage.getInstance().runOnUiThread(() -> {
+//                            binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
+//                            binding.txtChooseThumbnail.setText("");
+//                        });
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+//            }
+//            if (savedInstanceState.containsKey("tags")) {
+//                tags = savedInstanceState.getStringArrayList("tags");
+//                tagsAdapter.notifyDataSetChanged();
+//            }
+//        }
+//    }
 }

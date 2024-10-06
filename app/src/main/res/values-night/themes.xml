@@ -2,13 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme for light mode. -->
-    <style name="Base.Theme.CrispyCrumbs.Light" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Base.Theme.CrispyCrumbs.Dark" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/crispy_orange_light</item>
         <item name="colorPrimaryDark">@color/crispy_orange_dark</item>
         <item name="colorAccent">@color/crispy_orange</item>
         <item name="android:colorBackground">@color/off_white</item>
         <item name="android:windowBackground">@color/off_white</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.CrispyCrumbs.Light" parent="Base.Theme.CrispyCrumbs.Light">

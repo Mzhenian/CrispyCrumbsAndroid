@@ -23,6 +23,23 @@
         android:hint="@string/user_name"
         android:layout_marginTop="16dp"/>
 
+
+    <!-- User Password Edit Text -->
+    <EditText
+        android:id="@+id/edit_user_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:layout_marginTop="16dp"/>
+
+    <!-- User Password Edit Text -->
+    <EditText
+        android:id="@+id/confirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/confirm_password"
+        android:layout_marginTop="16dp"/>
+
     <!-- User Email Edit Text -->
     <EditText
         android:id="@+id/edit_user_email"
@@ -65,6 +82,15 @@
         android:text="Save Changes"
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/crispy_orange"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete user"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/alert_red_dark"
         android:textColor="@color/white"/>
 
 

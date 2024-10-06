@@ -44,14 +44,6 @@ public class VideoPlayerViewModel extends AndroidViewModel {
         videoRepository.getVideo(videoId).observeForever(video::setValue);
     }
 
-    public void insertVideo(PreviewVideoCard video) {
-        videoRepository.insertVideo(video);
-    }
-
-    public LiveData<List<PreviewVideoCard>> getVideosByUser(String userId) {
-        return videoRepository.getVideosByUser(userId);
-    }
-
     public void incrementVideoViews() {
         videoRepository.incrementVideoViews(video.getValue().getVideoId());
     }

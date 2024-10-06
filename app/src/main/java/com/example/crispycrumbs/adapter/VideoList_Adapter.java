@@ -1,10 +1,12 @@
 package com.example.crispycrumbs.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -133,6 +135,32 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
                     .placeholder(R.drawable.default_video_thumbnail)
                     .skipMemoryCache(true)
                     .into(videoThumbnail);
+
+    // Set scaleType to fitCenter
+    videoThumbnail.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+    // Calculate and set the new height based on the aspect ratio
+    videoThumbnail.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            videoThumbnail.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+            Drawable drawable = videoThumbnail.getDrawable();
+            if (drawable != null) {
+                int intrinsicWidth = drawable.getIntrinsicWidth();
+                int intrinsicHeight = drawable.getIntrinsicHeight();
+                int imageViewWidth = videoThumbnail.getWidth();
+
+                float aspectRatio = (float) intrinsicHeight / intrinsicWidth;
+                int newHeight = Math.round(imageViewWidth * aspectRatio);
+
+                ViewGroup.LayoutParams layoutParams = videoThumbnail.getLayoutParams();
+                layoutParams.height = newHeight;
+                layoutParams.width = imageViewWidth;
+                videoThumbnail.setLayoutParams(layoutParams);
+            }
+        }
+    });
 
             // Remove the old observer if it exists to prevent data from getting mixed up
             if (userObserver != null) {

@@ -1,8 +1,14 @@
 package com.example.crispycrumbs.viewModel;
 
+import android.app.Activity;
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,6 +22,7 @@ import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 import com.example.crispycrumbs.view.MainPage;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ProfileViewModel extends AndroidViewModel {
     private UserRepository userRepository;
@@ -24,8 +31,7 @@ public class ProfileViewModel extends AndroidViewModel {
     // Constructor that accepts an Application
     public ProfileViewModel(Application application) {
         super(application);
-        AppDB db = AppDB.getDatabase(application); // Use application to initialize the DB
-        userRepository = new UserRepository(db); // Initialize repository with DB instance
+        userRepository = UserRepository.getInstance();
     }
 
     public LiveData<UserItem> getUser(String userId) {
@@ -42,22 +48,27 @@ public class ProfileViewModel extends AndroidViewModel {
         return user;
     }
 
-    public void updateUser(UserItem updatedUser, File profilePhotoFile, UserUpdateCallback callback) {
-        Log.d("Update user", "Updating user: " + updatedUser.getUserId());
-        Log.d("Update user", "Updated user details: " + updatedUser.toString());
 
-        if (profilePhotoFile != null) {
-            Log.d("Update user", "Profile photo file: " + profilePhotoFile.getAbsolutePath());
+    public void updateUser(UserItem updatedUser, Uri profilePhotoUri, UserUpdateCallback callback) {
+        Log.d("Update user", "Updating user: " + updatedUser.getUserId());
+
+        if (profilePhotoUri != null) {
+            Log.d("Update user", "Profile photo Uri: " + profilePhotoUri);
         } else {
             Log.d("Update user", "No profile photo to update.");
         }
 
         // Update Room database
-        userRepository.updateUser(updatedUser);
+        userRepository.updateUserFromRoom(updatedUser);
 
         // Update on server with optional profile photo and callback
-        userRepository.updateUserOnServer(updatedUser, profilePhotoFile, callback);
+        userRepository.updateUserOnServer(updatedUser, profilePhotoUri, callback);
     }
+
+    public void deleteUser() {
+        userRepository.deleteUser(user.getValue().getUserId());
+    }
+
 
 
 

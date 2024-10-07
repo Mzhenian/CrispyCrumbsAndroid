@@ -1,15 +1,23 @@
 package com.example.crispycrumbs.serverAPI;
-
+import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckResponse;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckEmailRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckUserNameRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.view.MainPage;
 
 import java.util.concurrent.Executors;
 
 import okhttp3.OkHttpClient;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Callback;
+
 
 public class ServerAPI {
     public static final String DEFAULT_IP = "10.0.2.2"; // the emulator's host IP
@@ -67,5 +75,23 @@ public class ServerAPI {
     public String constructUrl(String path) {
         return "http://" + IP + ":" + port + "/api/db/" + path;
     }
+
+    public void checkUsernameAvailability(String username, Callback<CheckResponse> callback) {
+        CheckUserNameRequest request = new CheckUserNameRequest(username);
+        Call<CheckResponse> call = serverAPInterface.checkUsernameAvailability(request);
+        call.enqueue(callback);
+    }
+
+    public void checkEmailAvailability(String email, Callback<CheckResponse> callback) {
+        CheckEmailRequest request = new CheckEmailRequest(email);
+        Call<CheckResponse> call = serverAPInterface.checkEmailAvailability(request);
+        call.enqueue(callback);
+    }
+
+    public void signUp(SignUpRequest signUpRequest, Callback<SignUpResponse> callback) {
+        Call<SignUpResponse> call = serverAPInterface.signUp(signUpRequest);
+        call.enqueue(callback);
+    }
+
 }
 

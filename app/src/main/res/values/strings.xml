@@ -28,7 +28,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="et_confirm_password">* confirm password</string>
     <string name="et_mail_address">* email address</string>
-    <string name="et_name">* displayed name</string>
+    <string name="et_name">* full name</string>
     <string name="et_password">* password</string>
     <string name="btn_sign_up">Sign up!</string>
     <string name="et_username">* username</string>
@@ -38,6 +38,8 @@
     <string name="forgot_my_password">forgot my password?</string>
     <string name="btn_already_have_a_user">already have a user?</string>
     <string name="add_profile_picture">add profile picture:</string>
+    <string name ="etCountry"> country</string>
+    <string name="et_select_birthday">select birthday</string>
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>

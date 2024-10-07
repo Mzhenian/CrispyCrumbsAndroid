@@ -1,5 +1,3 @@
-Note: We have submitted the final version of part 1 of the project late to enable Dolev, who's in active reserve service those days, to participate in the full project. We received approval in person and by email.
-
 # Crispy Crumbs - Android App
 
 Welcome to the **Crispy Crumbs** app, a dedicated video-sharing platform showcasing only the finest Crispy Crumbs content. This app is built with Android Studio to ensure a smooth, interactive, and tasty user experience.
@@ -14,6 +12,8 @@ Welcome to the **Crispy Crumbs** app, a dedicated video-sharing platform showcas
 ## Running the Crispy Crumbs App
 
 ### Prerequisites
+
+The app is designed to run on Android devices with **Android 10** and above. You will need **Android Studio Jellyfish (2023.3.1)** or later to open the project and run the app.
 
 Before running the Crispy Crumbs app, you need to start the backend server. 
 Follow the instructions in the [CrispyCrumbsServer repository](https://github.com/Mzhenian/CrispyCrumbsServer) to set up and run the server.
@@ -59,6 +59,15 @@ Once the server is running, follow these steps to connect your Android device:
 
 3. The output will show your IP address (e.g., `192.168.1.100`).
 
+#### On macOS:
+
+1. Open the **Terminal**. You can find it by searching for "Terminal" in Spotlight (`Command + Space`) or by navigating to **Applications > Utilities > Terminal**.
+
+2. In the terminal, type the following command and press Enter:
+```bash
+   ifconfig
+  ```
+
 Once you have the IP address, enter it in the app's **Set Server IP** field, and the app will connect to the server.
 
 ### Running the App on an Android Emulator
@@ -76,6 +85,7 @@ If you are using an Android emulator:
 Now, you can run the app and enjoy the Crispy Crumbs experience!
 
 ## App Pages
+Now you’re all set to enjoy the full Crispy Crumbs experience! Go ahead and dive into a world of video goodness, just like biting into a perfectly golden, crispy schnitzel — crunchy on the outside, packed with flavor on the inside. Bon appétit!
 
 ### 0. Navigation Menu
 
@@ -110,7 +120,13 @@ Users can edit the video title, description, and thumbnail, or delete the video.
 This page includes a video player, details about the video, and interactive options like like/dislike buttons and comments for logged-in users. The comments section allows users to edit or delete their own comments.
 
 
-### 7. Dark Theme
+### 7. Profile Page
+
+This page allows users to view details about their profile, including their username, email, and other relevant information. Additionally, from this page, users can access a list of their uploaded videos. By clicking on any video, the user will be taken to the video page where they can view, edit, or delete their content.
+Feeling curious about other users? You can also access other users' profiles by clicking on their usernames from various parts of the app (like video pages). This will take you to their profile page, where you can check out their content and follow them if you're a fan of their crispy creations!
+
+
+### 8. Dark Theme
 
 The app includes a dark mode that can be toggled from the navigation menu.
 
@@ -120,6 +136,5 @@ The app includes a dark mode that can be toggled from the navigation menu.
 Our project was a collaborative effort. We initially met to plan and divided tasks using Jira. We designed mockups with Figma and then began coding the app. The journey was both educational and enjoyable.
 
 - **Jira Board**:  
-- לבדוק שהקישור עובד!!
-  https://crispycrumbs.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?epics=visible
+  [Jira Missions](https://crispycrumbs.atlassian.net/jira/software/projects/SCRUM/list?sortBy=customfield_10020&direction=ASC)
 

@@ -141,4 +141,4 @@ Our project was a collaborative effort. We initially met to plan and divided tas
 
 - **Jira Board**:  
   [Jira Missions](https://crispycrumbs.atlassian.net/jira/software/projects/SCRUM/list?sortBy=customfield_10020&direction=ASC)
-
+![jira.jpg](demonstration%2Fjira.jpg)

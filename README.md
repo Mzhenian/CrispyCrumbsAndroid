@@ -68,7 +68,11 @@ Once the server is running, follow these steps to connect your Android device:
    ifconfig
   ```
 
-Once you have the IP address, enter it in the app's **Set Server IP** field, and the app will connect to the server.
+6. Once you have the IP address, enter it in the app's **Set Server IP** field, and the app will connect to the server.
+
+![sidebar.png](demonstration%2Fsidebar.png)
+
+![set server ip.png](demonstration%2Fset%20server%20ip.png)
 
 ### Running the App on an Android Emulator
 

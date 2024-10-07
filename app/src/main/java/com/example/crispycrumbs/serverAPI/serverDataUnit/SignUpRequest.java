@@ -9,10 +9,9 @@ public class SignUpRequest {
     private String phoneNumber;
     private String birthday;
     private String country;
-    private String profilePhoto;
 
 
-    public SignUpRequest(String username, String email, String password, String fullName, String phoneNumber, String birthday, String country, String profilePhoto) {
+    public SignUpRequest(String username, String email, String password, String fullName, String phoneNumber, String birthday, String country) {
         this.userName = username;
         this.email = email;
         this.password = password;
@@ -20,7 +19,6 @@ public class SignUpRequest {
         this.phoneNumber = phoneNumber;
         this.birthday = birthday;
         this.country = country;
-        this.profilePhoto = profilePhoto;
     }
 
     // Getters and Setters
@@ -76,15 +74,7 @@ public class SignUpRequest {
         return birthday;
     }
 
-    public void getBirthday(String birthday) {
+    public void setBirthday(String birthday) {
         this.birthday = birthday;
-    }
-
-    public String getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    public void setProfilePhoto(String profilePhoto) {
-        this.profilePhoto = profilePhoto;
     }
 }

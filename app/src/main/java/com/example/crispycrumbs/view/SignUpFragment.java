@@ -1,21 +1,26 @@
 package com.example.crispycrumbs.view;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckResponse;
@@ -23,6 +28,7 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UsernameEmailCheckCallback;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -32,37 +38,32 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SignUpFragment extends Fragment {
-
-    private EditText email, username, password, confirmPassword, phoneNumber, fullName, country, profilePhoto;
-    private Button signUpButton, btnSelectBirthday;
-    private ProgressBar progressBar;
-    private TextView errorDisplay;
-
+    private static final int REQUEST_IMAGE_PICK = 3;
+    private static final String TAG = "SignUpFragment";
+    private FragmentSignUpBinding binding;
+    private View view;
     private String formattedBirthdayForServer; // Stores the formatted birthday for the server
+    private Uri photoUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_profile_picture);
+    private ActivityResultLauncher<Intent> photoPickerLauncher;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sign_up, container, false);
+        binding = FragmentSignUpBinding.inflate(inflater, container, false);
+        view = binding.getRoot();
 
-        email = view.findViewById(R.id.etEmailAddress);
-        username = view.findViewById(R.id.etUsername);
-        password = view.findViewById(R.id.etPassword);
-        confirmPassword = view.findViewById(R.id.etConfirmPassword);
-        phoneNumber = view.findViewById(R.id.etPhoneNumber);
-        fullName = view.findViewById(R.id.etDisplayName);
-        btnSelectBirthday = view.findViewById(R.id.btnSelectBirthday);
-        signUpButton = view.findViewById(R.id.btnSighUp);
-        progressBar = view.findViewById(R.id.signUpProgressBar);
-        errorDisplay = view.findViewById(R.id.errorDisplay);
-        country = view.findViewById(R.id.etCountry);
-
-        // Temporary placeholder for profile photo
-        profilePhoto = new EditText(getContext()); // Replace this with actual profile photo selection logic
+        initializeProfilePhotoPicker();
 
         // Handle the birthday selection using a DatePickerDialog
-        btnSelectBirthday.setOnClickListener(v -> showDatePicker());
+        binding.btnSelectBirthday.setOnClickListener(v -> showDatePicker());
 
-        signUpButton.setOnClickListener(v -> signUpAttempt());
+        binding.btnToSignIn.setOnClickListener(v -> {
+            MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
+        });
+
+        binding.btnSighUp.setOnClickListener(v -> signUpAttempt());
+
+        binding.btnAddProfileImg.setOnClickListener(v -> uploadPhoto());
 
         return view;
     }
@@ -90,7 +91,7 @@ public class SignUpFragment extends Fragment {
                 // Format for display: "17 April 2000"
                 SimpleDateFormat displayFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
                 String displayDate = displayFormat.format(selectedDate.getTime());
-                btnSelectBirthday.setText(displayDate); // Display the formatted date on the button
+                binding.btnSelectBirthday.setText(displayDate); // Display the formatted date on the button
 
                 // Format for the server: "1989-12-31T22:00:00.000+00:00"
                 SimpleDateFormat serverFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
@@ -105,21 +106,20 @@ public class SignUpFragment extends Fragment {
     }
 
     private void signUpAttempt() {
-        progressBar.setVisibility(View.VISIBLE);
+        enableInput(false);
 
-        String emailInput = email.getText().toString();
-        String usernameInput = username.getText().toString();
-        String passwordInput = password.getText().toString();
-        String confirmPasswordInput = confirmPassword.getText().toString();
-        String phoneNumberInput = phoneNumber.getText().toString();
-        String fullNameInput = fullName.getText().toString();
-        String countryInput = country.getText().toString();
-        String profilePhotoInput = "temp"; // Placeholder until profile photo handling is added
+        String emailInput = binding.etEmailAddress.getText().toString();
+        String usernameInput = binding.etUsername.getText().toString();
+        String passwordInput = binding.etPassword.getText().toString();
+        String confirmPasswordInput = binding.etConfirmPassword.getText().toString();
+        String phoneNumberInput = binding.etPhoneNumber.getText().toString();
+        String fullNameInput = binding.etDisplayName.getText().toString();
+        String countryInput = binding.etCountry.getText().toString();
         String birthdayInput = formattedBirthdayForServer; // Use the server-formatted birthday
 
         // Validate form fields based on the requirements
         if (!validateForm(usernameInput, passwordInput, confirmPasswordInput, phoneNumberInput, emailInput, fullNameInput, birthdayInput, countryInput)) {
-            progressBar.setVisibility(View.GONE);
+            enableInput(true);
             return;
         }
 
@@ -129,12 +129,13 @@ public class SignUpFragment extends Fragment {
             public void onResult(boolean isAvailable) {
                 if (isAvailable) {
                     // If available, proceed with sign up
-                    signUpUser(emailInput, usernameInput, passwordInput, fullNameInput, phoneNumberInput, birthdayInput, countryInput, profilePhotoInput);
+                    signUpUser(emailInput, usernameInput, passwordInput, fullNameInput, phoneNumberInput, birthdayInput, countryInput, photoUri);
                 }
             }
 
             @Override
             public void onFailure(Throwable t) {
+                enableInput(true);
                 showError("Failed to check username or email availability");
             }
         });
@@ -240,15 +241,15 @@ public class SignUpFragment extends Fragment {
         });
     }
 
-    private void signUpUser(String email, String username, String password, String fullName, String phoneNumber, String birthday, String country, String profilePhoto) {
+    private void signUpUser(String email, String username, String password, String fullName, String phoneNumber, String birthday, String country, Uri photoUri) {
         ServerAPI serverAPI = ServerAPI.getInstance();
-        SignUpRequest signUpRequest = new SignUpRequest(username, email, password, fullName, phoneNumber, birthday, country, profilePhoto);
+        SignUpRequest signUpRequest = new SignUpRequest(username, email, password, fullName, phoneNumber, birthday, country);
 
-        serverAPI.signUp(signUpRequest, new Callback<SignUpResponse>() {
+        serverAPI.signUp(signUpRequest, photoUri, new Callback<SignUpResponse>() {
             @Override
             public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                 MainPage.getInstance().runOnUiThread(() -> {
-                    progressBar.setVisibility(View.GONE);
+                    enableInput(true);
                     if (response.isSuccessful() && response.body() != null) {
                         Toast.makeText(getContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
 
@@ -267,7 +268,7 @@ public class SignUpFragment extends Fragment {
 
             @Override
             public void onFailure(Call<SignUpResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+                enableInput(true);
                 showError("Sign Up failed: " + t.getMessage());
             }
         });
@@ -275,9 +276,52 @@ public class SignUpFragment extends Fragment {
 
     private void showError(String message) {
         MainPage.getInstance().runOnUiThread(() -> {
-            progressBar.setVisibility(View.GONE);
-            errorDisplay.setText(message);
-            errorDisplay.setVisibility(View.VISIBLE);
+            enableInput(true);
+            binding.errorDisplay.setText(message);
+            binding.errorDisplay.setVisibility(View.VISIBLE);
         });
+    }
+
+    private void enableInput(Boolean enable) {
+        binding.signUpProgressBar.setVisibility(enable ? View.GONE : View.VISIBLE);
+
+        binding.btnSighUp.setEnabled(enable);
+        binding.btnToSignIn.setEnabled(enable);
+        binding.btnAddProfileImg.setEnabled(enable);
+        binding.btnSelectBirthday.setEnabled(enable);
+    }
+
+    public void initializeProfilePhotoPicker() {
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        try {
+                            photoUri = result.getData().getData();
+                            if (null == photoUri) {
+                                Toast.makeText(getContext(), "Failed to get Profile Picture from user", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
+                            Bitmap profilePicBitmap = ImageDecoder.decodeBitmap(source);
+                            binding.btnAddProfileImg.setImageBitmap(profilePicBitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to get Profile Picture from user", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
+    // Launch gallery to pick an image
+    private void uploadPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (photoPickerLauncher != null) {
+            photoPickerLauncher.launch(intent);
+        } else {
+            Log.e(TAG, "photoPickerLauncher is not initialized.");
+        }
     }
 }

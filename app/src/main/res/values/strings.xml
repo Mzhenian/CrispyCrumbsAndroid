@@ -33,12 +33,12 @@
     <string name="btn_sign_up">Sign up!</string>
     <string name="et_username">* username</string>
     <string name="et_last_mame">last mame</string>
-    <string name="et_phone_number">Phone number</string>
+    <string name="et_phone_number"> * Phone number</string>
     <string name="et_date_of_birth">birth date (dd/mm/yyyy)</string>
     <string name="forgot_my_password">forgot my password?</string>
     <string name="btn_already_have_a_user">already have a user?</string>
     <string name="add_profile_picture">add profile picture:</string>
-    <string name ="etCountry"> country</string>
+    <string name ="etCountry"> * country</string>
     <string name="et_select_birthday">select birthday</string>
     <!-- TODO: Remove or change this placeholder text -->
     <!-- Preference Titles -->

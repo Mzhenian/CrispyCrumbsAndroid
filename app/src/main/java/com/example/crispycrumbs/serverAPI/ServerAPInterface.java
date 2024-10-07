@@ -121,8 +121,13 @@ public interface ServerAPInterface {
     @POST("videos/{videoId}/comments")
     Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
 
+    @Multipart
     @POST("users")
-    Call<SignUpResponse> signUp(@Body SignUpRequest signUpRequest);
+    Call<SignUpResponse> signUp(
+            @PartMap Map<String, RequestBody> signUpFields,
+            @Part MultipartBody.Part profilePhoto
+    );
+
 
     @POST("users/isUsernameAvailable")
     Call<CheckResponse> checkUsernameAvailability(@Body CheckUserNameRequest usernameRequest);

@@ -74,22 +74,33 @@ public class SignUpFragment extends Fragment {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
+        // Create a calendar instance for 13 years ago
+        final Calendar minAgeCalendar = Calendar.getInstance();
+        minAgeCalendar.add(Calendar.YEAR, -13); // Subtract 13 years
+
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year1, month1, dayOfMonth) -> {
             // Update the selected date and format it to the required formats
             Calendar selectedDate = Calendar.getInstance();
             selectedDate.set(year1, month1, dayOfMonth);
 
-            // Format for display: "17 April 2000"
-            SimpleDateFormat displayFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-            String displayDate = displayFormat.format(selectedDate.getTime());
-            btnSelectBirthday.setText(displayDate); // Display the formatted date on the button
+            if (selectedDate.after(minAgeCalendar)) {
+                // If selected date is after the date for minimum age (younger than 13), show error
+                Toast.makeText(getContext(), "You must be at least 13 years old to sign up.", Toast.LENGTH_SHORT).show();
+            } else {
+                // Format for display: "17 April 2000"
+                SimpleDateFormat displayFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+                String displayDate = displayFormat.format(selectedDate.getTime());
+                btnSelectBirthday.setText(displayDate); // Display the formatted date on the button
 
-            // Format for the server: "1989-12-31T22:00:00.000+00:00"
-            SimpleDateFormat serverFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
-            formattedBirthdayForServer = serverFormat.format(selectedDate.getTime());
+                // Format for the server: "1989-12-31T22:00:00.000+00:00"
+                SimpleDateFormat serverFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
+                formattedBirthdayForServer = serverFormat.format(selectedDate.getTime());
+            }
 
         }, year, month, day);
 
+        // Limit the date picker to ensure user can't pick a future date
+        datePickerDialog.getDatePicker().setMaxDate(minAgeCalendar.getTimeInMillis());
         datePickerDialog.show();
     }
 

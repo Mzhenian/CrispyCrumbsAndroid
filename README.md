@@ -71,8 +71,6 @@ The app includes a dark mode that can be toggled from the navigation menu.
 Our project was a collaborative effort. We initially met to plan and divided tasks using Jira. We designed mockups with Figma and then began coding the app. The journey was both educational and enjoyable.
 
 - **Jira Board**:  
+- לבדוק שהקישור עובד!!
   https://crispycrumbs.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?epics=visible
-  ![Jira](./demonstration/jira.png)
 
-- **Figma Designs**:  
-  ![Figma](./demonstration/figma.png)

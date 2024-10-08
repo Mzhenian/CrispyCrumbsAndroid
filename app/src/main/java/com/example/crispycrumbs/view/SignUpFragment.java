@@ -143,7 +143,7 @@ public class SignUpFragment extends Fragment {
 
     // Validate form fields
     private boolean validateForm(String username, String password, String confirmPassword, String phoneNumber, String email, String fullName, String birthday, String country) {
-        if (username.isEmpty()) {
+        if (null == username || username.isEmpty()) {
             showError("Username is required.");
             return false;
         }
@@ -153,7 +153,7 @@ public class SignUpFragment extends Fragment {
             return false;
         }
 
-        if (password.isEmpty()) {
+        if (null == password || password.isEmpty()) {
             showError("Password is required.");
             return false;
         }
@@ -168,7 +168,7 @@ public class SignUpFragment extends Fragment {
             return false;
         }
 
-        if (phoneNumber.isEmpty()) {
+        if (null == phoneNumber || phoneNumber.isEmpty()) {
             showError("Phone number is required.");
             return false;
         }
@@ -178,22 +178,22 @@ public class SignUpFragment extends Fragment {
             return false;
         }
 
-        if (email.isEmpty()) {
+        if (null == email || email.isEmpty()) {
             showError("Email is required.");
             return false;
         }
 
-        if (fullName.isEmpty()) {
+        if (null == fullName || fullName.isEmpty()) {
             showError("Full name is required.");
             return false;
         }
 
-        if (birthday.isEmpty()) {
+        if (null == birthday || birthday.isEmpty()) {
             showError("Birthday is required.");
             return false;
         }
 
-        if (country.isEmpty()) {
+        if (null == country || country.isEmpty()) {
             showError("Country is required.");
             return false;
         }

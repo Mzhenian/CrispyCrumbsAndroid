@@ -40,7 +40,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SignUpFragment extends Fragment {
-    private static final int REQUEST_IMAGE_PICK = 3;
     private static final String TAG = "SignUpFragment";
     private FragmentSignUpBinding binding;
     private View view;
@@ -86,8 +85,10 @@ public class SignUpFragment extends Fragment {
         // Create a calendar instance for 13 years ago
         final Calendar minAgeCalendar = Calendar.getInstance();
         minAgeCalendar.add(Calendar.YEAR, -13); // Subtract 13 years
+        minAgeCalendar.add(Calendar.DAY_OF_MONTH, 1);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year1, month1, dayOfMonth) -> {
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainPage.getInstance(), (view, year1, month1, dayOfMonth) -> {
             // Update the selected date and format it to the required formats
             Calendar selectedDate = Calendar.getInstance();
             selectedDate.set(year1, month1, dayOfMonth);
@@ -139,6 +140,7 @@ public class SignUpFragment extends Fragment {
                     // If available, proceed with sign up
                     signUpUser(emailInput, usernameInput, passwordInput, fullNameInput, phoneNumberInput, birthdayInput, countryInput, photoUri);
                 }
+                //todo handle if not available
             }
 
             @Override
@@ -291,12 +293,14 @@ public class SignUpFragment extends Fragment {
     }
 
     private void enableInput(Boolean enable) {
-        binding.signUpProgressBar.setVisibility(enable ? View.GONE : View.VISIBLE);
+        MainPage.getInstance().runOnUiThread(() -> {
+            binding.signUpProgressBar.setVisibility(enable ? View.GONE : View.VISIBLE);
 
-        binding.btnSighUp.setEnabled(enable);
-        binding.btnToSignIn.setEnabled(enable);
-        binding.btnAddProfileImg.setEnabled(enable);
-        binding.btnSelectBirthday.setEnabled(enable);
+            binding.btnSighUp.setEnabled(enable);
+            binding.btnToSignIn.setEnabled(enable);
+            binding.btnAddProfileImg.setEnabled(enable);
+            binding.btnSelectBirthday.setEnabled(enable);
+        });
     }
 
     public void initializeProfilePhotoPicker() {

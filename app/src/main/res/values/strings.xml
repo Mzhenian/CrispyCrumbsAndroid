@@ -38,6 +38,7 @@
     <string name="forgot_my_password">forgot my password?</string>
     <string name="btn_already_have_a_user">already have a user?</string>
     <string name="add_profile_picture">add profile picture:</string>
+    <string name="add_Country">Country</string>
     <string name ="etCountry"> * country</string>
     <string name="et_select_birthday">select birthday</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -94,4 +95,14 @@
     <string name="original_thumbnail">original thumbnail:</string>
     <string name="video_title">Video title:</string>
     <string name="video_category">Video category:</string>
+
+    <string-array name="countries_array">
+        <item>Israel</item>
+        <item>United States</item>
+        <item>Canada</item>
+        <item>United Kingdom</item>
+        <item>Germany</item>
+        <item>France</item>
+    </string-array>
 </resources>
+

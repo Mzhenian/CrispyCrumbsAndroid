@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -46,13 +48,19 @@ public class SignUpFragment extends Fragment {
     private Uri photoUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_profile_picture);
     private ActivityResultLauncher<Intent> photoPickerLauncher;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
         view = binding.getRoot();
 
         initializeProfilePhotoPicker();
+
+        // Initialize spinner with country array
+        Spinner countrySpinner = binding.spinnerCountry;
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.countries_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        countrySpinner.setAdapter(adapter);
 
         // Handle the birthday selection using a DatePickerDialog
         binding.btnSelectBirthday.setOnClickListener(v -> showDatePicker());
@@ -114,8 +122,8 @@ public class SignUpFragment extends Fragment {
         String confirmPasswordInput = binding.etConfirmPassword.getText().toString();
         String phoneNumberInput = binding.etPhoneNumber.getText().toString();
         String fullNameInput = binding.etDisplayName.getText().toString();
-        String countryInput = binding.etCountry.getText().toString();
         String birthdayInput = formattedBirthdayForServer; // Use the server-formatted birthday
+        String countryInput = binding.spinnerCountry.getSelectedItem().toString(); // Get selected country from Spinner
 
         // Validate form fields based on the requirements
         if (!validateForm(usernameInput, passwordInput, confirmPasswordInput, phoneNumberInput, emailInput, fullNameInput, birthdayInput, countryInput)) {

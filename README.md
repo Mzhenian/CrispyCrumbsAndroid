@@ -1,97 +1,144 @@
+# Crispy Crumbs - Android App
 
-Note: We have submitted the final version of part 1 of the project late to enable Dolev, who's in active reserve service those days, to participate in the full project. And we received approval in person and by email.
+Welcome to the **Crispy Crumbs** app, a dedicated video-sharing platform showcasing only the finest Crispy Crumbs content. This app is built with Android Studio to ensure a smooth, interactive, and tasty user experience.
 
- # Crispy Crumbs - Android App
+## Crispy Crumbs - Founders
 
- Welcome to the Crispy Crumbs app, a dedicated video-sharing platform showcasing only the finest Crispy Crumbs content. This app is built with Android Studio to ensure a smooth, interactive, and tasty user experience.
+- Ofek Avan Danan (211824727)
+- Zohar Mzhen (314621806)
+- Dolev Menajem (207272220)
 
-### Crispy Crumbs - founders
-Ofek Avan Danan 211824727
-Zohar Mzhen 314621806
-Dolev Menajem 207272220
 
 ## Running the Crispy Crumbs App
-The app is built for Android versions 10 up to 14 and is designed to run on Android devices as well as on emulators.
-Getting the Crispy Crumbs app to work on your device is simple and straightforward:
 
-1. ### 'Personal Android Device' :
-   There are two crispy-golden ways to run the app on a compatible Android device.
-   First: Install the APK from  the [releases section of the GitHub page](https://github.com/Mzhenian/CrispyCrumbsAndroid/releases/tag/v1) and run the app. 
-   Second: Download the entire project and open it in Android Studio - add your personal (physical) Android device to the studio devices by either connecting it with a USB to your machine, or through wi-fi. (Note that this method requires enabling ADB debugging through the developer options in the device.) - ensure you are on the "app" run/debug configuration and press the run button to launch the home page of CrispyCrumbs.
-2. ### 'Emulator' :
-   Download the [entire project](https://github.com/Mzhenian/CrispyCrumbsAndroid.git) and open the project in Android Studio - add a virtual device emulator to your liking through the device manager on the right toolbar of Android Studio, and run the app on the emulator.
+### Prerequisites
 
-   At any stage you can travel through the app using the navigation side menu, which adapts to the user's login status and shows only the relevant options.
+The app is designed to run on Android devices with **Android 10** and above. You will need **Android Studio Jellyfish (2023.3.1)** or later to open the project and run the app.
 
+Before running the Crispy Crumbs app, you need to start the backend server. 
+Follow the instructions in the [CrispyCrumbsServer repository](https://github.com/Mzhenian/CrispyCrumbsServer) to set up and run the server.
+
+### Connecting to Your Personal Android Device
+There are two crispy-golden ways to run the app on a compatible Android device:
+- Install the APK: Download the APK from the releases section and run the app.
+- Android Studio: Download the entire project and open it in Android Studio. Connect your device via USB or Wi-Fi and enable ADB debugging in the developer options. Then, select the "app" run/debug configuration and click run.
+
+Once the server is running, follow these steps to connect your Android device:
+
+1. Ensure that **both your Android device and the computer running the server** are connected to the same network. **Note:** This network must be open and not secured (such as the university network) to allow communication between the app and the server.
+
+2. Open the Crispy Crumbs app on your Android device.
+
+3. In the app, open the Crispy Crumbs menu by clicking on the **three-line button** (also known as the "crispy chicken" menu).
+
+4. Select the **Set Server IP** option.
+
+5. Enter the **IP address** of the computer where the server is running.
+
+#### Finding Your Computer's IP Address
+
+##### On Windows:
+
+1. Open the **Command Prompt** by pressing `Windows Key + R`, typing `cmd`, and pressing Enter.
+
+2. In the Command Prompt, type the following command and press Enter:
+```bash
+   ipconfig
+  ```
+
+3. Look for the section called **Wireless LAN adapter Wi-Fi** or **Ethernet adapter** (depending on how your computer is connected). The **IPv4 Address** listed there is your computer's IP address (e.g., `192.168.1.100`).
+
+#### On Linux:
+
+1. Open a terminal.
+
+2. Type the following command and press Enter:
+```bash
+   hostname
+  ```
+
+3. The output will show your IP address (e.g., `192.168.1.100`).
+
+#### On macOS:
+
+1. Open the **Terminal**. You can find it by searching for "Terminal" in Spotlight (`Command + Space`) or by navigating to **Applications > Utilities > Terminal**.
+
+2. In the terminal, type the following command and press Enter:
+```bash
+   ifconfig
+  ```
+
+6. Once you have the IP address, enter it in the app's **Set Server IP** field, and the app will connect to the server.
+
+![sidebar.png](demonstration%2Fsidebar.png)
+
+![set server ip.png](demonstration%2Fset%20server%20ip.png)
+
+### Running the App on an Android Emulator
+
+If you are using an Android emulator:
+
+1. Download the [entire project](https://github.com/Mzhenian/CrispyCrumbsAndroid.git) and open it in Android Studio.
+
+2. Add a virtual device using the device manager in Android Studio.
+
+3. Once the server is running, Make sure that the emulator and the machine running the server are on the same network.
+
+4. Follow the same steps above to set the server's IP address in the app via the crispy chicken menu.
+
+Now, you can run the app and enjoy the Crispy Crumbs experience!
 
 ## App Pages
-0. ### Navigation Menu
+Now you’re all set to enjoy the full Crispy Crumbs experience! Go ahead and dive into a world of video goodness, just like biting into a perfectly golden, crispy schnitzel — crunchy on the outside, packed with flavor on the inside. Bon appétit!
 
-   The app features an omnipresent, all-powerful navigation menu you can open with a click of the three-line button at the corner of the top bar.
-   The navigation bar will show different options whether a user is logged in or not, specifically, if there are no logged users it will show the option to log in and sign up, and if a user is logged
-   it will show the option to logout or go to the video upload page, video edit page, or your uploaded videos list page.
-    
-    ![NavBar](./demonstration/NavBar.jpg)
-    ![Guest Bar](./demonstration/Guest_Bar.jpg)
+### 0. Navigation Menu
 
-1. ### Homepage
-  
-    The homepage of the Crispy Crumbs app features a search bar at the top, and a list of available videos, each presented with its title, thumbnail, uploader, views count and upload date.
+The app features an omnipresent navigation menu accessible via the three-line button at the top bar. The options in the menu vary depending on whether a user is logged in. If logged in, users can log out, upload videos, edit them, or view their list of uploaded videos.
 
-   ![HomePage](./demonstration/HomePage.jpg)
+### 1. Homepage
 
-   Additionally we implemented a personal video list, from which a user can edit his videos to his liking. 
-   ![my videos](./demonstration/my_videos.jpg)
+The homepage features a search bar at the top and a list of videos with titles, thumbnails, uploader names, views, and upload dates.
 
-2. ### Sign Up
-  
-   It includes the crucial fields of email address, username, password and displayed name (to mask the username) with the optional birthday and phone number and the option to upload a profile picture. 
-   The form includes a "Sign up" (which validates the entered data before creating a user node from them) and a "Log In" button, in case you already have an account.
+### 2. Sign Up
 
-   ![SignUp](./demonstration/SignUp.jpg)
+This page allows new users to sign up with an email, username, password, and optional profile picture, birthday, and phone number.
 
-3. ### Login
+### 3. Login
 
-   It includes fields for entering the username and password. For the demo, you can log in with Username: "Tuna" Password: "password6" or Username: "ArnoldSchwarzenegger" Password: "password8".
+This page includes fields for username and password. For the demo, you can log in with:
+- Username: "Tuna", Password: "password6"
+- Username: "ArnoldSchwarzenegger", Password: "password8"
 
-   ![Login](./demonstration/Login.jpg)
+### 4. Video Upload
 
-5. ### Video Upload
+Users can upload a video with title, description, and thumbnail.
 
-   Includes fields for uploading a video file with complementary date - the video title, description and thumbnail. when they are valid you can press the "Upload" button or the "Cancel" button at any time.
 
-   ![upload video](./demonstration/upload_video.jpg)
+### 5. Video Edit
 
-6. ### Video Edit
+Users can edit the video title, description, and thumbnail, or delete the video.
 
-   Allows the user to edit the video's title, description and thumbnail or delete the video completely.
 
-   ![edit video](./demonstration/edit_video.jpg)
+### 6. Video Player
 
-7. ### Video Player
+This page includes a video player, details about the video, and interactive options like like/dislike buttons and comments for logged-in users. The comments section allows users to edit or delete their own comments.
 
-   This page shows a video player at the top. Below it, there are details about the video, including the uploader's name, upload date and views. Logged-in users can interact with the video with the like/unlike buttons and the comments section below which allows them to delete and edit their own comments.
-    There is also a share button to open a "stupid" share menu.
 
-   ![VideoPlayer](./demonstration/VideoPlayer.jpg)
+### 7. Profile Page
 
-7. ### Dark Theme
+This page allows users to view details about their profile, including their username, email, and other relevant information. Additionally, from this page, users can access a list of their uploaded videos. By clicking on any video, the user will be taken to the video page where they can view, edit, or delete their content.
+Feeling curious about other users? You can also access other users' profiles by clicking on their usernames from various parts of the app (like video pages). This will take you to their profile page, where you can check out their content and follow them if you're a fan of their crispy creations!
 
-   The app features a dark mode that can be toggled on and off from the navigation menu, independently from the system dark theme. The dark theme changes the color scheme of the app to a darker, more eye-friendly palette.
 
-   ![dark_theme1](./demonstration/dark_theme1.png) 
-   ![dark_theme2](./demonstration/dark_theme2.png) 
-   ![dark_theme3](./demonstration/dark_theme3.png) 
-   ![dark_theme4](./demonstration/dark_theme4.png) 
+### 8. Dark Theme
 
-## Work process -  
-Our project was built collaboratively as a team. 
-Initially, we met to plan the work together using Jira to divide the tasks among us and keep track of the progress. 
+The app includes a dark mode that can be toggled from the navigation menu.
 
-We created mockups for the website and application pages using Figma, and then we started working on the code for both the application and the website. The process was educational, and we thoroughly enjoyed the journey.
-the Jira page -
-![jira.png](./demonstration/jira.png)
 
-The Figma document-
-![figma](./demonstration/figma.png)
-![jira.png](./demonstration/jira.png)
+## Work Process
+
+Our project was a collaborative effort. We initially met to plan and divided tasks using Jira. We designed mockups with Figma and then began coding the app. The journey was both educational and enjoyable.
+
+- **Jira Board**:  
+  [Jira Missions](https://crispycrumbs.atlassian.net/jira/software/projects/SCRUM/list?sortBy=customfield_10020&direction=ASC)
+![jira.jpg](demonstration%2Fjira.jpg)

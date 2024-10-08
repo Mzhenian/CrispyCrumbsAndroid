@@ -92,4 +92,5 @@
     <string name="original_thumbnail">original thumbnail:</string>
     <string name="video_title">Video title:</string>
     <string name="video_category">Video category:</string>
+    <string name="add_tag_s">Add tag(s)</string>
 </resources>

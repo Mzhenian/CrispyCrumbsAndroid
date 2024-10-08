@@ -1,21 +1,16 @@
 package com.example.crispycrumbs.repository;
 
 import android.content.ContentResolver;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
-import com.example.crispycrumbs.model.DataManager;
-import com.example.crispycrumbs.serverAPI.ServerAPI;
 
 import com.example.crispycrumbs.List.VideoList;
 import com.example.crispycrumbs.R;
@@ -25,6 +20,7 @@ import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.serverAPI.ServerAPInterface;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
@@ -35,16 +31,16 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SuccessErrorResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
-import com.example.crispycrumbs.view.HomeFragment;
+import com.example.crispycrumbs.view.EditVideoFragment;
 import com.example.crispycrumbs.view.MainPage;
 import com.example.crispycrumbs.view.PlayListFragment;
 
-import java.util.ArrayList;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -643,7 +639,7 @@ public class VideoRepository {
         });
     }
 
-    public void updateVideo(String userId, String videoId, Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail) {
+    public void updateVideo(String userId, String videoId, Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail, EditVideoFragment editVideoFragment) {
         serverAPInterface.updateVideo(userId, videoId, videoFields, thumbnail).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
@@ -657,20 +653,29 @@ public class VideoRepository {
 
                     });
                 } else {
-                    Log.e(TAG, "Failed to update video on server: " + response.message());
+                    String message = "Failed to update video on server: " + response.message();
+                    Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, message);
+                    editVideoFragment.enableInput(true);
                 }
             }
 
             @Override
             public void onFailure(Call<PreviewVideoCard> call, Throwable t) {
-                Log.e(TAG, "Error updating video on server", t);
+                String message = "Error updating video on server";
+                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, message, t);
+                editVideoFragment.enableInput(true);
             }
         });
     }
 
-    public void deleteVideo(String videoId) {
+    public void deleteVideo(String videoId, EditVideoFragment editVideoFragment) {
         if (null == LoggedInUser.getUser().getValue()) {
-            Log.e(TAG, "User is not logged in. Delete action is not permitted.");
+            String message = "User is not logged in. Delete action is not permitted.";
+            Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, message);
+            editVideoFragment.enableInput(true);
             return;
         }
 
@@ -678,21 +683,24 @@ public class VideoRepository {
             @Override
             public void onResponse(Call<SuccessErrorResponse> call, Response<SuccessErrorResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-
                     executor.execute(() -> {
                         videoDao.deleteVideoById(videoId);
                         MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
-
-
                     });
                 } else {
-                    Log.e(TAG, "Failed to delete video on server: " + response.message());
+                    String message = "Failed to delete video on server: " + response.message();
+                    Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, message);
+                    editVideoFragment.enableInput(true);
                 }
             }
 
             @Override
             public void onFailure(Call<SuccessErrorResponse> call, Throwable t) {
-                Log.e(TAG, "Error deleting video on server", t);
+                String message = "Error deleting video on server";
+                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, message, t);
+                editVideoFragment.enableInput(true);
             }
         });
 

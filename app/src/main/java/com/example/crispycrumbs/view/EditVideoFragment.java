@@ -2,6 +2,7 @@ package com.example.crispycrumbs.view;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -115,6 +118,14 @@ public class EditVideoFragment extends Fragment {
 
         binding.btnAddVideoTagEdit.setOnClickListener(v -> addTag());
 
+        binding.etVideoTagEdit.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addTag();
+                return true;
+            }
+            return false;
+        });
+
         initializeThumbnailPicker();
         binding.btnChooseThumbnailEdit.setOnClickListener(v -> setPhoto());
         binding.btnUpdate.setOnClickListener(v -> updateVideo());
@@ -161,6 +172,10 @@ public class EditVideoFragment extends Fragment {
             tags.add(tag);
             tagsAdapter.notifyItemInserted(tags.size() - 1);
             binding.etVideoTagEdit.setText("");
+        } else {
+            //hide the keyboard
+            InputMethodManager imm = (InputMethodManager) MainPage.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(binding.etVideoTagEdit.getWindowToken(), 0);
         }
     }
 
@@ -174,8 +189,8 @@ public class EditVideoFragment extends Fragment {
     }
 
     private void updateVideo() {
-//        disableEdit();
         Toast.makeText(getContext(), "Updating video...", Toast.LENGTH_LONG).show();
+        enableInput(false);
 
         // Collect video fields from the UI
         String title = binding.etVideoTitleEdit.getText().toString().trim();
@@ -226,37 +241,30 @@ public class EditVideoFragment extends Fragment {
                 thumbnailPart = MultipartBody.Part.createFormData("thumbnail", DataManager.getFileNameFromUri(thumbnailUri), requestBodyImage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+                enableInput(true);
                 return;
             }
         }
-        viewModel.updateVideo(videoFields, thumbnailPart);
+        viewModel.updateVideo(videoFields, thumbnailPart, this);
     }
 
     private void delete() {
-//        disableEdit();
+        enableInput(false);
         Toast.makeText(getContext(), "deleting...", Toast.LENGTH_LONG).show();
-        viewModel.deleteVideo();
+        viewModel.deleteVideo(this);
     }
 
-    private void disableEdit() {
-        binding.progressBarEdit.setVisibility(View.VISIBLE);
-        binding.etVideoTitleEdit.setEnabled(false);
-        binding.etVideoDescriptionEdit.setEnabled(false);
-        binding.spinnerCategoryEdit.setEnabled(false);
-        binding.btnAddVideoTagEdit.setEnabled(false);
-        binding.btnChooseThumbnailEdit.setEnabled(false);
-        binding.btnUpdate.setEnabled(false);
-        binding.btnDelete.setEnabled(false);
-    }
+    public void enableInput(Boolean enable) {
+        MainPage.getInstance().runOnUiThread(() -> {
+            binding.progressBarEditVideo.setVisibility(enable ? View.GONE : View.VISIBLE);
 
-    private void enableEdit() {
-        binding.progressBarEdit.setVisibility(View.GONE);
-        binding.etVideoTitleEdit.setEnabled(true);
-        binding.etVideoDescriptionEdit.setEnabled(true);
-        binding.spinnerCategoryEdit.setEnabled(true);
-        binding.btnAddVideoTagEdit.setEnabled(true);
-        binding.btnChooseThumbnailEdit.setEnabled(true);
-        binding.btnUpdate.setEnabled(true);
-        binding.btnDelete.setEnabled(true);
+            binding.etVideoTitleEdit.setEnabled(enable);
+            binding.etVideoDescriptionEdit.setEnabled(enable);
+            binding.spinnerCategoryEdit.setEnabled(enable);
+            binding.btnAddVideoTagEdit.setEnabled(enable);
+            binding.btnChooseThumbnailEdit.setEnabled(enable);
+            binding.btnUpdate.setEnabled(enable);
+            binding.btnDelete.setEnabled(enable);
+        });
     }
 }

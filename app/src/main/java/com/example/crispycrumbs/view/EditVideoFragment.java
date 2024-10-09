@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
@@ -55,13 +56,12 @@ import okio.Source;
 
 public class EditVideoFragment extends Fragment {
     private static final String TAG = "EditVideoFragment";
+    private final List<String> tags = new ArrayList<>();
     private FragmentEditVideoBinding binding;
     private EditVideoViewModel viewModel;
-
     private PreviewVideoCard video;
     private Uri thumbnailUri = null;
     private TagsAdapter tagsAdapter;
-    private final List<String> tags = new ArrayList<>();
     private ActivityResultLauncher<Intent> photoPickerLauncher;
 
     @Nullable
@@ -90,13 +90,18 @@ public class EditVideoFragment extends Fragment {
             return view;
         }
 
-        binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + " #" + video.getVideoId());
+        binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + "\n #" + video.getVideoId());
 
         String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
         Glide.with(MainPage.getInstance())
                 .load(thumbnailUrl)
                 .placeholder(R.drawable.default_video_thumbnail)
                 .into(binding.imgOriginalThumbailEdit);
+
+        Glide.with(MainPage.getInstance())
+                .load(thumbnailUrl)
+                .placeholder(R.drawable.default_video_thumbnail)
+                .into(binding.thumbnailImageHolderEdit);
 
 
         binding.etVideoTitleEdit.setText(video.getTitle());
@@ -108,6 +113,7 @@ public class EditVideoFragment extends Fragment {
         binding.spinnerCategoryEdit.setSelection(categoryAdapter.getPosition(video.getCategory()));
 
         tagsAdapter = new TagsAdapter(tags);
+        binding.rvTagsPreviewEdit.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         for (String tag : video.getTags()) {
             addTag(tag);
@@ -135,7 +141,7 @@ public class EditVideoFragment extends Fragment {
     }
 
     private void deleteThumbnail() {
-        thumbnailUri = null;
+        thumbnailUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_video_thumbnail);
         binding.thumbnailImageHolderEdit.setImageDrawable(ContextCompat.getDrawable(MainPage.getInstance(), R.drawable.default_video_thumbnail));
     }
 
@@ -164,10 +170,7 @@ public class EditVideoFragment extends Fragment {
     }
 
     private void addTag() {
-        String trimmedTag = binding.etVideoTagEdit.getText().toString().trim();
-        if (!trimmedTag.isEmpty()) {
-            addTag(trimmedTag);
-        }
+        addTag(binding.etVideoTagEdit.getText().toString());
     }
 
     private void addTag(String tag) {
@@ -175,6 +178,7 @@ public class EditVideoFragment extends Fragment {
         if (!trimmedTag.isEmpty()) {
             tags.add(tag);
             tagsAdapter.notifyItemInserted(tags.size() - 1);
+            binding.etVideoTagEdit.setText("");
         } else {
             //hide the keyboard
             InputMethodManager imm = (InputMethodManager) MainPage.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);

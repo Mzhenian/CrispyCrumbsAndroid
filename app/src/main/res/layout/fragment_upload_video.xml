@@ -193,6 +193,7 @@
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/tag_item"
                 tools:orientation="horizontal"
+                android:paddingBottom="10dp"
                 tools:spanCount="5" />
 
             <LinearLayout
@@ -217,15 +218,19 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#00FFFFFF">
+                    app:cardBackgroundColor="@color/transparent"
+                    android:outlineSpotShadowColor="@color/transparent">
 
                     <ImageView
                         android:id="@+id/thumbnailImageHolder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
                         android:src="@drawable/default_video_thumbnail" />
+
 
                     <ImageView
                         android:id="@+id/btn_delete_thumbnail"

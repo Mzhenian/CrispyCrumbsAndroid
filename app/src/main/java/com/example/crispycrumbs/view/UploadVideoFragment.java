@@ -32,7 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.TagsAdapter;
 import com.example.crispycrumbs.databinding.FragmentUploadVideoBinding;
-import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.viewModel.UploadVideoViewModel;
 
 import java.io.IOException;
@@ -79,6 +78,7 @@ public class UploadVideoFragment extends Fragment {
 
         tags = new ArrayList<>();
         tagsAdapter = new TagsAdapter(tags);
+        binding.rvTagsPreview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvTagsPreview.setAdapter(tagsAdapter);
 
         binding.btnAddVideoTag.setOnClickListener(v -> addTag());
@@ -159,13 +159,15 @@ public class UploadVideoFragment extends Fragment {
 
         MutableLiveData<Boolean> uploadStatus = new MutableLiveData<>();
         uploadStatus.observe(getViewLifecycleOwner(), status -> {
-            if (status) {
-                Toast.makeText(getContext(), "Video uploaded successfully", Toast.LENGTH_SHORT).show();
-                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
-            } else {
-                Toast.makeText(getContext(), "Failed to upload video", Toast.LENGTH_SHORT).show();
-            }
-            enableInput(true);
+            MainPage.getInstance().runOnUiThread(() -> {
+                if (status) {
+                    Toast.makeText(getContext(), "Video uploaded successfully", Toast.LENGTH_SHORT).show();
+                    MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
+                } else {
+                    Toast.makeText(getContext(), "Failed to upload video", Toast.LENGTH_SHORT).show();
+                }
+                enableInput(true);
+            });
         });
 
         uploadVideoViewModel.upload(videoUri, thumbnailUri, binding.etVideoTitle.getText().toString(), binding.etVideoDescription.getText().toString(), binding.spinnerCategory.getSelectedItem().toString(), tags, uploadStatus);

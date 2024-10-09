@@ -19,9 +19,9 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.crispycrumbs.R;
-import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
 

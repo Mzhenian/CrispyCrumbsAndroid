@@ -5,19 +5,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
-import com.example.crispycrumbs.databinding.FragmentEditVideoBinding;
 import com.example.crispycrumbs.databinding.FragmentHomeBinding;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 

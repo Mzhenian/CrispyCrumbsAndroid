@@ -22,9 +22,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class EditVideoViewModel extends AndroidViewModel {
-    private final VideoRepository videoRepository;
     private static final String TAG = "EditVideoViewModel";
-
+    private final VideoRepository videoRepository;
     private MutableLiveData<PreviewVideoCard> video;
 
     public EditVideoViewModel(Application application) {
@@ -46,11 +45,13 @@ public class EditVideoViewModel extends AndroidViewModel {
     }
 
     public void updateVideo(Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail, EditVideoFragment editVideoFragment) {
-        if (null == LoggedInUser.getUser().getValue() || null == video.getValue() || !LoggedInUser.getUser().getValue().getUserId().equals(video.getValue().getUserId()) ) {
-            String message = "Uploader not logged in, so forbidden to update video.";
-            Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, message);
-            editVideoFragment.enableInput(true);
+        if (null == LoggedInUser.getUser().getValue() || null == video.getValue() || !LoggedInUser.getUser().getValue().getUserId().equals(video.getValue().getUserId())) {
+            MainPage.getInstance().runOnUiThread(() -> {
+                String message = "Uploader not logged in, so forbidden to update video.";
+                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, message);
+                editVideoFragment.enableInput(true);
+            });
             return;
         }
         String userId = LoggedInUser.getUser().getValue().getUserId();

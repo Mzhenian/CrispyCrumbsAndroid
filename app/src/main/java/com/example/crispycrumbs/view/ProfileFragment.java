@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.databinding.FragmentProfileBinding;
-import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
 
@@ -21,7 +20,8 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel viewModel;
     private String userId;
 
-    public ProfileFragment() {}
+    public ProfileFragment() {
+    }
 
     public ProfileFragment(String userId) {
         this.userId = userId;

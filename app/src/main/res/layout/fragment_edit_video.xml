@@ -29,57 +29,71 @@
             app:layout_constraintTop_toTopOf="parent">
 
 
-            <TextView
-                android:id="@+id/title_edit_video_edit"
+<!--            todo V1-->
+<!--            <TextView-->
+<!--                android:id="@+id/title_edit_video_edit"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@drawable/diff_round_corners_orange"-->
+<!--                android:paddingHorizontal="10dp"-->
+<!--                android:text="@string/editing_video_title"-->
+<!--                android:textColor="@color/absolute_ofek_white"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/txt_choose_video_edit"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/original_thumbnail"-->
+<!--                android:textAppearance="@style/TextAppearance.BoldText"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/choose_video_edit"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="200dp"-->
+<!--                android:gravity="center">-->
+<!--                -->
+<!--                <ImageView-->
+<!--                    android:id="@+id/img_original_thumbail_edit"-->
+<!--                    android:layout_width="200dp"-->
+<!--                    android:layout_height="200dp"-->
+<!--                    android:layout_centerInParent="true"-->
+<!--                    android:adjustViewBounds="true"-->
+<!--                    android:clickable="false"-->
+<!--                    android:scaleType="fitCenter"-->
+<!--                    android:src="@drawable/layer_1" />-->
+<!--            </RelativeLayout>-->
+
+            <!--            todo V2-->
+                        <TextView
+                            android:id="@+id/title_edit_video_edit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/crispy_orange"
+                            android:paddingHorizontal="10dp"
+                            android:text="@string/editing_video_title"
+                            android:textColor="@color/absolute_ofek_white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/diff_round_corners_orange"
-                android:paddingHorizontal="10dp"
-                android:text="@string/editing_video_title"
-                android:textColor="@color/absolute_ofek_white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/txt_choose_video_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/original_thumbnail"
-                android:textAppearance="@style/TextAppearance.BoldText"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <RelativeLayout
-                android:id="@+id/choose_video_edit"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-
-                android:gravity="center">
-
-                <!--                <ProgressBar-->
-                <!--                    android:id="@+id/progress_bar_edit"-->
-                <!--                    style="?android:attr/progressBarStyleHorizontal"-->
-                <!--                    android:layout_width="0dp"-->
-                <!--                    android:layout_height="200dp"-->
-                <!--                    android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"-->
-                <!--                    android:progressDrawable="@android:drawable/progress_horizontal"-->
-                <!--                    android:visibility="invisible"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent" />-->
+                android:backgroundTint="@color/transparent"
+                android:outlineSpotShadowColor="@color/crispy_orange">
 
                 <ImageView
                     android:id="@+id/img_original_thumbail_edit"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_centerInParent="true"
-                    android:adjustViewBounds="true"
-                    android:clickable="false"
-                    android:scaleType="fitCenter"
+                    android:outlineSpotShadowColor="@color/crispy_orange"
+                    android:scaleType="center"
                     android:src="@drawable/layer_1" />
-            </RelativeLayout>
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/textView"
@@ -167,6 +181,7 @@
                     android:background="@drawable/round_corners_white"
                     android:hint="Add tag(s)"
                     android:padding="10dp"
+                    android:singleLine="true"
                     android:textColor="@color/black" />
 
                 <Button
@@ -189,6 +204,7 @@
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/tag_item"
                 tools:orientation="horizontal"
+                android:paddingBottom="10dp"
                 tools:spanCount="5" />
 
             <LinearLayout
@@ -213,9 +229,11 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#00FFFFFF">
+                    android:outlineSpotShadowColor="@color/transparent"
+                    app:cardBackgroundColor="@color/transparent">
+                    >
 
                     <ImageView
                         android:id="@+id/thumbnailImageHolderEdit"

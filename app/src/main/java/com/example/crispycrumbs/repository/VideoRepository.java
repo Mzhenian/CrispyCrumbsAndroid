@@ -653,29 +653,35 @@ public class VideoRepository {
 
                     });
                 } else {
-                    String message = "Failed to update video on server: " + response.message();
-                    Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, message);
-                    editVideoFragment.enableInput(true);
+                    MainPage.getInstance().runOnUiThread(() -> {
+                        String message = "Failed to update video on server: " + response.message();
+                        Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, message);
+                        editVideoFragment.enableInput(true);
+                    });
                 }
             }
 
             @Override
             public void onFailure(Call<PreviewVideoCard> call, Throwable t) {
-                String message = "Error updating video on server";
-                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, message, t);
-                editVideoFragment.enableInput(true);
+                MainPage.getInstance().runOnUiThread(() -> {
+                    String message = "Error updating video on server";
+                    Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, message, t);
+                    editVideoFragment.enableInput(true);
+                });
             }
         });
     }
 
     public void deleteVideo(String videoId, EditVideoFragment editVideoFragment) {
         if (null == LoggedInUser.getUser().getValue()) {
-            String message = "User is not logged in. Delete action is not permitted.";
-            Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, message);
-            editVideoFragment.enableInput(true);
+            MainPage.getInstance().runOnUiThread(() -> {
+                String message = "User is not logged in. Delete action is not permitted.";
+                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, message);
+                editVideoFragment.enableInput(true);
+            });
             return;
         }
 
@@ -688,19 +694,23 @@ public class VideoRepository {
                         MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
                     });
                 } else {
-                    String message = "Failed to delete video on server: " + response.message();
-                    Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, message);
-                    editVideoFragment.enableInput(true);
+                    MainPage.getInstance().runOnUiThread(() -> {
+                        String message = "Failed to delete video on server: " + response.message();
+                        Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, message);
+                        editVideoFragment.enableInput(true);
+                    });
                 }
             }
 
             @Override
             public void onFailure(Call<SuccessErrorResponse> call, Throwable t) {
-                String message = "Error deleting video on server";
-                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, message, t);
-                editVideoFragment.enableInput(true);
+                MainPage.getInstance().runOnUiThread(() -> {
+                    String message = "Error deleting video on server";
+                    Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, message, t);
+                    editVideoFragment.enableInput(true);
+                });
             }
         });
 

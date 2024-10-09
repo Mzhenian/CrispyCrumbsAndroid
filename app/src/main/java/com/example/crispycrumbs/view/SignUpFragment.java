@@ -25,10 +25,10 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.databinding.FragmentSignUpBinding;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UsernameEmailCheckCallback;
+import com.example.crispycrumbs.viewModel.UserViewModel;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -43,14 +43,21 @@ public class SignUpFragment extends Fragment {
     private static final String TAG = "SignUpFragment";
     private FragmentSignUpBinding binding;
     private View view;
+    private UserViewModel viewModel;
+
     private String formattedBirthdayForServer; // Stores the formatted birthday for the server
     private Uri photoUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_profile_picture);
     private ActivityResultLauncher<Intent> photoPickerLauncher;
+    private ServerAPI serverAPI;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
         view = binding.getRoot();
+        viewModel = new UserViewModel(MainPage.getInstance().getApplication());
+
+        serverAPI = ServerAPI.getInstance();
 
         initializeProfilePhotoPicker();
 
@@ -132,23 +139,7 @@ public class SignUpFragment extends Fragment {
             return;
         }
 
-        // Check username and email availability
-        checkUsernameAndEmailAvailability(usernameInput, emailInput, new UsernameEmailCheckCallback() {
-            @Override
-            public void onResult(boolean isAvailable) {
-                if (isAvailable) {
-                    // If available, proceed with sign up
-                    signUpUser(emailInput, usernameInput, passwordInput, fullNameInput, phoneNumberInput, birthdayInput, countryInput, photoUri);
-                }
-                //todo handle if not available
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                enableInput(true);
-                showError("Failed to check username or email availability");
-            }
-        });
+        signUpUser(emailInput, usernameInput, passwordInput, fullNameInput, phoneNumberInput, birthdayInput, countryInput, photoUri);
     }
 
     // Validate form fields
@@ -211,68 +202,66 @@ public class SignUpFragment extends Fragment {
         return true; // All fields are valid
     }
 
-    private void checkUsernameAndEmailAvailability(String username, String email, UsernameEmailCheckCallback callback) {
-        ServerAPI serverAPI = ServerAPI.getInstance();
-
-        // First check username availability
-        serverAPI.checkUsernameAvailability(username, new Callback<CheckResponse>() {
-            @Override
-            public void onResponse(Call<CheckResponse> call, Response<CheckResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isAvailable()) {
-                    // If username is available, check email
-                    serverAPI.checkEmailAvailability(email, new Callback<CheckResponse>() {
-                        @Override
-                        public void onResponse(Call<CheckResponse> call, Response<CheckResponse> response) {
-                            if (response.isSuccessful() && response.body() != null && response.body().isAvailable()) {
-                                callback.onResult(true); // Username and email are both available
-                            } else {
-                                showError("Email is already taken");
-                                callback.onResult(false);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<CheckResponse> call, Throwable t) {
-                            showError("Failed to check email availability");
-                            callback.onResult(false);
-                        }
-                    });
-                } else {
-                    showError("Username is already taken");
-                    callback.onResult(false);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CheckResponse> call, Throwable t) {
-                showError("Failed to check username availability");
-                callback.onResult(false);
-            }
-        });
-    }
-
     private void signUpUser(String email, String username, String password, String fullName, String phoneNumber, String birthday, String country, Uri photoUri) {
-        ServerAPI serverAPI = ServerAPI.getInstance();
         SignUpRequest signUpRequest = new SignUpRequest(username, email, password, fullName, phoneNumber, birthday, country);
-
         serverAPI.signUp(signUpRequest, photoUri, new Callback<SignUpResponse>() {
             @Override
-            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
+            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> signUpResponse) {
                 MainPage.getInstance().runOnUiThread(() -> {
                     enableInput(true);
-                    if (response.isSuccessful() && response.body() != null) {
+                    if (signUpResponse.isSuccessful() && signUpResponse.body() != null) {
                         Toast.makeText(getContext(), "Sign Up Successful", Toast.LENGTH_SHORT).show();
 
-                        LoggedInUser.setLoggedInUser(response.body().getUser());
-                        LoggedInUser.setToken(response.body().getToken());
+                        LoggedInUser.setLoggedInUser(signUpResponse.body().getUser());
+                        LoggedInUser.setToken(signUpResponse.body().getToken());
 
                         // Switch to home fragment after sign up
                         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                         transaction.replace(R.id.fragment_container, new HomeFragment());
                         transaction.commit();
-                    } else {
-                        showError("Sign Up failed: " + response.message());
+                        return;
                     }
+
+                    //Signup got to the server and failed:
+                    viewModel.checkUsernameAvailability(username, new UsernameEmailCheckCallback() {
+                        @Override
+                        public void onResult(Boolean isAvailable) {
+                            if (null == isAvailable) {
+                                showError("Failed to check username availability");
+                                return;
+                            }
+                            if (!isAvailable) {
+                                showError("Username is already taken");
+                                return;
+                            }
+
+                            // Check email availability
+                            viewModel.checkEmailAvailability(email, new UsernameEmailCheckCallback() {
+                                @Override
+                                public void onResult(Boolean isAvailable) {
+                                    if (null == isAvailable) {
+                                        showError("Failed to check email availability");
+                                        return;
+                                    }
+                                    if (!isAvailable) {
+                                        showError("Email is already taken");
+                                        return;
+                                    }
+                                    showError("Sign Up failed: " + signUpResponse.message());
+                                }
+
+                                @Override
+                                public void onFailure(Throwable t) {
+                                    showError("Failed to check email availability");
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                            showError("Failed to check username availability");
+                        }
+                    });
                 });
             }
 

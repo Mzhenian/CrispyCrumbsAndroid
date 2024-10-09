@@ -2,19 +2,19 @@ package com.example.crispycrumbs.serverAPI.serverDataUnit;
 
 
 public class CheckUserNameRequest {
-    private String userName;
+    private String username;
 
 
     public CheckUserNameRequest(String username) {
-        this.userName = username;
+        this.username = username;
     }
 
     // Getters and Setters
     public String getUserName() {
-        return userName;
+        return username;
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.username = userName;
     }
 }

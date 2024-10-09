@@ -22,10 +22,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
@@ -61,7 +61,7 @@ public class EditVideoFragment extends Fragment {
     private PreviewVideoCard video;
     private Uri thumbnailUri = null;
     private TagsAdapter tagsAdapter;
-    private List<String> tags = new ArrayList<>();
+    private final List<String> tags = new ArrayList<>();
     private ActivityResultLauncher<Intent> photoPickerLauncher;
 
     @Nullable
@@ -113,7 +113,6 @@ public class EditVideoFragment extends Fragment {
             addTag(tag);
         }
 
-        binding.rvTagsPreviewEdit.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvTagsPreviewEdit.setAdapter(tagsAdapter);
 
         binding.btnAddVideoTagEdit.setOnClickListener(v -> addTag());
@@ -127,11 +126,17 @@ public class EditVideoFragment extends Fragment {
         });
 
         initializeThumbnailPicker();
-        binding.btnChooseThumbnailEdit.setOnClickListener(v -> setPhoto());
+        binding.txtChooseThumbnailEdit.setOnClickListener(v -> setPhoto());
+        binding.btnDeleteThumbnailEdit.setOnClickListener(v -> deleteThumbnail());
         binding.btnUpdate.setOnClickListener(v -> updateVideo());
         binding.btnDelete.setOnClickListener(v -> delete());
 
         return view;
+    }
+
+    private void deleteThumbnail() {
+        thumbnailUri = null;
+        binding.thumbnailImageHolderEdit.setImageDrawable(ContextCompat.getDrawable(MainPage.getInstance(), R.drawable.default_video_thumbnail));
     }
 
     public void initializeThumbnailPicker() {
@@ -145,10 +150,9 @@ public class EditVideoFragment extends Fragment {
                                 Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
+                            ImageDecoder.Source source = ImageDecoder.createSource(MainPage.getInstance().getContentResolver(), thumbnailUri);
                             Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
                             binding.thumbnailImageHolderEdit.setImageBitmap(thumbnailBitmap);
-                            binding.txtChooseThumbnail.setText("");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -171,7 +175,6 @@ public class EditVideoFragment extends Fragment {
         if (!trimmedTag.isEmpty()) {
             tags.add(tag);
             tagsAdapter.notifyItemInserted(tags.size() - 1);
-            binding.etVideoTagEdit.setText("");
         } else {
             //hide the keyboard
             InputMethodManager imm = (InputMethodManager) MainPage.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -262,7 +265,7 @@ public class EditVideoFragment extends Fragment {
             binding.etVideoDescriptionEdit.setEnabled(enable);
             binding.spinnerCategoryEdit.setEnabled(enable);
             binding.btnAddVideoTagEdit.setEnabled(enable);
-            binding.btnChooseThumbnailEdit.setEnabled(enable);
+            binding.txtChooseThumbnailEdit.setEnabled(enable);
             binding.btnUpdate.setEnabled(enable);
             binding.btnDelete.setEnabled(enable);
         });

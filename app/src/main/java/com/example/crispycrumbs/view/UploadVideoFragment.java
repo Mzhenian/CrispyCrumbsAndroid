@@ -68,7 +68,8 @@ public class UploadVideoFragment extends Fragment {
         initializeVideoPicker();
         initializeThumbnailPicker();
         binding.btnChooseVideo.setOnClickListener(v -> setVideo());
-        binding.btnChooseThumbnail.setOnClickListener(v -> setPhoto());
+        binding.txtChooseThumbnail.setOnClickListener(v -> setPhoto());
+        binding.btnDeleteThumbnail.setOnClickListener(v -> deleteThumbnail());
 
         binding.btnUpload.setOnClickListener(v -> upload());
         binding.btnCancelUpload.setOnClickListener(v -> cancelUpload());
@@ -78,7 +79,6 @@ public class UploadVideoFragment extends Fragment {
 
         tags = new ArrayList<>();
         tagsAdapter = new TagsAdapter(tags);
-        binding.rvTagsPreview.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvTagsPreview.setAdapter(tagsAdapter);
 
         binding.btnAddVideoTag.setOnClickListener(v -> addTag());
@@ -92,6 +92,11 @@ public class UploadVideoFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void deleteThumbnail() {
+        thumbnailUri = null;
+        binding.thumbnailImageHolder.setImageDrawable(ContextCompat.getDrawable(MainPage.getInstance(), R.drawable.default_video_thumbnail));
     }
 
     public void addTag() {
@@ -211,7 +216,6 @@ public class UploadVideoFragment extends Fragment {
                             ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
                             Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
                             binding.thumbnailImageHolder.setImageBitmap(thumbnailBitmap);
-                            binding.txtChooseThumbnail.setText("");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -230,7 +234,7 @@ public class UploadVideoFragment extends Fragment {
             binding.etVideoDescription.setEnabled(enable);
             binding.spinnerCategory.setEnabled(enable);
             binding.btnAddVideoTag.setEnabled(enable);
-            binding.btnChooseThumbnail.setEnabled(enable);
+            binding.txtChooseThumbnail.setEnabled(enable);
             binding.btnUpload.setEnabled(enable);
             binding.btnCancelUpload.setEnabled(enable);
         });

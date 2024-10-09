@@ -36,26 +36,16 @@
                 android:background="@drawable/diff_round_corners_orange"
                 android:paddingHorizontal="10dp"
                 android:text="@string/editing_video_title"
-                android:textColor="@color/black_div"
+                android:textColor="@color/absolute_ofek_white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="15dp"
-                android:paddingTop="5dp"
-
-                android:text="Leave blank to keep unchanged"
-                android:textColor="@color/gray_dark"
-                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/txt_choose_video_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/original_thumbnail"
+                android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -67,18 +57,18 @@
 
                 android:gravity="center">
 
-<!--                <ProgressBar-->
-<!--                    android:id="@+id/progress_bar_edit"-->
-<!--                    style="?android:attr/progressBarStyleHorizontal"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="200dp"-->
-<!--                    android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"-->
-<!--                    android:progressDrawable="@android:drawable/progress_horizontal"-->
-<!--                    android:visibility="invisible"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+                <!--                <ProgressBar-->
+                <!--                    android:id="@+id/progress_bar_edit"-->
+                <!--                    style="?android:attr/progressBarStyleHorizontal"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="200dp"-->
+                <!--                    android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"-->
+                <!--                    android:progressDrawable="@android:drawable/progress_horizontal"-->
+                <!--                    android:visibility="invisible"-->
+                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
                 <ImageView
                     android:id="@+id/img_original_thumbail_edit"
@@ -91,13 +81,22 @@
                     android:src="@drawable/layer_1" />
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+
+                android:text="*Leave a field blank to keep it unchanged"
+                android:textColor="@color/gray_dark"
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/video_title_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/diff_round_top_right_corner_orange"
                 android:text="@string/video_title"
+                android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black_div"
                 android:textStyle="bold" />
 
@@ -118,8 +117,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@drawable/diff_round_top_right_corner_orange"
                 android:text="Video description:    "
+                android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black_div"
                 android:textStyle="bold" />
 
@@ -141,8 +140,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@drawable/diff_round_top_right_corner_orange"
                 android:text="@string/video_category"
+                android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -187,47 +186,51 @@
                 android:id="@+id/rv_tags_preview_edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layoutManager="GridLayoutManager"
-                tools:listitem="@layout/recycler_view_item"
+                tools:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/tag_item"
+                tools:orientation="horizontal"
                 tools:spanCount="5" />
 
-            <RelativeLayout
-                android:id="@+id/choose_thumbnail_edit"
+            <LinearLayout
+                android:id="@+id/chooseThumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:adjustViewBounds="true"
                 android:gravity="center"
-                android:scaleType="fitCenter">
-
-                <Button
-                    android:id="@+id/btn_choose_thumbnail_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_alignTop="@id/thumbnail_image_holder_edit"
-                    android:layout_alignBottom="@id/thumbnail_image_holder_edit"
-                    android:background="@android:color/transparent"
-                    android:clickable="true"
-                    android:focusable="true" />
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txt_choose_thumbnail"
+                    android:id="@+id/txtChooseThumbnailEdit"
                     android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:text="new thumbnail:"
-                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:background="@drawable/diff_round_corners_orange"
+                    android:padding="10dp"
+                    android:text="choose a thumbnail"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/thumbnail_image_holder_edit"
+                <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:layout_centerInParent="true"
-                    android:clickable="false"
-                    android:src="@drawable/layer_1" />
-            </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="#00FFFFFF">
+
+                    <ImageView
+                        android:id="@+id/thumbnailImageHolderEdit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/default_video_thumbnail" />
+
+                    <ImageView
+                        android:id="@+id/btn_delete_thumbnailEdit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        app:srcCompat="@drawable/delete_x_inverted" />
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
 
             <LinearLayout
@@ -260,7 +263,6 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,7 +34,7 @@ public class EditProfileFragment extends Fragment {
     private FragmentEditProfileBinding binding;
 
     private ActivityResultLauncher<Intent> photoPickerLauncher;
-    private Uri PhotoUri = null;
+    private Uri photoUri = null;
 
 
     @Override
@@ -64,7 +64,7 @@ public class EditProfileFragment extends Fragment {
                     .into(binding.profilePicture);
 
 
-            PhotoUri = Uri.parse(currentPhotoUrl); //todo test me
+            photoUri = Uri.parse(currentPhotoUrl); //todo test me
 
             binding.editUserName.setText(userItem.getUserName());
             binding.editUserEmail.setText(userItem.getEmail());
@@ -114,7 +114,7 @@ public class EditProfileFragment extends Fragment {
                 }
 
                 // Call ViewModel to update Room and Server
-                viewModel.updateUser(updatedUser, PhotoUri, new UserUpdateCallback() {
+                viewModel.updateUser(updatedUser, photoUri, new UserUpdateCallback() {
                     @Override
                     public void onSuccess() {
                         // Navigate to ProfileFragment on success
@@ -147,19 +147,19 @@ public class EditProfileFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         try {
-                            PhotoUri = result.getData().getData();
-                            if (null == PhotoUri) {
-                                Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                            photoUri = result.getData().getData();
+                            if (null == photoUri) {
+                                Toast.makeText(getContext(), "Failed to get Profile Picture from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), PhotoUri);
-                            Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
-                            binding.profilePicture.setImageBitmap(thumbnailBitmap);
+                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
+                            Bitmap profilePicBitmap = ImageDecoder.decodeBitmap(source);
+                            binding.profilePicture.setImageBitmap(profilePicBitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Failed to get Profile Picture from user", Toast.LENGTH_SHORT).show();
                     }
                 }
         );

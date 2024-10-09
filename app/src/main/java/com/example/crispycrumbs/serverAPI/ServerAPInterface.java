@@ -3,12 +3,17 @@ package com.example.crispycrumbs.serverAPI;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.ApiResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckEmailRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckUserNameRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.CommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.DeleteCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.EditCommentRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LikeDislikeRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.LoginResponse;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SuccessErrorResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
@@ -115,5 +120,19 @@ public interface ServerAPInterface {
 
     @POST("videos/{videoId}/comments")
     Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
+
+    @Multipart
+    @POST("users")
+    Call<SignUpResponse> signUp(
+            @PartMap Map<String, RequestBody> signUpFields,
+            @Part MultipartBody.Part profilePhoto
+    );
+
+
+    @POST("users/isUsernameAvailable")
+    Call<CheckResponse> checkUsernameAvailability(@Body CheckUserNameRequest usernameRequest);
+
+    @POST("users/isEmailAvailable")
+    Call<CheckResponse> checkEmailAvailability(@Body CheckEmailRequest emailRequest);
 
 }

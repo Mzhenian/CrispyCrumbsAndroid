@@ -27,6 +27,8 @@
         android:background="@color/background_gray"
         android:iconifiedByDefault="false"
         android:queryHint="@string/search_hint"
+        android:textColor="@color/black"
+        android:searchIcon="@drawable/search_icon"
         style="@style/SEARCHBAR"/>
 
     <androidx.recyclerview.widget.RecyclerView

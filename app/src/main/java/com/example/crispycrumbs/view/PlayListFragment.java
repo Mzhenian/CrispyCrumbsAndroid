@@ -71,7 +71,7 @@ public class PlayListFragment extends Fragment {
 
         // Search functionality
         SearchView searchBar = view.findViewById(R.id.search_bar);
-        customizeSearchViewIcon(searchBar);
+//        customizeSearchViewIcon(searchBar);
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -88,17 +88,5 @@ public class PlayListFragment extends Fragment {
         });
 
         return view;
-    }
-
-    private void customizeSearchViewIcon(SearchView searchView) {
-        try {
-            int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
-            ImageView searchIcon = searchView.findViewById(searchIconId);
-            if (searchIcon != null) {
-                searchIcon.setImageResource(R.drawable.search_icon);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -56,15 +56,7 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                videoViewModel.searchVideos(query).observe(getViewLifecycleOwner(), videoList -> {
-                    // Update the adapter with the new video list
-                    if (videoList != null) {
-                        adapter.updateVideoList(videoList);
-                    } else {
-                        Toast.makeText(getContext(), "No video found for:" + query, Toast.LENGTH_LONG).show();
-                    }
-                });
-                return false;
+                return search(query);
             }
 
             @Override
@@ -74,14 +66,28 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
             }
         });
 
+
         //todo WIP
-//        ImageView searchIcon = binding.searchBar.findViewById(androidx.appcompat.R.id.search_button);
+//        ImageView searchIcon = binding.searchBar.findViewById(R.id.action_search);
 //        searchIcon.setOnClickListener(v -> {
 //            String query = binding.searchBar.getQuery().toString();
-//            binding.searchBar.setQuery(query, true);
+////            binding.searchBar.setQuery(query, true);
+//            search(query);
 //        });
 
         return view;
+    }
+
+    private boolean search(String query) {
+        videoViewModel.searchVideos(query).observe(getViewLifecycleOwner(), videoList -> {
+            // Update the adapter with the new video list
+            if (videoList != null) {
+                adapter.updateVideoList(videoList);
+            } else {
+                Toast.makeText(getContext(), "No video found for:" + query, Toast.LENGTH_LONG).show();
+            }
+        });
+        return false;
     }
 
     @Override

@@ -1,15 +1,32 @@
 package com.example.crispycrumbs.serverAPI;
+import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.repository.UserRepository;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckResponse;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckEmailRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckUserNameRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpRequest;
+import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.view.MainPage;
+import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.Callback;
+
 
 public class ServerAPI {
     public static final String DEFAULT_IP = "10.0.2.2"; // the emulator's host IP
@@ -67,5 +84,37 @@ public class ServerAPI {
     public String constructUrl(String path) {
         return "http://" + IP + ":" + port + "/api/db/" + path;
     }
+
+    public void checkUsernameAvailability(String username, Callback<CheckResponse> callback) {
+        CheckUserNameRequest request = new CheckUserNameRequest(username);
+        Call<CheckResponse> call = serverAPInterface.checkUsernameAvailability(request);
+        call.enqueue(callback);
+    }
+
+    public void checkEmailAvailability(String email, Callback<CheckResponse> callback) {
+        CheckEmailRequest request = new CheckEmailRequest(email);
+        Call<CheckResponse> call = serverAPInterface.checkEmailAvailability(request);
+        call.enqueue(callback);
+    }
+
+    public void signUp(SignUpRequest signUpRequest, Uri profilePhotoUri, Callback<SignUpResponse> callback) {
+        ContentResolver contentResolver = MainPage.getInstance().getContentResolver();
+        UserRepository userRepository = UserRepository.getInstance();
+
+        MultipartBody.Part profilePhotoPart = userRepository.setProfilePhotoPart(contentResolver, profilePhotoUri);
+
+        Map<String, RequestBody> signUpFields = new HashMap<>();
+        signUpFields.put("userName", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getUserName()));
+        signUpFields.put("email", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getEmail()));
+        signUpFields.put("password", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getPassword()));
+        signUpFields.put("fullName", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getFullName()));
+        signUpFields.put("phoneNumber", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getPhoneNumber()));
+        signUpFields.put("birthday", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getBirthday()));
+        signUpFields.put("country", RequestBody.create(okhttp3.MediaType.parse("text/plain"), signUpRequest.getCountry()));
+
+        Call<SignUpResponse> call = serverAPInterface.signUp(signUpFields, profilePhotoPart);
+        call.enqueue(callback);
+    }
+
 }
 

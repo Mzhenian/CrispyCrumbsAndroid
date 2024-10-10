@@ -42,4 +42,8 @@ public class VideoViewModel extends AndroidViewModel {
         return videoRepository.getVideosByUser(userId);
     }
 
+    public LiveData<List<PreviewVideoCard>> getVideosByType(VideoRepository.VideoType videoType, String userId) {
+        return videoRepository.getVideosByType(videoType, userId);
+    }
+
 }

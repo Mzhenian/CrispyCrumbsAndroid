@@ -363,6 +363,81 @@ public class VideoRepository {
         return videoLiveData;
     }
 
+    // VideoRepository.java
+    public enum VideoType {
+        MOST_VIEWED,
+        MOST_RECENT,
+        USER_VIDEOS
+    }
+
+    public LiveData<List<PreviewVideoCard>> getVideosByType(VideoType videoType, String userId) {
+        MutableLiveData<List<PreviewVideoCard>> liveData = new MutableLiveData<>();
+
+        switch (videoType) {
+            case MOST_VIEWED:
+                serverAPInterface.getAllVideos().enqueue(new Callback<VideoListsResponse>() {
+                    @Override
+                    public void onResponse(Call<VideoListsResponse> call, Response<VideoListsResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<PreviewVideoCard> videoList = response.body().getMostViewedVideos();
+                            liveData.postValue(videoList);
+                            executor.execute(() -> videoDao.insertVideos(videoList));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<VideoListsResponse> call, Throwable t) {
+                        Log.e(TAG, "Failed to fetch videos from server", t);
+                    }
+                });
+                break;
+
+            case MOST_RECENT:
+                serverAPInterface.getAllVideos().enqueue(new Callback<VideoListsResponse>() {
+                    @Override
+                    public void onResponse(Call<VideoListsResponse> call, Response<VideoListsResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<PreviewVideoCard> videoList = response.body().getMostRecentVideos();
+                            liveData.postValue(videoList);
+                            executor.execute(() -> videoDao.insertVideos(videoList));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<VideoListsResponse> call, Throwable t) {
+                        Log.e(TAG, "Failed to fetch most recent videos from server", t);
+                    }
+                });
+                break;
+
+            case USER_VIDEOS:
+                if (userId == null) {
+                    Log.e(TAG, "UserId cannot be null for USER_VIDEOS.");
+                    return liveData;
+                }
+
+                serverAPInterface.getVideosByUser(userId).enqueue(new Callback<List<PreviewVideoCard>>() {
+                    @Override
+                    public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<PreviewVideoCard> videoList = response.body();
+                            liveData.postValue(videoList);
+                            executor.execute(() -> videoDao.insertVideos(videoList));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<PreviewVideoCard>> call, Throwable t) {
+                        Log.e(TAG, "Failed to fetch videos from server", t);
+                    }
+                });
+                break;
+        }
+
+        return liveData;
+    }
+
+
     public void insertComment(MutableLiveData<PreviewVideoCard> videoLiveData, String commentText, String date) {
         if (videoLiveData.getValue() == null) {
             Log.e("Comment update", "Video is null. Comment action is not permitted.");

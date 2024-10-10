@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/round_corners_white"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:layout_marginRight="10dp"
+    >
 
     <TextView
         android:id="@+id/tvTag"
@@ -14,7 +16,8 @@
         android:backgroundTint="@color/ofek_white"
         android:text="TagHolder"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        />
 
     <ImageView
         android:id="@+id/imageView2"

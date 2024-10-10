@@ -1,8 +1,5 @@
 package com.example.crispycrumbs.localDB;
 
-import static com.example.crispycrumbs.view.MainPage.getInstance;
-
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -10,7 +7,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.view.MainPage;
@@ -61,8 +57,10 @@ public class LoggedInUser {
     }
 
     public static void logOut() {
-        LoggedInUser.loggedInUser.postValue(null);
-        LoggedInUser.token = null;
+        if (null != LoggedInUser.loggedInUser) {
+            loggedInUser.postValue(null);
+        }
+        token = null;
         sharedPreferences.edit()
                 .remove(LIU_ID_KEY)
                 .remove(LIU_TOKEN_KEY)

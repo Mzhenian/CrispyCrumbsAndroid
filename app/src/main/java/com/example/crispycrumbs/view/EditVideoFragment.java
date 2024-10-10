@@ -2,6 +2,7 @@ package com.example.crispycrumbs.view;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,13 +56,12 @@ import okio.Source;
 
 public class EditVideoFragment extends Fragment {
     private static final String TAG = "EditVideoFragment";
+    private final List<String> tags = new ArrayList<>();
     private FragmentEditVideoBinding binding;
     private EditVideoViewModel viewModel;
-
     private PreviewVideoCard video;
     private Uri thumbnailUri = null;
     private TagsAdapter tagsAdapter;
-    private List<String> tags = new ArrayList<>();
     private ActivityResultLauncher<Intent> photoPickerLauncher;
 
     @Nullable
@@ -87,13 +90,18 @@ public class EditVideoFragment extends Fragment {
             return view;
         }
 
-        binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + " #" + video.getVideoId());
+        binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + "\n #" + video.getVideoId());
 
         String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
         Glide.with(MainPage.getInstance())
                 .load(thumbnailUrl)
                 .placeholder(R.drawable.default_video_thumbnail)
                 .into(binding.imgOriginalThumbailEdit);
+
+        Glide.with(MainPage.getInstance())
+                .load(thumbnailUrl)
+                .placeholder(R.drawable.default_video_thumbnail)
+                .into(binding.thumbnailImageHolderEdit);
 
 
         binding.etVideoTitleEdit.setText(video.getTitle());
@@ -105,22 +113,36 @@ public class EditVideoFragment extends Fragment {
         binding.spinnerCategoryEdit.setSelection(categoryAdapter.getPosition(video.getCategory()));
 
         tagsAdapter = new TagsAdapter(tags);
+        binding.rvTagsPreviewEdit.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         for (String tag : video.getTags()) {
             addTag(tag);
         }
 
-        binding.rvTagsPreviewEdit.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvTagsPreviewEdit.setAdapter(tagsAdapter);
 
         binding.btnAddVideoTagEdit.setOnClickListener(v -> addTag());
 
+        binding.etVideoTagEdit.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addTag();
+                return true;
+            }
+            return false;
+        });
+
         initializeThumbnailPicker();
-        binding.btnChooseThumbnailEdit.setOnClickListener(v -> setPhoto());
+        binding.txtChooseThumbnailEdit.setOnClickListener(v -> setPhoto());
+        binding.btnDeleteThumbnailEdit.setOnClickListener(v -> deleteThumbnail());
         binding.btnUpdate.setOnClickListener(v -> updateVideo());
         binding.btnDelete.setOnClickListener(v -> delete());
 
         return view;
+    }
+
+    private void deleteThumbnail() {
+        thumbnailUri = Uri.parse("android.resource://" + MainPage.getInstance().getPackageName() + "/" + R.drawable.default_video_thumbnail);
+        binding.thumbnailImageHolderEdit.setImageDrawable(ContextCompat.getDrawable(MainPage.getInstance(), R.drawable.default_video_thumbnail));
     }
 
     public void initializeThumbnailPicker() {
@@ -134,10 +156,9 @@ public class EditVideoFragment extends Fragment {
                                 Toast.makeText(getContext(), "Failed to get thumbnail from user", Toast.LENGTH_SHORT).show();
                                 return;
                             }
-                            ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), thumbnailUri);
+                            ImageDecoder.Source source = ImageDecoder.createSource(MainPage.getInstance().getContentResolver(), thumbnailUri);
                             Bitmap thumbnailBitmap = ImageDecoder.decodeBitmap(source);
                             binding.thumbnailImageHolderEdit.setImageBitmap(thumbnailBitmap);
-                            binding.txtChooseThumbnail.setText("");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -149,10 +170,7 @@ public class EditVideoFragment extends Fragment {
     }
 
     private void addTag() {
-        String trimmedTag = binding.etVideoTagEdit.getText().toString().trim();
-        if (!trimmedTag.isEmpty()) {
-            addTag(trimmedTag);
-        }
+        addTag(binding.etVideoTagEdit.getText().toString());
     }
 
     private void addTag(String tag) {
@@ -161,6 +179,10 @@ public class EditVideoFragment extends Fragment {
             tags.add(tag);
             tagsAdapter.notifyItemInserted(tags.size() - 1);
             binding.etVideoTagEdit.setText("");
+        } else {
+            //hide the keyboard
+            InputMethodManager imm = (InputMethodManager) MainPage.getInstance().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(binding.etVideoTagEdit.getWindowToken(), 0);
         }
     }
 
@@ -174,8 +196,8 @@ public class EditVideoFragment extends Fragment {
     }
 
     private void updateVideo() {
-//        disableEdit();
         Toast.makeText(getContext(), "Updating video...", Toast.LENGTH_LONG).show();
+        enableInput(false);
 
         // Collect video fields from the UI
         String title = binding.etVideoTitleEdit.getText().toString().trim();
@@ -226,37 +248,30 @@ public class EditVideoFragment extends Fragment {
                 thumbnailPart = MultipartBody.Part.createFormData("thumbnail", DataManager.getFileNameFromUri(thumbnailUri), requestBodyImage);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
+                enableInput(true);
                 return;
             }
         }
-        viewModel.updateVideo(videoFields, thumbnailPart);
+        viewModel.updateVideo(videoFields, thumbnailPart, this);
     }
 
     private void delete() {
-//        disableEdit();
+        enableInput(false);
         Toast.makeText(getContext(), "deleting...", Toast.LENGTH_LONG).show();
-        viewModel.deleteVideo();
+        viewModel.deleteVideo(this);
     }
 
-    private void disableEdit() {
-        binding.progressBarEdit.setVisibility(View.VISIBLE);
-        binding.etVideoTitleEdit.setEnabled(false);
-        binding.etVideoDescriptionEdit.setEnabled(false);
-        binding.spinnerCategoryEdit.setEnabled(false);
-        binding.btnAddVideoTagEdit.setEnabled(false);
-        binding.btnChooseThumbnailEdit.setEnabled(false);
-        binding.btnUpdate.setEnabled(false);
-        binding.btnDelete.setEnabled(false);
-    }
+    public void enableInput(Boolean enable) {
+        MainPage.getInstance().runOnUiThread(() -> {
+            binding.progressBarEditVideo.setVisibility(enable ? View.GONE : View.VISIBLE);
 
-    private void enableEdit() {
-        binding.progressBarEdit.setVisibility(View.GONE);
-        binding.etVideoTitleEdit.setEnabled(true);
-        binding.etVideoDescriptionEdit.setEnabled(true);
-        binding.spinnerCategoryEdit.setEnabled(true);
-        binding.btnAddVideoTagEdit.setEnabled(true);
-        binding.btnChooseThumbnailEdit.setEnabled(true);
-        binding.btnUpdate.setEnabled(true);
-        binding.btnDelete.setEnabled(true);
+            binding.etVideoTitleEdit.setEnabled(enable);
+            binding.etVideoDescriptionEdit.setEnabled(enable);
+            binding.spinnerCategoryEdit.setEnabled(enable);
+            binding.btnAddVideoTagEdit.setEnabled(enable);
+            binding.txtChooseThumbnailEdit.setEnabled(enable);
+            binding.btnUpdate.setEnabled(enable);
+            binding.btnDelete.setEnabled(enable);
+        });
     }
 }

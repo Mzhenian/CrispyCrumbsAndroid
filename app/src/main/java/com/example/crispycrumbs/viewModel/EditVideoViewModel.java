@@ -2,6 +2,7 @@ package com.example.crispycrumbs.viewModel;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -11,16 +12,18 @@ import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.repository.VideoRepository;
+import com.example.crispycrumbs.view.EditVideoFragment;
+import com.example.crispycrumbs.view.MainPage;
 
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class EditVideoViewModel extends AndroidViewModel {
-    private final VideoRepository videoRepository;
     private static final String TAG = "EditVideoViewModel";
-
+    private final VideoRepository videoRepository;
     private MutableLiveData<PreviewVideoCard> video;
 
     public EditVideoViewModel(Application application) {
@@ -41,17 +44,22 @@ public class EditVideoViewModel extends AndroidViewModel {
         video = (MutableLiveData<PreviewVideoCard>) videoRepository.getVideo(videoId);
     }
 
-    public void updateVideo(Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail) {
-        if (null == LoggedInUser.getUser().getValue() || null == video.getValue() || !LoggedInUser.getUser().getValue().getUserId().equals(video.getValue().getUserId()) ) {
-            Log.e(TAG, "Uploader not logged in, so forbidden to update video");
+    public void updateVideo(Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail, EditVideoFragment editVideoFragment) {
+        if (null == LoggedInUser.getUser().getValue() || null == video.getValue() || !LoggedInUser.getUser().getValue().getUserId().equals(video.getValue().getUserId())) {
+            MainPage.getInstance().runOnUiThread(() -> {
+                String message = "Uploader not logged in, so forbidden to update video.";
+                Toast.makeText(MainPage.getInstance(), message, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, message);
+                editVideoFragment.enableInput(true);
+            });
             return;
         }
         String userId = LoggedInUser.getUser().getValue().getUserId();
         String videoId = video.getValue().getVideoId();
-        videoRepository.updateVideo (userId, videoId, videoFields, thumbnail);
+        videoRepository.updateVideo(userId, videoId, videoFields, thumbnail, editVideoFragment);
     }
 
-    public void deleteVideo() {
-        videoRepository.deleteVideo(video.getValue().getVideoId());
+    public void deleteVideo(EditVideoFragment editVideoFragment) {
+        videoRepository.deleteVideo(Objects.requireNonNull(video.getValue()).getVideoId(), editVideoFragment);
     }
 }

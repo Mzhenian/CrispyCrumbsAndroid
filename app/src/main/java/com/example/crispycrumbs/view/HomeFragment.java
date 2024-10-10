@@ -5,19 +5,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
-import com.example.crispycrumbs.databinding.FragmentEditVideoBinding;
 import com.example.crispycrumbs.databinding.FragmentHomeBinding;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 
@@ -56,15 +53,7 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                videoViewModel.searchVideos(query).observe(getViewLifecycleOwner(), videoList -> {
-                    // Update the adapter with the new video list
-                    if (videoList != null) {
-                        adapter.updateVideoList(videoList);
-                    } else {
-                        Toast.makeText(getContext(), "No video found for:" + query, Toast.LENGTH_LONG).show();
-                    }
-                });
-                return false;
+                return search(query);
             }
 
             @Override
@@ -74,14 +63,28 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
             }
         });
 
+
         //todo WIP
-//        ImageView searchIcon = binding.searchBar.findViewById(androidx.appcompat.R.id.search_button);
+//        ImageView searchIcon = binding.searchBar.findViewById(R.id.action_search);
 //        searchIcon.setOnClickListener(v -> {
 //            String query = binding.searchBar.getQuery().toString();
-//            binding.searchBar.setQuery(query, true);
+////            binding.searchBar.setQuery(query, true);
+//            search(query);
 //        });
 
         return view;
+    }
+
+    private boolean search(String query) {
+        videoViewModel.searchVideos(query).observe(getViewLifecycleOwner(), videoList -> {
+            // Update the adapter with the new video list
+            if (videoList != null) {
+                adapter.updateVideoList(videoList);
+            } else {
+                Toast.makeText(getContext(), "No video found for:" + query, Toast.LENGTH_LONG).show();
+            }
+        });
+        return false;
     }
 
     @Override

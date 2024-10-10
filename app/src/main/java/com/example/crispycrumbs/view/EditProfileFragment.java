@@ -127,8 +127,8 @@ public class EditProfileFragment extends Fragment {
                     @Override
                     public void onFailure(String errorMessage) {
                         // Show error message on failure
-                        Log.e("Update user", "Update failed: " + errorMessage);
                         getActivity().runOnUiThread(() -> {
+                            Log.e("Update user", "Update failed: " + errorMessage);
                             Toast.makeText(getContext(), "Update failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
                     }

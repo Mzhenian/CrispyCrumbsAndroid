@@ -12,21 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
@@ -45,17 +38,15 @@ import java.util.ArrayList;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
     private static final String TAG = "VideoPlayerFragment";
+    private static final String KEY_POSITION = "position";
     private FragmentVideoPlayerBinding binding;
     private VideoPlayerViewModel videoPlayerViewModel;
     private UserViewModel userViewModel;
-
-
-    private static final String KEY_POSITION = "position";
     private MediaController mediaController;
     private int currentPosition = 0;
     private String videoId;
     private PreviewVideoCard video;
-//    private ConstraintLayout buttonBar, commentSectionContainer;
+    //    private ConstraintLayout buttonBar, commentSectionContainer;
     private CommentSection_Adapter adapter;
     private LiveData<PreviewVideoCard> videoCardLiveData;
     private View view;
@@ -210,13 +201,13 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 //            Log.d("Comment update", "Updating existing adapter with new comments: " + comments.size());
 //            adapter.updateComments(comments);
 //        } else {
-            UserItem currentUser = LoggedInUser.getUser().getValue();
-            String currentUserId = currentUser != null ? currentUser.getUserId() : null;
+        UserItem currentUser = LoggedInUser.getUser().getValue();
+        String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
-            Log.d("Comment update", "Setting up adapter with comments: " + comments.size());
-            adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
-            binding.commentSection.setAdapter(adapter);
-            binding.commentSection.setLayoutManager(new LinearLayoutManager(getContext()));
+        Log.d("Comment update", "Setting up adapter with comments: " + comments.size());
+        adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
+        binding.commentSection.setAdapter(adapter);
+        binding.commentSection.setLayoutManager(new LinearLayoutManager(getContext()));
 //        }
 
         binding.commentSectionContainer.setVisibility(View.VISIBLE);
@@ -427,7 +418,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             Toast.makeText(getContext(), "You can only edit your own comments", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
     @Override

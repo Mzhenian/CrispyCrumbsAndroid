@@ -1,11 +1,9 @@
 package com.example.crispycrumbs.view;
 
 import static androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode;
-
 import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_ID_KEY;
 import static com.example.crispycrumbs.localDB.LoggedInUser.LIU_TOKEN_KEY;
 
-import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -19,7 +17,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +27,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -45,20 +41,19 @@ import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.PageMainBinding;
 import com.example.crispycrumbs.localDB.AppDB;
 import com.example.crispycrumbs.localDB.LoggedInUser;
-import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.model.DataManager;
 import com.example.crispycrumbs.model.UserLogic;
-import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.repository.VideoRepository;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MainPage extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private PageMainBinding binding;
+    public static String THEME_KEY = "THEME_KEY";
     private static MainPage instance = null;
     private static DataManager dataManager = null;
     private static UserLogic userLogic = null;
+    private PageMainBinding binding;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationView navigationView;
@@ -69,11 +64,10 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
     public static DataManager getDataManager() {
         return dataManager;
     }
+
     public static UserLogic getUserLogic() {
         return userLogic;
     }
-
-    public static String THEME_KEY = "THEME_KEY";
 
     public static MainPage getInstance() {
         if (instance == null) {
@@ -169,33 +163,35 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         LoggedInUser.setToken(sharedPreferences.getString(LIU_TOKEN_KEY, ""));
 
     }
-    @Override
-    public void onBackPressed() {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof VideoPlayerFragment) {
-            ((VideoPlayerFragment) currentFragment).hideMediaController();
-        }
 
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else if (currentFragment instanceof HomeFragment) {
-            //dropDB_Changes
-            dataManager = null;
-            LoggedInUser.logOut();
-
-            Toast.makeText(this, "goodbye", Toast.LENGTH_SHORT).show();
-            finish(); // Close the app
-        } else if (currentFragment instanceof LoginFragment || currentFragment instanceof SignUpFragment) {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getSupportFragmentManager().popBackStack(); // Go back to the previous fragment
-            } else {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-                super.onBackPressed();
-            }
-        } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-        }
-    }
+//todo remove
+//    @Override
+//    public void onBackPressed() {
+//        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+//        if (currentFragment instanceof VideoPlayerFragment) {
+//            ((VideoPlayerFragment) currentFragment).hideMediaController();
+//        }
+//
+//        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            drawerLayout.closeDrawer(GravityCompat.START);
+//        } else if (currentFragment instanceof HomeFragment) {
+//            //dropDB_Changes
+//            dataManager = null;
+//            LoggedInUser.logOut();
+//
+//            Toast.makeText(this, "goodbye", Toast.LENGTH_SHORT).show();
+//            finish(); // Close the app
+//        } else if (currentFragment instanceof LoginFragment || currentFragment instanceof SignUpFragment) {
+//            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+//                getSupportFragmentManager().popBackStack(); // Go back to the previous fragment
+//            } else {
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+//                super.onBackPressed();
+//            }
+//        } else {
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+//        }
+//    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -259,10 +255,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 getWindow().getDecorView().setSystemUiVisibility(0);
                 sharedPreferences.edit().putInt(THEME_KEY, Configuration.UI_MODE_NIGHT_YES).apply();
                 break;
-
-//            getWindow().getStatusBarColor(ContextCompat.getColor(this, R.color.crispy_orange));
-//            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.crispy_orange));
-
         }
     }
 
@@ -270,7 +262,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
         Menu menu = navigationView.getMenu();
 
         // Get references to the header view and its components
-        NavigationView navigationView = findViewById(R.id.nav_Bar);
+//        NavigationView navigationView = findViewById(R.id.nav_Bar);
         View headerView = navigationView.getHeaderView(0);
         ImageView profilePicture = headerView.findViewById(R.id.profile_picture);
         TextView userName = headerView.findViewById(R.id.user_name);
@@ -281,7 +273,12 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 // User is logged in
                 Log.d("MainPage", "User is logged in: " + user.getUserName());
 
-                // Update the profile picture
+                // Update UI with user information
+                userEmail.setText(user.getEmail());
+                if (!user.getDisplayedName().equals(userName.getText().toString())) {
+                    Toast.makeText(MainPage.this, "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
+                    userName.setText(user.getDisplayedName());
+                }
                 String profilePhoto = user.getProfilePhoto();
                 if (profilePhoto != null && profilePhoto.startsWith("content://")) {
                     // Local URI (content URI)
@@ -299,10 +296,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                             .into(profilePicture);
                 }
 
-                // Update UI with user information
-                userName.setText(user.getDisplayedName());
-                userEmail.setText(user.getEmail());
-
                 // Set the correct visibility for menu items when logged in
                 menu.findItem(R.id.nav_profile).setVisible(true);
                 menu.findItem(R.id.nav_my_videos).setVisible(true);
@@ -312,7 +305,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 menu.findItem(R.id.nav_login).setVisible(false);
                 menu.findItem(R.id.nav_signup).setVisible(false);
 
-                Toast.makeText(MainPage.this, "Welcome back " + user.getDisplayedName(), Toast.LENGTH_SHORT).show();
 
                 // Navigate to profile page on profile picture click
                 profilePicture.setOnClickListener(v -> {
@@ -362,14 +354,16 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 //        binding.connectToServerAlertIcon.invalidate();
 //        binding.connectToServerAlertIcon.requestLayout();
     }
+
     public void stopConnectToServerAlert() {
         binding.connectToServerAlertIcon.setVisibility(View.GONE);
         binding.connectToServerAlertIcon.clearAnimation();
 //        binding.connectToServerAlertIcon.invalidate();
 //        binding.connectToServerAlertIcon.requestLayout();
     }
+
     private void showUpdateIPDialog() {
-        ServerAPI serverAPI =  ServerAPI.getInstance();
+        ServerAPI serverAPI = ServerAPI.getInstance();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -404,6 +398,7 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
         dialog.show();
     }
+
     private void refreshfragment() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
         this.recreate();

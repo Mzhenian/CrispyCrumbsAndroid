@@ -35,17 +35,6 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
 
-        // Check if the user is logged in
-        boolean isLoggedIn = LoggedInUser.getUser().getValue() != null;
-
-        // Hide the Subscribed button if the user is not logged in
-        if (!isLoggedIn) {
-            binding.btnUserVideos.setVisibility(View.GONE);
-
-            // Adjust the weight sum to evenly distribute the remaining buttons (Optional)
-            binding.buttonContainer.setWeightSum(2);  // Assuming you want to evenly distribute remaining buttons
-        }
-
         // Set up RecyclerView and Adapter
         adapter = new VideoList_Adapter(getContext(), new ArrayList<>(), this);
         binding.rvVideo.setAdapter(adapter);
@@ -57,31 +46,24 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         // Observe the video list LiveData from ViewModel based on initial selection
         loadVideos(VideoRepository.VideoType.MOST_VIEWED);
 
+        // Observe the login state
+        LoggedInUser.getUser().observe(getViewLifecycleOwner(), loggedInUser -> {
+            if (loggedInUser != null) {
+                binding.btnUserVideos.setVisibility(View.VISIBLE);
+                binding.btnUserVideos.setOnClickListener(v -> {
+                    String userId = loggedInUser.getUserId();
+                    loadVideos(VideoRepository.VideoType.USER_VIDEOS, userId);
+                });
+            } else {
+                binding.btnUserVideos.setVisibility(View.GONE);
+                // Adjust the weight sum to evenly distribute the remaining buttons
+                binding.buttonContainer.setWeightSum(2);
+            }
+        });
+
         // Set up buttons to allow the user to select which videos to display
         binding.btnMostViewed.setOnClickListener(v -> loadVideos(VideoRepository.VideoType.MOST_VIEWED));
         binding.btnMostRecent.setOnClickListener(v -> loadVideos(VideoRepository.VideoType.MOST_RECENT));
-
-        // Set the click listener for Subscribed button only if the user is logged in
-        if (isLoggedIn) {
-            binding.btnUserVideos.setOnClickListener(v -> {
-                String userId = LoggedInUser.getUser().getValue().getUserId();
-                loadVideos(VideoRepository.VideoType.USER_VIDEOS, userId);
-            });
-        }
-
-        // Set up search bar listener
-        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return search(query);
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                adapter.filter(newText);
-                return false;
-            }
-        });
 
         return view;
     }

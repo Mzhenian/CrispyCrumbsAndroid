@@ -5,19 +5,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.SearchView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
+import com.example.crispycrumbs.adapter.PlayList_Adapter;
+import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentProfileBinding;
+import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
+import com.example.crispycrumbs.viewModel.VideoViewModel;
 
+import java.util.ArrayList;
 
 public class ProfileFragment extends Fragment {
     private ProfileViewModel viewModel;
+    private VideoViewModel videoViewModel;
+    private PlayList_Adapter adapter;
     private String userId;
 
     public ProfileFragment() {
@@ -51,7 +61,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
@@ -84,15 +93,37 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // Set up "My Videos" button to navigate to the user's playlist
-        binding.btnMyVideos.setOnClickListener(v -> {
-            if (viewModel.getUser(null).getValue() != null) {
-                PlayListFragment playListFragment = new PlayListFragment(viewModel.getUser(null).getValue());
-                MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, playListFragment).addToBackStack(null).commit();
+        // Set up RecyclerView and Adapter
+        adapter = new PlayList_Adapter(getContext(), new ArrayList<>(), null, LoggedInUser.getUser().getValue());
+        binding.rvVideo.setAdapter(adapter);
+        binding.rvVideo.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Initialize VideoViewModel
+        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
+
+        // Observe videos by the user
+        String userIdToFetch = userId != null ? userId : LoggedInUser.getUser().getValue().getUserId();
+        videoViewModel.getVideosByUser(userIdToFetch).observe(getViewLifecycleOwner(), videoList -> {
+            if (videoList != null) {
+                adapter.updateVideoList(videoList);
+            }
+        });
+
+        // Set up search functionality
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filter(newText);
+                return false;
             }
         });
 
         return view;
     }
-
 }

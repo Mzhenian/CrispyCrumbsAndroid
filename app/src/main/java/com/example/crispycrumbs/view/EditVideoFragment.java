@@ -90,7 +90,7 @@ public class EditVideoFragment extends Fragment {
             return view;
         }
 
-        binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + "\n #" + video.getVideoId());
+        binding.titleEditVideoEdit.setText("Editing: " + video.getTitle());
 
         String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
 

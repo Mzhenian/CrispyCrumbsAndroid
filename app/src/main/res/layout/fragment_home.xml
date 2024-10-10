@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".view.HomeFragment"
-    style="@style/SCREEN"
-    >
+    style="@style/SCREEN">
 
     <SearchView
         android:layout_width="match_parent"
@@ -15,9 +14,49 @@
         android:background="@color/background_gray"
         android:iconifiedByDefault="false"
         android:queryHint="@string/search_hint"
-        android:textColor="@color/black"
-        android:searchIcon="@drawable/search_icon"
         style="@style/SEARCHBAR"/>
+
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/btnMostViewed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Most Viewed"
+            android:textColor="@color/absolute_ofek_white"
+            android:textStyle="bold"
+            android:gravity="center"
+            style="@style/BUTTON"/>
+
+        <TextView
+            android:id="@+id/btnMostRecent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Most Recent"
+            android:textColor="@color/absolute_ofek_white"
+            android:textStyle="bold"
+            android:gravity="center"
+            style="@style/BUTTON"/>
+
+        <TextView
+            android:id="@+id/btnUserVideos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Subscribed"
+            android:textColor="@color/absolute_ofek_white"
+            android:textStyle="bold"
+            android:gravity="center"
+            style="@style/BUTTON"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_video"

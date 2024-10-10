@@ -16,6 +16,8 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.databinding.FragmentHomeBinding;
+import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.repository.VideoRepository;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
 
 import java.util.ArrayList;
@@ -33,48 +35,52 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
 
+        // Set up RecyclerView and Adapter
         adapter = new VideoList_Adapter(getContext(), new ArrayList<>(), this);
         binding.rvVideo.setAdapter(adapter);
         binding.rvVideo.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Set up ViewModel
         videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
-        // Observe the video list LiveData from ViewModel
-        videoViewModel.getAllVideos().observe(getViewLifecycleOwner(), videoList -> {
-            // Update the adapter with the new video list
+        // Observe the video list LiveData from ViewModel based on initial selection
+        loadVideos(VideoRepository.VideoType.MOST_VIEWED);
+
+        // Observe the login state
+        LoggedInUser.getUser().observe(getViewLifecycleOwner(), loggedInUser -> {
+            if (loggedInUser != null) {
+                binding.btnUserVideos.setVisibility(View.VISIBLE);
+                binding.btnUserVideos.setOnClickListener(v -> {
+                    String userId = loggedInUser.getUserId();
+                    loadVideos(VideoRepository.VideoType.USER_VIDEOS, userId);
+                });
+            } else {
+                binding.btnUserVideos.setVisibility(View.GONE);
+                // Adjust the weight sum to evenly distribute the remaining buttons
+                binding.buttonContainer.setWeightSum(2);
+            }
+        });
+
+        // Set up buttons to allow the user to select which videos to display
+        binding.btnMostViewed.setOnClickListener(v -> loadVideos(VideoRepository.VideoType.MOST_VIEWED));
+        binding.btnMostRecent.setOnClickListener(v -> loadVideos(VideoRepository.VideoType.MOST_RECENT));
+
+        return view;
+    }
+
+    private void loadVideos(VideoRepository.VideoType videoType) {
+        loadVideos(videoType, null);
+    }
+
+    private void loadVideos(VideoRepository.VideoType videoType, String userId) {
+        videoViewModel.getVideosByType(videoType, userId).observe(getViewLifecycleOwner(), videoList -> {
             if (videoList != null) {
                 adapter.updateVideoList(videoList);
             } else {
                 Log.e(TAG, "Video list is null");
             }
         });
-
-
-        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return search(query);
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                adapter.filter(newText);
-                return false;
-            }
-        });
-
-
-        //todo WIP
-//        ImageView searchIcon = binding.searchBar.findViewById(R.id.action_search);
-//        searchIcon.setOnClickListener(v -> {
-//            String query = binding.searchBar.getQuery().toString();
-////            binding.searchBar.setQuery(query, true);
-//            search(query);
-//        });
-
-        return view;
     }
-
     private boolean search(String query) {
         videoViewModel.searchVideos(query).observe(getViewLifecycleOwner(), videoList -> {
             // Update the adapter with the new video list

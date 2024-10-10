@@ -1,103 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ProfileFragment"
+    android:orientation="vertical"
     android:padding="16dp"
+    tools:context=".view.ProfileFragment"
+    android:background="@color/ofek_white"
+
     style="@style/SCREEN">
 
-    <!-- Profile Picture -->
-    <ImageView
-        android:id="@+id/profile_picture"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/default_profile_picture"
-        android:contentDescription="profile_picture"
-        android:scaleType="centerCrop"
-        android:background="@drawable/circle_background"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"
-        />
+    <!-- Profile Section -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
 
-    <!-- User's Name -->
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/profile_picture"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="John Doe"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        style="@style/TEXT"/>
+        <!-- Profile Picture -->
+        <ImageView
+            android:id="@+id/profile_picture"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/default_profile_picture"
+            android:contentDescription="profile_picture"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_background"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
-    <TextView
-        android:id="@+id/userEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_name"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="a@b.con"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        style="@style/TEXT"/>
+        <!-- User's Name -->
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/profile_picture"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="John Doe"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            style="@style/TEXT" />
 
-    <!-- User's Bio -->
-<!--    <TextView-->
-<!--        android:id="@+id/user_bio"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/user_name"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:text="This is the user bio. It's a short description about the user."-->
-<!--        android:textSize="16sp"-->
-<!--        android:background="@drawable/round_corners_gray"-->
-<!--        android:textColor="@color/black_div"-->
-<!--        android:padding="10dp"/>-->
+        <!-- User Email -->
+        <TextView
+            android:id="@+id/userEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="a@b.con"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            style="@style/TEXT" />
+    </RelativeLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_my_videos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/userEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="my videos"
-        android:backgroundTint="@color/crispy_orange"
-        android:textColor="@color/white"
-        style="@style/BUTTON"/>
+    <!-- Video Playlist Section -->
 
-    <!-- Edit Profile Button -->
-<!--    <Button-->
-<!--        android:id="@+id/btn_edit_profile"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/btn_my_videos"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:text="@string/edit_profile"-->
-<!--        android:backgroundTint="@color/crispy_orange"-->
-<!--        android:textColor="@color/white"-->
-<!--        style="@style/BUTTON"/>-->
+    <SearchView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:id="@+id/search_bar"
+        android:background="@color/background_gray"
+        android:iconifiedByDefault="false"
+        android:queryHint="@string/search_hint"
+        android:textColor="@color/black"
+        android:searchIcon="@drawable/search_icon"
+        style="@style/SEARCHBAR" />
 
-<!--    //todo enable in next release-->
-    <!-- Settings Button -->
-<!--    <Button-->
-<!--        android:id="@+id/btn_settings"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/btn_my_videos"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginTop="8dp"-->
-<!--        android:text="@string/settings"-->
-<!--        android:backgroundTint="@color/crispy_orange"-->
-<!--        android:textColor="@color/white"-->
-<!--        style="@style/BUTTON"/>-->
-
-</RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_video"
+        tools:listitem="@layout/video_pre_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/SCREEN" />
+</LinearLayout>

@@ -26,39 +26,35 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
+            app:layout_constraintTop_toTopOf="parent"
+            >
 
             <TextView
                 android:id="@+id/TitleUploadVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/diff_round_corners_orange"
-                android:paddingHorizontal="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingHorizontal="16dp"
                 android:text="Upload a video"
                 android:textColor="@color/absolute_ofek_white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
-            <RelativeLayout
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="16dp">
+
+
+        <RelativeLayout
                 android:id="@+id/chooseVideo"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-
                 android:gravity="center">
-
-                <!--                <ProgressBar-->
-                <!--                    android:id="@+id/progressBar"-->
-                <!--                    style="?android:attr/progressBarStyleHorizontal"-->
-                <!--                    android:layout_width="0dp"-->
-                <!--                    android:layout_height="200dp"-->
-                <!--                    android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"-->
-                <!--                    android:progressDrawable="@android:drawable/progress_horizontal"-->
-                <!--                    android:visibility="invisible"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
                 <Button
                     android:id="@+id/btnChooseVideo"
@@ -70,17 +66,13 @@
                     android:clickable="true"
                     android:focusable="true" />
 
-                <TextView
-                    android:id="@+id/txtChooseVideo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:text="choose a video"
-                    android:textAppearance="@style/TextAppearance.BoldText"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/txtChooseVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose a video"
+                android:textAppearance="@style/TextAppearance.BoldText"
+                android:textColor="@color/black_div" />
 
                 <ImageView
                     android:id="@+id/video_holder"
@@ -99,6 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Video title:    "
+                android:layout_marginTop="10dp"
                 android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
@@ -107,19 +100,20 @@
                 android:id="@+id/etVideoTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/round_corners_white"
-                android:backgroundTint="@color/white"
-                android:ems="10"
                 android:hint="* Video title"
+                android:imeOptions="actionNext"
                 android:inputType="text"
-                android:minHeight="48dp"
-                android:textColor="@color/black" />
+                android:padding="10dp"
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:textColorHint="@color/gray_light" />
 
             <TextView
                 android:id="@+id/VideoDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:text="* Video description:    "
                 android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black"
@@ -128,20 +122,22 @@
             <EditText
                 android:id="@+id/etVideoDescription"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
+                android:layout_weight="1"
                 android:background="@drawable/round_corners_white"
-                android:backgroundTint="@color/white"
-                android:ems="10"
+                android:hint="Video description..."
                 android:gravity="top"
-                android:hint="Video description...\n\n\n\n"
-                android:inputType="text|textMultiLine"
-                android:textColor="@color/black" />
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:padding="10dp"
+                android:paddingVertical="@dimen/activity_vertical_margin"
+                android:textColorHint="@color/gray_light" />
 
             <TextView
                 android:id="@+id/tvCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/video_category"
                 android:textAppearance="@style/TextAppearance.BoldText"
                 android:textColor="@color/black"
@@ -173,16 +169,22 @@
                     android:singleLine="true"
                     android:textColor="@color/black" />
 
-                <Button
+                <TextView
                     android:id="@+id/btnAddVideoTag"
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.2"
-                    android:backgroundTint="@color/crispy_orange_dark"
+                    android:background="@drawable/diff_round_corners_orange"
+                    android:gravity="center"
+                    android:padding="10dp"
                     android:text="+"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    />
+
 
             </LinearLayout>
 
@@ -193,53 +195,76 @@
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/tag_item"
                 tools:orientation="horizontal"
-                android:paddingBottom="10dp"
-                tools:spanCount="5" />
+                android:layout_marginBottom="10dp"
+                tools:spanCount="5"
+                android:layout_marginTop="10dp"/>
 
             <LinearLayout
                 android:id="@+id/chooseThumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="130dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                >
 
                 <TextView
                     android:id="@+id/txtChooseThumbnail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/diff_round_corners_orange"
                     android:padding="10dp"
                     android:text="choose a thumbnail"
                     android:textAppearance="@style/TextAppearance.BoldText"
                     android:textColor="@color/white"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginRight="10dp"/>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="16dp"
                     app:cardBackgroundColor="@color/transparent"
                     android:outlineSpotShadowColor="@color/transparent">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
                     <ImageView
                         android:id="@+id/thumbnailImageHolder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_height="105dp"
                         android:scaleType="centerCrop"
-                    android:adjustViewBounds="true"
-                        android:src="@drawable/default_video_thumbnail" />
-
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/default_video_thumbnail"
+                        app:layout_constraintDimensionRatio="16:9"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintWidth_default="spread"
+                        app:layout_constraintHeight_default="spread"/>
 
                     <ImageView
                         android:id="@+id/btn_delete_thumbnail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:srcCompat="@drawable/delete_x_inverted" />
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
 
 
             <LinearLayout
@@ -263,7 +288,7 @@
                     android:backgroundTint="#00FFFFFF"
                     android:src="@drawable/cancel_upload" />
             </LinearLayout>
-
+        </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

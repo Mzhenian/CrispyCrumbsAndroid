@@ -1,97 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    tools:context=".view.EditProfileFragment">
 
-    <!-- Profile Picture -->
-    <ImageView
-        android:id="@+id/profile_picture"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/default_profile_picture"
-        android:scaleType="centerCrop"/>
-
-    <!-- User Name Edit Text -->
-    <EditText
-        android:id="@+id/edit_user_name"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/user_name"
-        android:layout_marginTop="16dp"/>
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:background="@drawable/round_corners_gray"
+        tools:context=".view.EditProfileFragment">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:showDividers="middle"
+                android:dividerPadding="30dp">
+
+                <!-- Profile Picture -->
+
+                <!-- Full Name Edit Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Full Name :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"/>
+
+                <EditText
+                    android:id="@+id/editFullName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="Full Name"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
+
+                <!-- Username Edit Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+
+                <EditText
+                    android:id="@+id/edit_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="@string/user_name"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
+
+                <!-- Email Edit Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+
+                <EditText
+                    android:id="@+id/edit_user_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="@string/prompt_email"
+                    android:imeOptions="actionNext"
+                    android:inputType="textEmailAddress"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
+
+                <!-- Password Edit Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Password :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+
+                <EditText
+                    android:id="@+id/edit_user_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="@string/password"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
+
+                <!-- Confirm Password Edit Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Confirm Password :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+
+                <EditText
+                    android:id="@+id/confirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="@string/confirm_password"
+                    android:imeOptions="actionNext"
+                    android:inputType="textPassword"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
+
+                <!-- Phone Number Edit Text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+
+                <EditText
+                    android:id="@+id/editPhoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="Phone Number"
+                    android:inputType="phone"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
 
 
-    <!-- User Password Edit Text -->
-    <EditText
-        android:id="@+id/edit_user_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
-        android:layout_marginTop="16dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Picture :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+                />
 
-    <!-- User Password Edit Text -->
-    <EditText
-        android:id="@+id/confirmPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/confirm_password"
-        android:layout_marginTop="16dp"/>
-
-    <!-- User Email Edit Text -->
-    <EditText
-        android:id="@+id/edit_user_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/prompt_email"
-        android:layout_marginTop="16dp"/>
-
-    <EditText
-        android:id="@+id/editFullName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Full Name"
-        android:layout_marginTop="16dp"/>
-
-    <EditText
-        android:id="@+id/editPhoneNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Phone Number"
-        android:inputType="phone"
-        android:layout_marginTop="16dp"/>
-
-    <ImageButton
-        android:id="@+id/btn_change_profile_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/open_camera"
-        android:contentDescription="@string/change_profile_picture"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"/>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/btn_change_profile_img"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/default_profile_picture"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
 
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="24dp">
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save Changes"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/crispy_orange"
-        android:textColor="@color/white"/>
+                    <!-- Save Changes Button -->
+                    <ImageButton
+                        android:id="@+id/btnUpdate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/update"
+                        android:backgroundTint="#00FFFFFF"
+                        />
 
-    <Button
-        android:id="@+id/btn_delete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete user"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="@color/alert_red_dark"
-        android:textColor="@color/white"/>
+                    <!-- Delete User Button -->
+                    <ImageButton
+                        android:id="@+id/btnDelete"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/delete"
+                        android:backgroundTint="#00FFFFFF"
+                         />
 
 
-</LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="20dp" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

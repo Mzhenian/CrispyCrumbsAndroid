@@ -61,7 +61,7 @@ public class EditProfileFragment extends Fragment {
             Glide.with(MainPage.getInstance())
                     .load(currentPhotoUrl)
                     .placeholder(R.drawable.default_profile_picture)
-                    .into(binding.profilePicture);
+                    .into(binding.btnChangeProfileImg);
 
 
             photoUri = Uri.parse(currentPhotoUrl); //todo test me
@@ -75,7 +75,7 @@ public class EditProfileFragment extends Fragment {
             binding.btnChangeProfileImg.setOnClickListener(v -> uploadPhoto());
 
             // Set onClickListener for Save button
-            binding.btnSave.setOnClickListener(v -> {
+            binding.btnUpdate.setOnClickListener(v -> {
                 String newUserName = binding.editUserName.getText().toString();
                 String newUserEmail = binding.editUserEmail.getText().toString();
                 String newFullName = binding.editFullName.getText().toString();
@@ -154,7 +154,7 @@ public class EditProfileFragment extends Fragment {
                             }
                             ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), photoUri);
                             Bitmap profilePicBitmap = ImageDecoder.decodeBitmap(source);
-                            binding.profilePicture.setImageBitmap(profilePicBitmap);
+                            binding.btnChangeProfileImg.setImageBitmap(profilePicBitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

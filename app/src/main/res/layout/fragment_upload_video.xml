@@ -122,10 +122,11 @@
             <EditText
                 android:id="@+id/etVideoDescription"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="120dp"
                 android:layout_weight="1"
                 android:background="@drawable/round_corners_white"
-                android:hint="Video description...\n\n\n\n"
+                android:hint="Video description..."
+                android:gravity="top"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:padding="10dp"

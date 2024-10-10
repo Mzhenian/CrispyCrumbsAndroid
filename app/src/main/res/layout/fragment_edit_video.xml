@@ -8,17 +8,16 @@
     android:windowSoftInputMode="adjustPan"
     tools:context=".view.EditVideoFragment">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="89dp">
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="101dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="20dp"
             android:background="@drawable/round_corners_gray"
@@ -28,251 +27,220 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
-<!--            todo V1-->
-<!--            <TextView-->
-<!--                android:id="@+id/title_edit_video_edit"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@drawable/diff_round_corners_orange"-->
-<!--                android:paddingHorizontal="10dp"-->
-<!--                android:text="@string/editing_video_title"-->
-<!--                android:textColor="@color/absolute_ofek_white"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textStyle="bold" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/txt_choose_video_edit"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/original_thumbnail"-->
-<!--                android:textAppearance="@style/TextAppearance.BoldText"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="16sp"-->
-<!--                android:textStyle="bold" />-->
-
-<!--            <RelativeLayout-->
-<!--                android:id="@+id/choose_video_edit"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="200dp"-->
-<!--                android:gravity="center">-->
-<!--                -->
-<!--                <ImageView-->
-<!--                    android:id="@+id/img_original_thumbail_edit"-->
-<!--                    android:layout_width="200dp"-->
-<!--                    android:layout_height="200dp"-->
-<!--                    android:layout_centerInParent="true"-->
-<!--                    android:adjustViewBounds="true"-->
-<!--                    android:clickable="false"-->
-<!--                    android:scaleType="fitCenter"-->
-<!--                    android:src="@drawable/layer_1" />-->
-<!--            </RelativeLayout>-->
-
-            <!--            todo V2-->
-                        <TextView
-                            android:id="@+id/title_edit_video_edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/crispy_orange"
-                            android:paddingHorizontal="10dp"
-                            android:text="@string/editing_video_title"
-                            android:textColor="@color/absolute_ofek_white"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/transparent"
-                android:outlineSpotShadowColor="@color/crispy_orange">
-
-                <ImageView
-                    android:id="@+id/img_original_thumbail_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:outlineSpotShadowColor="@color/crispy_orange"
-                    android:scaleType="center"
-                    android:src="@drawable/layer_1" />
-            </androidx.cardview.widget.CardView>
-
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/titleEditVideoEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/diff_round_corners_orange"
                 android:paddingTop="5dp"
-
-                android:text="*Leave a field blank to keep it unchanged"
-                android:textColor="@color/gray_dark"
-                android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/video_title_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/video_title"
-                android:textAppearance="@style/TextAppearance.BoldText"
-                android:textColor="@color/black_div"
+                android:paddingBottom="5dp"
+                android:paddingHorizontal="16dp"
+                android:text="Edit Video"
+                android:textColor="@color/absolute_ofek_white"
+                android:textSize="20sp"
                 android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_video_title_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_corners_white"
-                android:backgroundTint="@color/white"
-                android:ems="10"
-                android:hint="Video title"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:textColor="@color/black" />
-
-            <TextView
-                android:id="@+id/video_description_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="Video description:    "
-                android:textAppearance="@style/TextAppearance.BoldText"
-                android:textColor="@color/black_div"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_video_description_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_corners_white"
-                android:backgroundTint="@color/white"
-                android:ems="10"
-                android:gravity="top"
-                android:hint="Video description...\n\n\n\n"
-                android:inputType="text|textMultiLine"
-                android:textColor="@color/black" />
-
-
-            <TextView
-                android:id="@+id/tv_category_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/video_category"
-                android:textAppearance="@style/TextAppearance.BoldText"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <Spinner
-                android:id="@+id/spinner_category_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_corners_white"
-                android:padding="10dp"
-                android:spinnerMode="dropdown" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:layout_margin="16dp">
+
+                <TextView
+                    android:id="@+id/videoTitleEdit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Video title:    "
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
 
                 <EditText
-                    android:id="@+id/et_video_tag_edit"
-                    android:layout_width="0dp"
+                    android:id="@+id/etVideoTitleEdit"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/round_corners_white"
-                    android:hint="Add tag(s)"
+                    android:hint="* Video title"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
                     android:padding="10dp"
-                    android:singleLine="true"
-                    android:textColor="@color/black" />
-
-                <Button
-                    android:id="@+id/btn_add_video_tag_edit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
-                    android:backgroundTint="@color/crispy_orange_dark"
-                    android:text="+"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_tags_preview_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:layoutManager="LinearLayoutManager"
-                tools:listitem="@layout/tag_item"
-                tools:orientation="horizontal"
-                android:paddingBottom="10dp"
-                tools:spanCount="5" />
-
-            <LinearLayout
-                android:id="@+id/chooseThumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
 
                 <TextView
-                    android:id="@+id/txtChooseThumbnailEdit"
+                    android:id="@+id/videoDescriptionEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:background="@drawable/diff_round_corners_orange"
-                    android:padding="10dp"
-                    android:text="choose a thumbnail"
+                    android:layout_marginTop="10dp"
+                    android:text="* Video description:    "
                     android:textAppearance="@style/TextAppearance.BoldText"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textColor="@color/black"
                     android:textStyle="bold" />
 
-                <androidx.cardview.widget.CardView
+                <EditText
+                    android:id="@+id/etVideoDescriptionEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/round_corners_white"
+                    android:hint="Video description..."
+                    android:gravity="top"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:paddingVertical="@dimen/activity_vertical_margin"
+                    android:textColorHint="@color/gray_light" />
+
+                <TextView
+                    android:id="@+id/tvCategoryEdit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:outlineSpotShadowColor="@color/transparent"
-                    app:cardBackgroundColor="@color/transparent">
-                    >
+                    android:layout_marginTop="10dp"
+                    android:text="@string/video_category"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:id="@+id/thumbnailImageHolderEdit"
+                <Spinner
+                    android:id="@+id/spinnerCategoryEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_white"
+                    android:padding="10dp"
+                    android:spinnerMode="dropdown" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/etVideoTagEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_corners_white"
+                        android:hint="Add tag(s)"
+                        android:inputType="text"
+                        android:padding="10dp"
+                        android:singleLine="true"
+                        android:textColor="@color/black" />
+
+                    <TextView
+                        android:id="@+id/btnAddVideoTagEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        android:background="@drawable/diff_round_corners_orange"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="+"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTagsPreviewEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layoutManager="LinearLayoutManager"
+                    tools:listitem="@layout/tag_item"
+                    tools:orientation="horizontal"
+                    android:layout_marginBottom="10dp"
+                    tools:spanCount="5"
+                    android:layout_marginTop="10dp" />
+
+                <LinearLayout
+                    android:id="@+id/chooseThumbnailEditLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtChooseThumbnailEdit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/default_video_thumbnail" />
+                        android:layout_gravity="top"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/diff_round_corners_orange"
+                        android:padding="10dp"
+                        android:text="Choose a thumbnail"
+                        android:textAppearance="@style/TextAppearance.BoldText"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginRight="10dp" />
 
-                    <ImageView
-                        android:id="@+id/btn_delete_thumbnailEdit"
+                    <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        app:srcCompat="@drawable/delete_x_inverted" />
-                </androidx.cardview.widget.CardView>
+                        android:layout_weight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardBackgroundColor="@color/transparent"
+                        android:outlineSpotShadowColor="@color/transparent">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
+
+                            <ImageView
+                                android:id="@+id/thumbnailImageHolderEdit"
+                                android:layout_width="0dp"
+                                android:layout_height="105dp"
+                                android:scaleType="centerCrop"
+                                android:adjustViewBounds="true"
+                                android:src="@drawable/default_video_thumbnail"
+                                app:layout_constraintDimensionRatio="16:9"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="spread"
+                                app:layout_constraintHeight_default="spread" />
+
+                            <ImageView
+                                android:id="@+id/btn_delete_thumbnailEdit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|end"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:srcCompat="@drawable/delete_x_inverted" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btnUpdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="#00FFFFFF"
+                        android:src="@drawable/update" />
+
+                    <ImageButton
+                        android:id="@+id/btnDelete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="#00FFFFFF"
+                        android:src="@drawable/delete" />
+                </LinearLayout>
             </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/btn_update"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#00FFFFFF"
-                    android:src="@drawable/update" />
-
-                <ImageButton
-                    android:id="@+id/btn_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="#00FFFFFF"
-                    android:src="@drawable/delete" />
-            </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 

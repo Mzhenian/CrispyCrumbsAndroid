@@ -93,10 +93,6 @@ public class EditVideoFragment extends Fragment {
         binding.titleEditVideoEdit.setText("Editing: " + video.getTitle() + "\n #" + video.getVideoId());
 
         String thumbnailUrl = ServerAPI.getInstance().constructUrl(video.getThumbnail());
-        Glide.with(MainPage.getInstance())
-                .load(thumbnailUrl)
-                .placeholder(R.drawable.default_video_thumbnail)
-                .into(binding.imgOriginalThumbailEdit);
 
         Glide.with(MainPage.getInstance())
                 .load(thumbnailUrl)

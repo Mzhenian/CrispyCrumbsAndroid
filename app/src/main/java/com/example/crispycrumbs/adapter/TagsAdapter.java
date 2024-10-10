@@ -3,6 +3,7 @@ package com.example.crispycrumbs.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,9 +31,9 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
     public void onBindViewHolder(@NonNull TagViewHolder holder, int position) {
         String tag = tags.get(position);
         holder.tvTag.setText(tag);
-        holder.tvTag.setOnClickListener(v -> {
-            deleteTag(position);
-        });
+
+        // Set click listener on delete icon to remove the tag
+        holder.deleteIcon.setOnClickListener(v -> deleteTag(position));
     }
 
     public void deleteTag(int position) {
@@ -41,7 +42,6 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
         notifyItemRangeChanged(position, getItemCount());
     }
 
-
     @Override
     public int getItemCount() {
         return tags.size();
@@ -49,10 +49,12 @@ public class TagsAdapter extends RecyclerView.Adapter<TagsAdapter.TagViewHolder>
 
     public static class TagViewHolder extends RecyclerView.ViewHolder {
         TextView tvTag;
+        ImageView deleteIcon;
 
         public TagViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTag = itemView.findViewById(R.id.tvTag);
+            deleteIcon = itemView.findViewById(R.id.imageView2); // Find the delete icon by its ID
         }
     }
 }

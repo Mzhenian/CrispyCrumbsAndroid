@@ -19,6 +19,13 @@ Before running the Crispy Crumbs app, you need to set up and start the backend s
 - Follow the instructions in the [CrispyCrumbsServer repository](https://github.com/Mzhenian/CrispyCrumbsServer) to set up and run the server.
 - **Don't forget the TCP Server!** It's necessary for video recommendations. Activate the [C++ TCP Server](https://github.com/Mzhenian/CrispyCrumbsTCP) as instructed in its repository.
 
+```mermaid
+graph TD;
+    NodeJS_Server["NodeJS Server - Backend"] <--> React_Web["React Frontend"];
+    NodeJS_Server <--> Android_App["Android App - Frontend"];
+    NodeJS_Server <--> TCP_Server["TCP Recommendation Server - Backend"];
+```
+
 ### Connecting to Your Android Device
 
 You have two main ways to run the app on a compatible Android device:

@@ -59,12 +59,12 @@ import retrofit2.Response;
 public class VideoRepository {
     private final String TAG = "VideoRepository";
     private VideoDao videoDao;
-    private ServerAPInterface serverAPInterface;
+    private ServerAPI serverAPI;
     private Executor executor = Executors.newSingleThreadExecutor();
 
     public VideoRepository(AppDB db) {
         videoDao = db.videoDao();
-        serverAPInterface = ServerAPI.getInstance().getAPI();
+        serverAPI = ServerAPI.getInstance();
     }
 
     public static File drawableToFile(int drawableResId, String fileName) {
@@ -101,7 +101,7 @@ public class VideoRepository {
         });
 
         // Step 2: Fetch data from the server and update Room and LiveData
-        serverAPInterface.getAllVideos().enqueue(new Callback<VideoListsResponse>() {
+        serverAPI.getAPI().getAllVideos().enqueue(new Callback<VideoListsResponse>() {
             @Override
             public void onResponse(Call<VideoListsResponse> call, Response<VideoListsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -142,7 +142,7 @@ public class VideoRepository {
         });
 
         // Step 2: Fetch data from the server and update Room and LiveData
-        serverAPInterface.getAllVideos().enqueue(new Callback<VideoListsResponse>() {
+        serverAPI.getAPI().getAllVideos().enqueue(new Callback<VideoListsResponse>() {
             @Override
             public void onResponse(Call<VideoListsResponse> call, Response<VideoListsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -175,7 +175,7 @@ public class VideoRepository {
         });
 
         // Step 2: Fetch from the server and update Room and LiveData
-        serverAPInterface.getVideosByUser(userId).enqueue(new Callback<List<PreviewVideoCard>>() {
+        serverAPI.getAPI().getVideosByUser(userId).enqueue(new Callback<List<PreviewVideoCard>>() {
             @Override
             public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -199,7 +199,7 @@ public class VideoRepository {
     public LiveData<List<PreviewVideoCard>> searchVideos(String query) {
         MutableLiveData<List<PreviewVideoCard>> queryVideosLiveData = new MutableLiveData<>();
 
-        serverAPInterface.searchVideos(query).enqueue(new Callback<List<PreviewVideoCard>>() {
+        serverAPI.getAPI().searchVideos(query).enqueue(new Callback<List<PreviewVideoCard>>() {
             @Override
             public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -299,7 +299,7 @@ public class VideoRepository {
         MultipartBody videoData = videoDataBuilder.build();
 
         try {
-            serverAPInterface.upload(userId, videoData.part(0), videoData.part(1), videoData.part(2).body(), videoData.part(3).body(),
+            serverAPI.getAPI().upload(userId, videoData.part(0), videoData.part(1), videoData.part(2).body(), videoData.part(3).body(),
                     videoData.part(4).body(), videoData.part(5).body(), videoData.part(6).body()).enqueue(new Callback<PreviewVideoCard>() {
                 @Override
                 public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
@@ -338,7 +338,7 @@ public class VideoRepository {
             }
         });
 
-        serverAPInterface.getVideoById(videoId).enqueue(new Callback<PreviewVideoCard>() {
+        serverAPI.getAPI().getVideoById(videoId).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -375,7 +375,7 @@ public class VideoRepository {
 
         switch (videoType) {
             case MOST_VIEWED:
-                serverAPInterface.getAllVideos().enqueue(new Callback<VideoListsResponse>() {
+                serverAPI.getAPI().getAllVideos().enqueue(new Callback<VideoListsResponse>() {
                     @Override
                     public void onResponse(Call<VideoListsResponse> call, Response<VideoListsResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -393,7 +393,7 @@ public class VideoRepository {
                 break;
 
             case MOST_RECENT:
-                serverAPInterface.getAllVideos().enqueue(new Callback<VideoListsResponse>() {
+                serverAPI.getAPI().getAllVideos().enqueue(new Callback<VideoListsResponse>() {
                     @Override
                     public void onResponse(Call<VideoListsResponse> call, Response<VideoListsResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -416,7 +416,7 @@ public class VideoRepository {
                     return liveData;
                 }
 
-                serverAPInterface.getVideosByUser(userId).enqueue(new Callback<List<PreviewVideoCard>>() {
+                serverAPI.getAPI().getVideosByUser(userId).enqueue(new Callback<List<PreviewVideoCard>>() {
                     @Override
                     public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -449,7 +449,7 @@ public class VideoRepository {
 
         CommentRequest commentRequest = new CommentRequest(videoId, commentText, date);
 
-        serverAPInterface.postComment(commentRequest).enqueue(new Callback<CommentItem>() {
+        serverAPI.getAPI().postComment(commentRequest).enqueue(new Callback<CommentItem>() {
             @Override
             public void onResponse(Call<CommentItem> call, Response<CommentItem> response) {
                 Log.d("Comment update", "Server response: isSuccessful=" + response.isSuccessful() + ", body=" + response.body());
@@ -504,7 +504,7 @@ public class VideoRepository {
         EditCommentRequest editCommentRequest = new EditCommentRequest(videoId, commentId, LoggedInUser.getUser().getValue().getUserId(), newContent, date);
 
         // Send the edit request to the server
-        serverAPInterface.editComment(editCommentRequest).enqueue(new Callback<PreviewVideoCard>() {
+        serverAPI.getAPI().editComment(editCommentRequest).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -538,7 +538,7 @@ public class VideoRepository {
 
         DeleteCommentRequest request = new DeleteCommentRequest(videoLivaData.getValue().getVideoId(), commentId, userId); // Pass commentId as String
 
-        serverAPInterface.deleteComment(request).enqueue(new Callback<Void>() {
+        serverAPI.getAPI().deleteComment(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
@@ -569,7 +569,7 @@ public class VideoRepository {
 
         VideoIdRequest request = new VideoIdRequest(videoId);
 
-        serverAPInterface.incrementVideoViews(request).enqueue(new Callback<ApiResponse<Void>>() {
+        serverAPI.getAPI().incrementVideoViews(request).enqueue(new Callback<ApiResponse<Void>>() {
             @Override
             public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
                 if (response.isSuccessful()) {
@@ -628,7 +628,7 @@ public class VideoRepository {
         Log.d(TAG, "Attempting to like video with ID: " + videoId + " by user: " + userId);
 
         LikeDislikeRequest request = new LikeDislikeRequest(videoId, userId);
-        serverAPInterface.likeVideo(request).enqueue(new Callback<PreviewVideoCard>() {
+        serverAPI.getAPI().likeVideo(request).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
                 if (!response.isSuccessful() || null == response.body()) {
@@ -683,7 +683,7 @@ public class VideoRepository {
         Log.d(TAG, "Attempting to dislike video with ID: " + videoId + " by user: " + userId);
 
         LikeDislikeRequest request = new LikeDislikeRequest(videoId, userId);
-        serverAPInterface.dislikeVideo(request).enqueue(new Callback<PreviewVideoCard>() {
+        serverAPI.getAPI().dislikeVideo(request).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
                 if (!response.isSuccessful() || null == response.body()) {
@@ -715,7 +715,7 @@ public class VideoRepository {
     }
 
     public void updateVideo(String userId, String videoId, Map<String, RequestBody> videoFields, MultipartBody.Part thumbnail, EditVideoFragment editVideoFragment) {
-        serverAPInterface.updateVideo(userId, videoId, videoFields, thumbnail).enqueue(new Callback<PreviewVideoCard>() {
+        serverAPI.getAPI().updateVideo(userId, videoId, videoFields, thumbnail).enqueue(new Callback<PreviewVideoCard>() {
             @Override
             public void onResponse(Call<PreviewVideoCard> call, Response<PreviewVideoCard> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -760,7 +760,7 @@ public class VideoRepository {
             return;
         }
 
-        serverAPInterface.deleteVideo(videoId).enqueue(new Callback<SuccessErrorResponse>() {
+        serverAPI.getAPI().deleteVideo(videoId).enqueue(new Callback<SuccessErrorResponse>() {
             @Override
             public void onResponse(Call<SuccessErrorResponse> call, Response<SuccessErrorResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {

@@ -1,6 +1,5 @@
 package com.example.crispycrumbs.repository;
 
-import android.app.Application;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.util.Log;
@@ -46,14 +45,14 @@ import retrofit2.Response;
 public class UserRepository {
     private static final String TAG = "UserRepository";
     private UserDao userDao;
-    private ServerAPInterface serverAPInterface;
+    private ServerAPI serverAPI;
     private Executor executor = Executors.newSingleThreadExecutor();
     private static final UserRepository INSTANCE = new UserRepository(AppDB.getDatabase(MainPage.getInstance().getApplication()));
     public static final int HTTP_ERROR = -1;
 
     private UserRepository(AppDB db) {
         userDao = db.userDao();
-        serverAPInterface = ServerAPI.getInstance().getAPI();
+        serverAPI = ServerAPI.getInstance();
     }
     public static UserRepository getInstance() {
 //        if (null == INSTANCE) {
@@ -103,7 +102,7 @@ public class UserRepository {
         });
 
         // Fetch the user from the server and update Room and LiveData
-        serverAPInterface.getUser(userId).enqueue(new Callback<UserResponse>() {
+        serverAPI.getAPI().getUser(userId).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -181,7 +180,7 @@ public class UserRepository {
         String userId = LoggedInUser.getUser().getValue().getUserId();
 
         // Make the server API call
-        serverAPInterface.updateUser(userId, userFields, profilePhotoPart).enqueue(new Callback<UserResponse>() {
+        serverAPI.getAPI().updateUser(userId, userFields, profilePhotoPart).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 if (response.isSuccessful()) {
@@ -251,7 +250,7 @@ public class UserRepository {
             return;
         }
 
-        serverAPInterface.deleteUser(userId).enqueue(new Callback<SuccessErrorResponse>() {
+        serverAPI.getAPI().deleteUser(userId).enqueue(new Callback<SuccessErrorResponse>() {
             @Override
             public void onResponse(Call<SuccessErrorResponse> call, Response<SuccessErrorResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -276,7 +275,7 @@ public class UserRepository {
     public void login(String userName, String password, boolean rememberMe, LoginCallback
             callback) {
         LoginRequest loginRequest = new LoginRequest(userName, password, rememberMe);
-        Call<LoginResponse> call = serverAPInterface.login(loginRequest);
+        Call<LoginResponse> call = serverAPI.getAPI().login(loginRequest);
         call.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {

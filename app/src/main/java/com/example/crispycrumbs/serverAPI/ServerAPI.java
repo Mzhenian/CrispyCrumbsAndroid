@@ -34,7 +34,7 @@ public class ServerAPI {
     public static final String IP_KEY = "IP_KEY";
     private static final ServerAPI serverAPI = new ServerAPI();
     private Retrofit retrofit = null;
-    private ServerAPInterface serverAPInterface = null;
+    private ServerAPInterface serverAPInterface = null; // todo upgrade to LiveData
     private String IP;
     //    private MainPage mainPage = MainPage.getInstance();
     private SharedPreferences sharedPreferences = MainPage.getInstance().getPreferences(Context.MODE_PRIVATE);

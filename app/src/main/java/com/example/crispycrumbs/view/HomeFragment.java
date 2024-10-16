@@ -65,6 +65,19 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         binding.btnMostViewed.setOnClickListener(v -> loadVideos(VideoRepository.VideoType.MOST_VIEWED));
         binding.btnMostRecent.setOnClickListener(v -> loadVideos(VideoRepository.VideoType.MOST_RECENT));
 
+        // Set up search bar listener
+        binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return search(query);
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return view;
     }
 

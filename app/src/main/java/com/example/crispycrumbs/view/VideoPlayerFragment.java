@@ -17,13 +17,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.CommentSection_Adapter;
+import com.example.crispycrumbs.adapter.VideoList_Adapter;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
@@ -40,23 +40,23 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private static final String TAG = "VideoPlayerFragment";
     private static final String KEY_POSITION = "position";
     private FragmentVideoPlayerBinding binding;
-    private VideoPlayerViewModel videoPlayerViewModel;
+    private VideoPlayerViewModel viewModel;
     private UserViewModel userViewModel;
     private MediaController mediaController;
     private int currentPosition = 0;
-    private String videoId;
     private PreviewVideoCard video;
     //    private ConstraintLayout buttonBar, commentSectionContainer;
-    private CommentSection_Adapter adapter;
-    private LiveData<PreviewVideoCard> videoCardLiveData;
+    private CommentSection_Adapter CS_Adapter;
     private View view;
+    private VideoList_Adapter VL_Adapter;
+    private VideoList_Adapter.OnItemClickListener listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentVideoPlayerBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
 
-        videoPlayerViewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
+        viewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
 
@@ -80,9 +80,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         });
 
 
-        videoPlayerViewModel.setVideo(bundle.getString("videoId"));
-        videoCardLiveData = videoPlayerViewModel.getVideo();
-        videoCardLiveData.observe(getViewLifecycleOwner(), video -> {
+        viewModel.setVideo(bundle.getString("videoId"));
+        viewModel.getVideo().observe(getViewLifecycleOwner(), video -> {
             if (null == video) {
                 Toast.makeText(getContext(), "Failed to load video", Toast.LENGTH_SHORT).show();
                 return;
@@ -95,7 +94,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 return;
             }
             this.video = video;
-            videoId = video.getVideoId();
 
             initializeVideo(video);
             initializeVideoDetails(video);
@@ -114,15 +112,20 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 });
             } else {
                 binding.likeButton.setOnClickListener(v -> {
-                    videoPlayerViewModel.likeVideo();
+                    viewModel.likeVideo();
                 });
 
                 binding.unlikeButton.setOnClickListener(v -> {
-                    videoPlayerViewModel.dislikeVideo();
+                    viewModel.dislikeVideo();
                 });
             }
 
             initializeCommentsSection(video.getComments());  // Update the comment section
+
+            viewModel.loadRecommendedVideos(video.getVideoId());
+            viewModel.getRecommendedVideos().observe(getViewLifecycleOwner(), videos -> {
+                VL_Adapter.updateVideoList(videos);
+            });
 
             // Log when UI refreshes with the updated video
             Log.d("LiveData update", "Refreshing UI for updated video data");
@@ -132,8 +135,26 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             showAddCommentDialog();
         });
 
+        listener = video -> {
+            VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
+            Bundle args = new Bundle();
+            args.putString("videoId", video.getVideoId());
+            videoPlayerFragment.setArguments(args);
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, videoPlayerFragment)
+                    .addToBackStack(null)
+                    .commit();
+        };
+
+        VL_Adapter = new VideoList_Adapter(MainPage.getInstance(), new ArrayList<>(), listener);
+        binding.rvRecommendedVideos.setAdapter(VL_Adapter);
+        binding.rvRecommendedVideos.setLayoutManager(new LinearLayoutManager(MainPage.getInstance()));
+
+
         return view;
     }
+
 
     private void loadingMessage() {
         Toast.makeText(getContext(), "Loading video and his data...", Toast.LENGTH_SHORT).show();
@@ -151,7 +172,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         binding.videoView.setOnPreparedListener(mp -> {
             binding.progressBar2.setVisibility(View.GONE);
             binding.videoView.start();
-            videoPlayerViewModel.incrementVideoViews(); // Trigger view count increment
+            viewModel.incrementVideoViews(); // Trigger view count increment
         });
     }
 
@@ -179,7 +200,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             }
         });
 
-        String formattedDate = videoPlayerViewModel.formatDate(video.getUploadDate());
+        String formattedDate = viewModel.formatDate(video.getUploadDate());
         binding.videoDate.setText(formattedDate);
         binding.btnVideoDescription.setOnClickListener(v -> toggleDescriptionComments());
         binding.shareButton.setOnClickListener(v -> showShareMenu());
@@ -205,8 +226,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         String currentUserId = currentUser != null ? currentUser.getUserId() : null;
 
         Log.d("Comment update", "Setting up adapter with comments: " + comments.size());
-        adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
-        binding.commentSection.setAdapter(adapter);
+        CS_Adapter = new CommentSection_Adapter(getContext(), comments, this, currentUserId);
+        binding.commentSection.setAdapter(CS_Adapter);
         binding.commentSection.setLayoutManager(new LinearLayoutManager(getContext()));
 //        }
 
@@ -335,7 +356,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        videoCardLiveData.removeObservers(getViewLifecycleOwner());
+        viewModel.getVideo().removeObservers(getViewLifecycleOwner());
 //        binding.videoView = null;
     }
 
@@ -367,7 +388,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             String content = inputContent.getText().toString();
 
             if (!content.isEmpty()) {
-                videoPlayerViewModel.insertComment(videoCardLiveData, content);
+                viewModel.insertComment(viewModel.getVideo(), content);
                 dialog.dismiss();
             } else {
                 Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
@@ -404,7 +425,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 String newContent = inputContent.getText().toString();
 
                 if (!newContent.isEmpty()) {
-                    videoPlayerViewModel.editComment(videoCardLiveData, comment.getId(), newContent);
+                    viewModel.editComment(viewModel.getVideo(), comment.getId(), newContent);
                     dialog.dismiss();
                 } else {
                     Toast.makeText(getContext(), "Please enter a comment.", Toast.LENGTH_SHORT).show();
@@ -422,7 +443,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public void onDeleteComment(int position) {
-        Log.d("Comment deletion", "Attempting to delete comment at position: " + position + ". Total comments: " + adapter.getItemCount());
+        Log.d("Comment deletion", "Attempting to delete comment at position: " + position + ". Total comments: " + CS_Adapter.getItemCount());
         CommentItem comment = video.getComments().get(position);
 
         UserItem currentUser = LoggedInUser.getUser().getValue();
@@ -430,7 +451,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             // Ensure only the user who made the comment can delete it
 
             if (position >= 0 && position < video.getComments().size()) {
-                videoPlayerViewModel.deleteComment(videoCardLiveData, comment.getId(), currentUser.getUserId()); // Use String commentId
+                viewModel.deleteComment(viewModel.getVideo(), comment.getId(), currentUser.getUserId()); // Use String commentId
             } else {
                 Log.e("Comment deletion", "Attempted to delete a comment at invalid position: " + position);
             }

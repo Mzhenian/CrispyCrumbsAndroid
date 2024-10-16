@@ -790,4 +790,29 @@ public class VideoRepository {
         });
 
     }
+
+    public LiveData<List<PreviewVideoCard>> getRecommendedVideos(String videoId) {
+        MutableLiveData<List<PreviewVideoCard>> recommendedVideos = new MutableLiveData<>();
+        ServerAPI.getRecommendedVideos(videoId).enqueue(new Callback<List<PreviewVideoCard>>() {
+            @Override
+            public void onResponse(Call<List<PreviewVideoCard>> call, Response<List<PreviewVideoCard>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    recommendedVideos.postValue(response.body());
+                } else {
+                    // todo Handle error
+                    Log.e(TAG, "Failed to fetch recommended videos from server: " + response.message());
+                    recommendedVideos.postValue(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PreviewVideoCard>> call, Throwable t) {
+                // todo Handle network error
+                Log.e(TAG, "Failed to fetch recommended videos from server", t);
+                recommendedVideos.postValue(new ArrayList<>());
+            }
+        });
+        return recommendedVideos;
+    }
+
 }

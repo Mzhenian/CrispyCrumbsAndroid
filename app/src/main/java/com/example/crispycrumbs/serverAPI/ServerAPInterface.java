@@ -121,6 +121,9 @@ public interface ServerAPInterface {
     @POST("videos/{videoId}/comments")
     Call<CommentItem> postComment(@Path("videoId") String videoId, @Body CommentItem comment);
 
+    @GET("videos/{videoId}/recommendations")
+    Call<List<PreviewVideoCard>> getRecommendedVideos(@Path("videoId") String videoId);
+
     @Multipart
     @POST("users")
     Call<SignUpResponse> signUp(

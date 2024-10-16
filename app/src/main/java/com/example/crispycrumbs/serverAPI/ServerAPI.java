@@ -1,5 +1,6 @@
 package com.example.crispycrumbs.serverAPI;
 import com.example.crispycrumbs.dataUnit.CommentItem;
+import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.CheckResponse;
 
@@ -16,6 +17,7 @@ import com.example.crispycrumbs.view.MainPage;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
@@ -116,5 +118,8 @@ public class ServerAPI {
         call.enqueue(callback);
     }
 
+    public static Call<List<PreviewVideoCard>> getRecommendedVideos(String videoId) {
+    return getInstance().getAPI().getRecommendedVideos(videoId);
+    }
 }
 

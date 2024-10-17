@@ -12,18 +12,18 @@ Welcome to the **Crispy Crumbs** app, a dedicated video-sharing platform showcas
 
 ### Prerequisites
 
-The app is designed to run on Android devices with **Android 10** and above. You will need **Android Studio Jellyfish (2023.3.1)** or later to open the project and run the app.
+The app is designed to run on Android devices with **Android 10** and above. You will need **Android Studio Jellyfish (2023.3.1)** or later to Sync Gradle and build the app.
 
-Before running the Crispy Crumbs app, you need to set up and start the backend server:
+Before running the Crispy Crumbs app, you need to set up and start the backend servers:
 
-- Follow the instructions in the [CrispyCrumbsServer repository](https://github.com/Mzhenian/CrispyCrumbsServer) to set up and run the server.
-- **Don't forget the TCP Server!** It's necessary for video recommendations. Activate the [C++ TCP Server](https://github.com/Mzhenian/CrispyCrumbsTCP) as instructed in its repository.
+- Follow the instructions in the [CrispyCrumbsServer repository](https://github.com/Mzhenian/CrispyCrumbsServer) to set up and run the Node.js server.
+- **Don't forget the recommendations Server!** It's necessary for video recommendations. Activate the [C++ recommendations Server](https://github.com/Mzhenian/CrispyCrumbsTCP) as instructed in its repository.
 
 ```mermaid
 graph TD;
     NodeJS_Server["NodeJS Server - Backend"] <--> React_Web["React Frontend"];
     NodeJS_Server <--> Android_App["Android App - Frontend"];
-    NodeJS_Server <--> TCP_Server["TCP Recommendation Server - Backend"];
+    NodeJS_Server <--> TCP_Server["C++ recommendations Engine - Backend"];
 ```
 
 ### Connecting to Your Android Device
@@ -33,9 +33,9 @@ You have two main ways to run the app on a compatible Android device:
 - **Install the APK**: Download the APK from the releases section and run the app.
 - **Use Android Studio**: Download the entire project, open it in Android Studio, and connect your device via USB or Wi-Fi. Make sure ADB debugging is enabled in developer options. Then, select the "app" run/debug configuration and click run.
 
-Once the server is running, follow these steps to connect your Android device:
+Once the (Node.js) server is running, follow these steps to connect your Android device:
 
-1. Ensure that **both your Android device and the computer running the server** are connected to the same network. **Note:** This network should be open and not restricted to allow communication between the app and the server.
+1. Ensure that **both your Android device and the computer running the server** are connected to the same local network. **Note:** This network should be open and not restricted to allow communication between the app and the server.
 
 2. Open the Crispy Crumbs app on your Android device.
 
@@ -76,7 +76,7 @@ Once the server is running, follow these steps to connect your Android device:
 
 ![sidebar.png](demonstration/sidebar.png)
 
-![set server ip.png](demonstration/set_server_ip.png)
+![set server ip.png](demonstration/set server ip.png)
 
 ### Running the App on an Android Emulator
 
@@ -125,7 +125,7 @@ This page includes a video player, video details, and interactive options like l
 
 ### 7. Profile Page
 
-This page allows users to view their profile details, including their uploaded videos. Users can also view other users' profiles by clicking on their usernames from video pages, allowing them to follow and explore more content.
+This page allows a user to view his own profile details a their uploaded videos. Users can also view each others profiles by clicking on the the uploader's profile picture in any video, allowing them to explore more content.
 
 ### 8. Dark Theme
 

@@ -85,8 +85,8 @@ public class HomeFragment extends Fragment implements VideoList_Adapter.OnItemCl
         loadVideos(videoType, null);
     }
 
-    private void loadVideos(VideoRepository.VideoType videoType, String userId) {
-        videoViewModel.getVideosByType(videoType, userId).observe(getViewLifecycleOwner(), videoList -> {
+    private void loadVideos(VideoRepository.VideoType videoType, String fromUserId) {
+        videoViewModel.getVideosByType(videoType, fromUserId).observe(getViewLifecycleOwner(), videoList -> {
             if (videoList != null) {
                 adapter.updateVideoList(videoList);
             } else {

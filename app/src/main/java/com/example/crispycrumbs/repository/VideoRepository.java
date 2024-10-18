@@ -373,6 +373,11 @@ public class VideoRepository {
     public LiveData<List<PreviewVideoCard>> getVideosByType(VideoType videoType, String userId) {
         MutableLiveData<List<PreviewVideoCard>> liveData = new MutableLiveData<>();
 
+        executor.execute(() -> {
+            VideoList localVideosFallback = new VideoList(videoDao.getAllVideosSync());
+            liveData.postValue(localVideosFallback.getVideos());
+        });
+
         switch (videoType) {
             case MOST_VIEWED:
                 serverAPI.getAPI().getAllVideos().enqueue(new Callback<VideoListsResponse>() {

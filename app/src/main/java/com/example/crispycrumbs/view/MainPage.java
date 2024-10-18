@@ -318,6 +318,9 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 // User is not logged in
                 Log.d("MainPage", "No user logged in, setting guest UI.");
 
+                if (!userName.getText().toString().equals(getString(R.string.guest))) {                    Toast.makeText(MainPage.this, "Goodbye", Toast.LENGTH_SHORT).show();
+                }
+
                 // Reset profile picture and user details
                 profilePicture.setImageResource(R.drawable.default_profile_picture);
                 userName.setText(R.string.guest);
@@ -331,8 +334,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 menu.findItem(R.id.nav_upload_video).setVisible(false);
                 menu.findItem(R.id.nav_login).setVisible(true);
                 menu.findItem(R.id.nav_signup).setVisible(true);
-
-                Toast.makeText(MainPage.this, "Goodbye", Toast.LENGTH_SHORT).show();
             }
         };
     }

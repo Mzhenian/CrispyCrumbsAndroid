@@ -18,6 +18,7 @@ import com.example.crispycrumbs.adapter.PlayList_Adapter;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentProfileBinding;
 import com.example.crispycrumbs.localDB.LoggedInUser;
+import com.example.crispycrumbs.repository.UserRepository;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
 import com.example.crispycrumbs.viewModel.VideoViewModel;
@@ -94,20 +95,37 @@ public class ProfileFragment extends Fragment {
         });
 
         // Set up RecyclerView and Adapter
-        adapter = new PlayList_Adapter(getContext(), new ArrayList<>(), null, LoggedInUser.getUser().getValue());
+        UserRepository.getInstance().getUser(userId).observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                adapter = new PlayList_Adapter(getContext(), new ArrayList<>(), null, user);
+                binding.rvVideo.setAdapter(adapter);
         binding.rvVideo.setAdapter(adapter);
         binding.rvVideo.setLayoutManager(new LinearLayoutManager(getContext()));
+            }
+
+            // Observe videos by the user
+            String userIdToFetch;
+            if (null == userId) {
+                if (null == LoggedInUser.getUser().getValue()) {
+                    return;
+                }
+                userIdToFetch = LoggedInUser.getUser().getValue().getUserId();
+            } else {
+                userIdToFetch = userId;
+            }
+            videoViewModel.getVideosByUser(userIdToFetch).observe(getViewLifecycleOwner(), videoList -> {
+                if (videoList != null) {
+                    adapter.updateVideoList(videoList);
+                }
+            });
+
+
+        });
 
         // Initialize VideoViewModel
         videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
 
-        // Observe videos by the user
-        String userIdToFetch = userId != null ? userId : LoggedInUser.getUser().getValue().getUserId();
-        videoViewModel.getVideosByUser(userIdToFetch).observe(getViewLifecycleOwner(), videoList -> {
-            if (videoList != null) {
-                adapter.updateVideoList(videoList);
-            }
-        });
+
 
         // Set up search functionality
         binding.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

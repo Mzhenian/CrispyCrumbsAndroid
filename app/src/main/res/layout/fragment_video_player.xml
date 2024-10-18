@@ -66,17 +66,32 @@
                         android:layout_height="match_parent" />
                 </androidx.cardview.widget.CardView>
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/video_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loading Video data..."
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:paddingVertical="5dp">
 
                     <!-- Profile Picture -->
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/profile_picture"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_gravity="center_horizontal"
                         android:background="@drawable/circle_background"
                         android:contentDescription="@string/profile_picture"
@@ -84,78 +99,132 @@
                         android:src="@drawable/default_profile_picture"
                         app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:layout_marginStart="5dp"
+                        android:text="[Uploader]"
+                        android:textColor="@color/ofek_black" />
 
-                        <TextView
-                            android:id="@+id/video_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:text="Loading Video data..."
-                            android:textAppearance="@style/TextAppearance.BoldText"
-                            android:textColor="@color/crispy_orange"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/user_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:text="[Uploader]"
-                            android:textAppearance="@style/TextAppearance.BoldText"
-                            android:textColor="@color/crispy_orange"
-                            android:textSize="16sp" />
-                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/video_stats"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="5dp">
 
                     <TextView
                         android:id="@+id/video_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
                         android:text="[upload date]"
-                        android:textAppearance="@style/TextAppearance.BoldText"
-                        android:textColor="@color/crispy_orange" />
+                        android:layout_marginEnd="8dp"
+                        android:textColor="@color/gray_dark"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/video_views"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
                         android:text="@string/default_views"
-                        android:textAppearance="@style/TextAppearance.BoldText"
-                        android:textColor="@color/crispy_orange" />
+                        android:layout_marginEnd="8dp"
+                        android:textColor="@color/gray_dark"
+                        android:textSize="12sp" />
 
-                    <!-- Likes TextView -->
+
                     <TextView
                         android:id="@+id/video_likes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
                         android:text="@string/default_likes"
-                        android:textAppearance="@style/TextAppearance.BoldText"
-                        android:textColor="@color/crispy_orange" />
+                        android:layout_marginEnd="8dp"
+                        android:textColor="@color/gray_dark"
+                        android:textSize="12sp" />
 
-                    <!-- Dislikes TextView -->
                     <TextView
                         android:id="@+id/btn_video_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
                         android:text="@string/more"
-                        android:textAppearance="@style/TextAppearance.BoldText"
-                        android:textColor="@color/link_blue"
-                        android:textSize="16sp" />
+                        android:textColor="@color/gray_dark"
+                        android:layout_marginEnd="8dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="5dp">
+
+
+                    <LinearLayout
+                        android:id="@+id/like_unlike_buttons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageButton
+                            android:id="@+id/like_button"
+                            style="@style/LIKE_BUTTON"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="15dp"
+                            android:src="@drawable/baseline_thumb_up_24"
+                            app:tint="@color/crispy_orange_light" />
+
+                        <ImageButton
+                            android:id="@+id/unlike_button"
+                            style="@style/DISLIKE_BUTTON"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:padding="15dp"
+                            android:src="@drawable/baseline_thumb_down_24"
+                            app:tint="@color/crispy_orange_light" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/share_button"
+                        style="@style/BUTTON"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:padding="8dp"
+                        android:text="@string/share"
+                        android:textColor="@color/off_white"
+                        app:layout_constraintEnd_toStartOf="@id/comment_button"
+                        app:layout_constraintStart_toEndOf="@id/like_unlike_buttons"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.3" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/comment_button"
+                        style="@style/BUTTON"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:padding="8dp"
+                        android:text="@string/comment"
+                        android:textColor="@color/off_white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/share_button"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.3" />
+                </LinearLayout>
 
                 </LinearLayout>
 
@@ -179,66 +248,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/page_top">
 
-        <LinearLayout
-            android:id="@+id/like_unlike_buttons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageButton
-                android:id="@+id/unlike_button"
-                style="@style/DISLIKE_BUTTON"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="15dp"
-                android:src="@drawable/baseline_thumb_down_24"
-                app:tint="@color/crispy_orange_light" />
-
-            <ImageButton
-                android:id="@+id/like_button"
-                style="@style/LIKE_BUTTON"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="15dp"
-                android:src="@drawable/baseline_thumb_up_24"
-                app:tint="@color/crispy_orange_light" />
-
-        </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/share_button"
-            style="@style/BUTTON"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:padding="8dp"
-            android:text="@string/share"
-            android:textColor="@color/off_white"
-            app:layout_constraintEnd_toStartOf="@id/comment_button"
-            app:layout_constraintStart_toEndOf="@id/like_unlike_buttons"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/comment_button"
-            style="@style/BUTTON"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:padding="8dp"
-            android:text="@string/comment"
-            android:textColor="@color/off_white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/share_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

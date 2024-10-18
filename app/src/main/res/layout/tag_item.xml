@@ -12,8 +12,6 @@
         android:id="@+id/tvTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/diff_round_corners_orange"
-        android:backgroundTint="@color/ofek_white"
         android:text="TagHolder"
         android:textColor="@color/black"
         android:textSize="20sp"

@@ -6,7 +6,7 @@
     android:id="@+id/preview_card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="30dp"
+    android:layout_marginHorizontal="10dp"
     android:layout_marginVertical="5dp">
 
     <androidx.cardview.widget.CardView
@@ -48,11 +48,11 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profile_picture"
-            android:src="@drawable/default_profile_picture"
-            android:layout_width="29dp"
-            android:layout_height="29dp"
+            android:layout_width="41dp"
+            android:layout_height="match_parent"
             android:background="@drawable/round_corners_gray"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"/>
+            android:src="@drawable/default_profile_picture"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
         <LinearLayout
             android:layout_width="wrap_content"

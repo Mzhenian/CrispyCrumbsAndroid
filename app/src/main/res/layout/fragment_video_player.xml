@@ -196,8 +196,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
-                                    android:orientation="horizontal">
-
+                                    android:orientation="horizontal"
+                                    android:layout_marginEnd="16dp">
 
                                     <ImageButton
                                         android:id="@+id/unlike_button"
@@ -226,21 +226,20 @@
                                     style="@style/BUTTON"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="16dp"
                                     android:layout_marginEnd="16dp"
                                     android:padding="8dp"
                                     android:text="@string/share"
-                                    android:textColor="@color/off_white" />
+                                    android:textColor="@color/absolute_ofek_white" />
 
                                 <androidx.appcompat.widget.AppCompatButton
                                     android:id="@+id/comment_button"
                                     style="@style/BUTTON"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginStart="16dp"
+                                    android:layout_marginEnd="16dp"
                                     android:padding="8dp"
                                     android:text="@string/comment"
-                                    android:textColor="@color/off_white" />
+                                    android:textColor="@color/absolute_ofek_white" />
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -250,15 +249,17 @@
             <!-- Show Comments / Show Recommended Videos Button -->
             <TextView
                 android:id="@+id/btn_show_comments"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
-                style="@style/BUTTON"
-                app:tint="@color/crispy_orange_light"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/round_corners_gray"
                 android:text="Show Comments"
-                android:backgroundTint="@color/crispy_orange"
-                android:textColor="@color/off_white"
-                android:layout_gravity="center" />
+                android:textColor="@color/black_div"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                />
 
             <!-- Container for Description, Comments, and Recommended Videos -->
             <FrameLayout

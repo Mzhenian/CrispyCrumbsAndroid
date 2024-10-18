@@ -111,7 +111,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 commentSection.setVisibility(View.VISIBLE);
                 rvRecommendedVideos.setVisibility(View.GONE);
                 txtVideoDescription.setVisibility(View.GONE);
-                btnShowComments.setText("Show Recommended Videos");
+                btnShowComments.setText("Hide Comments");
             }
         });
 

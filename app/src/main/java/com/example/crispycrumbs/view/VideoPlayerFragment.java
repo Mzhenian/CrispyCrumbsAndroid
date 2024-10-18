@@ -253,16 +253,36 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private void initializeVideo(PreviewVideoCard video) {
         String videoUrl = ServerAPI.getInstance().constructUrl(video.getVideoFile());
         Uri videoUri = Uri.parse(videoUrl);
-        videoView.setVideoURI(videoUri);
 
+        videoView.setVideoURI(videoUri);
         mediaController = new MediaController(getContext());
         mediaController.setAnchorView(videoView);
         videoView.setMediaController(mediaController);
 
         videoView.setOnPreparedListener(mp -> {
             progressBar.setVisibility(View.GONE);
+
+            // Adjust VideoView dimensions dynamically
+            int videoWidth = mp.getVideoWidth();
+            int videoHeight = mp.getVideoHeight();
+            float videoRatio = (float) videoWidth / videoHeight;
+
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            int adjustedHeight = (int) (screenWidth / videoRatio);
+
+            ViewGroup.LayoutParams layoutParams = videoView.getLayoutParams();
+            layoutParams.width = screenWidth;
+            layoutParams.height = adjustedHeight;
+            videoView.setLayoutParams(layoutParams);
+
             videoView.start();
-            viewModel.incrementVideoViews(); // Trigger view count increment
+            viewModel.incrementVideoViews(); // Increment view count
+        });
+
+        videoView.setOnErrorListener((mp, what, extra) -> {
+            Toast.makeText(getContext(), "Error loading video", Toast.LENGTH_SHORT).show();
+            progressBar.setVisibility(View.GONE);
+            return true;
         });
     }
 

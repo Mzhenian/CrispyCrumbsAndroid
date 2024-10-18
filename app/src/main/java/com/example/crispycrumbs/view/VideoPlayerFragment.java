@@ -56,8 +56,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private ProgressBar progressBar;
     private ShapeableImageView profilePicture;
     private TextView videoTitle, userName, videoDate, videoLikes, videoViews, txtVideoDescription;
-    private Button btnShowComments, commentButton, shareButton;
-    private TextView btnVideoDescription;
+    private Button  commentButton, shareButton;
+    private TextView btnVideoDescription, btnShowComments;
     private ImageButton likeButton, unlikeButton;
     private RecyclerView commentSection, rvRecommendedVideos;
     private FrameLayout contentContainer;
@@ -127,12 +127,31 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         });
 
         likeButton.setOnClickListener(v -> {
-            loadingMessage();
+            if (LoggedInUser.getUser().getValue() == null) {
+                MainPage.getInstance().showLoginSnackbar(view);
+                return;
+            }
+
+            boolean isLiked = likeButton.isSelected();
+            likeButton.setSelected(!isLiked); // Toggle selected state
+            unlikeButton.setSelected(false); // Deselect unlike button
+            viewModel.likeVideo();
+
         });
 
         unlikeButton.setOnClickListener(v -> {
-            loadingMessage();
+            if (LoggedInUser.getUser().getValue() == null) {
+                MainPage.getInstance().showLoginSnackbar(view);
+                return;
+            }
+
+            boolean isDisliked = unlikeButton.isSelected();
+            unlikeButton.setSelected(!isDisliked); // Toggle selected state
+            likeButton.setSelected(false); // Deselect like button
+            viewModel.dislikeVideo();
+
         });
+
 
         viewModel.setVideo(bundle.getString("videoId"));
         viewModel.getVideo().observe(getViewLifecycleOwner(), video -> {
@@ -298,27 +317,22 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     }
 
     private void updateVideoDetails() {
-        if (video == null) {
-            return;
-        }
-        Log.d(TAG, "Updating UI with likes: " + video.getLikes() + " and dislikes: " + video.getDislikes());
+        if (video == null) return;
+
         videoLikes.setText(video.getLikes() + " likes");
         videoViews.setText(video.getViews() + " views");
 
+        // Reset to default state
         likeButton.setSelected(false);
-        likeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
         unlikeButton.setSelected(false);
-        unlikeButton.setColorFilter(getResources().getColor(R.color.crispy_orange_light));
 
         UserItem currentUser = LoggedInUser.getUser().getValue();
-        if (currentUser == null) {
-            // No user is logged in, so clear the selection like buttons states
-        } else if (video.getLikedBy().contains(currentUser.getUserId())) {
-            likeButton.setSelected(true);
-            likeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
-        } else if (video.getDislikedBy().contains(currentUser.getUserId())) {
-            unlikeButton.setSelected(true);
-            unlikeButton.setColorFilter(getResources().getColor(R.color.absolute_ofek_white));
+        if (currentUser != null) {
+            if (video.getLikedBy().contains(currentUser.getUserId())) {
+                likeButton.setSelected(true); // Mark as liked
+            } else if (video.getDislikedBy().contains(currentUser.getUserId())) {
+                unlikeButton.setSelected(true); // Mark as disliked
+            }
         }
     }
 

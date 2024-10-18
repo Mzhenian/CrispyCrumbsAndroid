@@ -97,8 +97,8 @@
                                     android:id="@+id/user_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
-                                    android:gravity="center"
                                     android:layout_marginStart="5dp"
+                                    android:gravity="center"
                                     android:text="[Uploader]"
                                     android:textColor="@color/ofek_black" />
                             </LinearLayout>
@@ -107,8 +107,8 @@
                                 android:id="@+id/video_stats"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginVertical="5dp">
+                                android:layout_marginVertical="5dp"
+                                android:orientation="horizontal">
 
                                 <TextView
                                     android:id="@+id/video_date"
@@ -159,8 +159,8 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginVertical="5dp">
+                                android:layout_marginVertical="5dp"
+                                android:orientation="horizontal">
 
                                 <LinearLayout
                                     android:id="@+id/like_unlike_buttons"
@@ -169,25 +169,27 @@
                                     android:gravity="center"
                                     android:orientation="horizontal">
 
-                                    <ImageButton
-                                        android:id="@+id/like_button"
-                                        style="@style/LIKE_BUTTON"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:padding="15dp"
-                                        android:src="@drawable/baseline_thumb_up_24"
-                                        app:tint="@color/crispy_orange_light" />
 
                                     <ImageButton
                                         android:id="@+id/unlike_button"
-                                        style="@style/DISLIKE_BUTTON"
+                                        style="@style/LIKE_BUTTON"
                                         android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="45dp"
                                         android:layout_weight="1"
                                         android:padding="15dp"
+                                        android:layout_marginRight="-3dp"
                                         android:src="@drawable/baseline_thumb_down_24"
-                                        app:tint="@color/crispy_orange_light" />
+                                        app:tint="@color/like_button_icon_color" />
+
+                                    <ImageButton
+                                        android:id="@+id/like_button"
+                                        style="@style/DISLIKE_BUTTON"
+                                        android:layout_width="0dp"
+                                        android:layout_height="45dp"
+                                        android:layout_weight="1"
+                                        android:padding="15dp"
+                                        android:src="@drawable/baseline_thumb_up_24"
+                                        app:tint="@color/like_button_icon_color" />
                                 </LinearLayout>
 
                                 <androidx.appcompat.widget.AppCompatButton
@@ -217,7 +219,7 @@
             </LinearLayout>
 
             <!-- Show Comments / Show Recommended Videos Button -->
-            <androidx.appcompat.widget.AppCompatButton
+            <TextView
                 android:id="@+id/btn_show_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

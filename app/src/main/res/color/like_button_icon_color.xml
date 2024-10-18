@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Selected (liked) state: white icon -->
+    <item android:state_selected="true" android:color="@color/ofek_white" />
+    <!-- Default state: orange icon -->
+    <item android:color="@color/crispy_orange" />
+</selector>

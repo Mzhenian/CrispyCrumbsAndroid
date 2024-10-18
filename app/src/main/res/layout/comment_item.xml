@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    style="@style/SCREEN"
     android:outlineProvider="none"
+    android:backgroundTint="@color/transparent"
     android:outlineAmbientShadowColor="@color/transparent"
+    android:background="@color/transparent"
     >
 
     <LinearLayout

@@ -286,4 +286,8 @@ public class UserItem implements Serializable {
     public void setDislikedVideoIds(Set<String> dislikedVideoIds) {
         this.dislikedVideoIds = dislikedVideoIds;
     }
+
+    public int getFollowersCount() {
+        return followerIds.size();
+    }
 }

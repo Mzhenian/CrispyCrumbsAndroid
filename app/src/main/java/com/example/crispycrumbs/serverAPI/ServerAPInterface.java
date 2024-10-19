@@ -140,10 +140,10 @@ public interface ServerAPInterface {
     @POST("users/isEmailAvailable")
     Call<CheckResponse> checkEmailAvailability(@Body CheckEmailRequest emailRequest);
 
-    @POST("/follow")
+    @POST("users/follow")
     Call<ResponseBody> followUnfollowUser(@Body JsonObject requestBody);
 
-    @POST("/isFollowing")
+    @POST("users/isFollowing")
     Call<JsonObject> isFollowing(@Body JsonObject requestBody);
 
 }

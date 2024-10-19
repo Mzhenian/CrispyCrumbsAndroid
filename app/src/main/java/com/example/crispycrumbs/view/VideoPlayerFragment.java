@@ -11,8 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.CommentSection_Adapter;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
+import com.example.crispycrumbs.viewModel.SubscribeButton;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
 import com.example.crispycrumbs.dataUnit.UserItem;
@@ -38,6 +40,7 @@ import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 import com.example.crispycrumbs.viewModel.VideoPlayerViewModel;
+
 
 import java.util.ArrayList;
 
@@ -55,15 +58,16 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private VideoView videoView;
     private ProgressBar progressBar;
     private ShapeableImageView profilePicture;
-    private TextView videoTitle, userName, videoDate, videoLikes, videoViews, txtVideoDescription;
+    private TextView videoTitle, userName, videoDate, videoLikes, videoViews, txtVideoDescription, userSubs;
     private Button  commentButton, shareButton;
     private TextView btnVideoDescription, btnShowComments;
-    private ImageButton likeButton, unlikeButton;
+    private ImageView likeButton, unlikeButton;
     private RecyclerView commentSection, rvRecommendedVideos;
     private FrameLayout contentContainer;
     private CommentSection_Adapter CS_Adapter;
     private VideoList_Adapter VL_Adapter;
     private VideoList_Adapter.OnItemClickListener listener;
+    private SubscribeButton subscribeButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,6 +97,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         contentContainer = view.findViewById(R.id.content_container);
         commentSection = view.findViewById(R.id.comment_section);
         rvRecommendedVideos = view.findViewById(R.id.rv_recommendedVideos);
+        subscribeButton = view.findViewById(R.id.subscribe_button);
+        userSubs = view.findViewById(R.id.userSubs);
 
         // Initially, show recommended videos, hide comments and description
         txtVideoDescription.setVisibility(View.GONE);
@@ -122,36 +128,12 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             return view;
         }
 
+        // Initialize the subscribeButton
+        subscribeButton = view.findViewById(R.id.subscribe_button);
+
         profilePicture.setOnClickListener(v -> {
             loadingMessage();
         });
-
-        likeButton.setOnClickListener(v -> {
-            if (LoggedInUser.getUser().getValue() == null) {
-                MainPage.getInstance().showLoginSnackbar(view);
-                return;
-            }
-
-            boolean isLiked = likeButton.isSelected();
-            likeButton.setSelected(!isLiked); // Toggle selected state
-            unlikeButton.setSelected(false); // Deselect unlike button
-            viewModel.likeVideo();
-
-        });
-
-        unlikeButton.setOnClickListener(v -> {
-            if (LoggedInUser.getUser().getValue() == null) {
-                MainPage.getInstance().showLoginSnackbar(view);
-                return;
-            }
-
-            boolean isDisliked = unlikeButton.isSelected();
-            unlikeButton.setSelected(!isDisliked); // Toggle selected state
-            likeButton.setSelected(false); // Deselect like button
-            viewModel.dislikeVideo();
-
-        });
-
 
         viewModel.setVideo(bundle.getString("videoId"));
         viewModel.getVideo().observe(getViewLifecycleOwner(), video -> {
@@ -175,24 +157,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 MainPage.getInstance().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment(video.getUserId())).commit();
             });
 
-            if (LoggedInUser.getUser().getValue() == null) {
-                likeButton.setOnClickListener(v -> {
-                    MainPage.getInstance().showLoginSnackbar(view);
-                });
-
-                unlikeButton.setOnClickListener(v -> {
-                    MainPage.getInstance().showLoginSnackbar(view);
-                });
-            } else {
-                likeButton.setOnClickListener(v -> {
-                    viewModel.likeVideo();
-                });
-
-                unlikeButton.setOnClickListener(v -> {
-                    viewModel.dislikeVideo();
-                });
-            }
-
             initializeCommentsSection(video.getComments());  // Update the comment section
 
             viewModel.loadRecommendedVideos(video.getVideoId());
@@ -200,8 +164,67 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 VL_Adapter.updateVideoList(videos);
             });
 
+            // Observe user profile data
+            userViewModel.getUser(video.getUserId()).observe(getViewLifecycleOwner(), uploader -> {
+                if (uploader != null) {
+                    String userProfileUrl = ServerAPI.getInstance().constructUrl(uploader.getProfilePhoto());
+                    Glide.with(VideoPlayerFragment.this)
+                            .load(userProfileUrl)
+                            .placeholder(R.drawable.default_profile_picture)
+                            .skipMemoryCache(true)
+                            .into(profilePicture);
+                    userName.setText(uploader.getUserName());
+
+                    int subscriberCount = uploader.getFollowersCount() != 0 ? uploader.getFollowersCount() : 0;
+                    userSubs.setText(subscriberCount + " subscribers");
+
+                    // Handle subscribe button
+                    UserItem currentUser = LoggedInUser.getUser().getValue();
+                    if (currentUser == null) {
+                        // User not logged in, hide subscribe button
+                        subscribeButton.setVisibility(View.GONE);
+                    } else if (currentUser.getUserId().equals(uploader.getUserId())) {
+                        // Viewing own video, hide subscribe button
+                        subscribeButton.setVisibility(View.GONE);
+                    } else {
+                        // Set the userIdToCheck on the subscribeButton
+                        subscribeButton.setUserIdToCheck(uploader.getUserId());
+                        subscribeButton.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    profilePicture.setImageResource(R.drawable.default_profile_picture);
+                    userName.setText(R.string.deleted_user);
+                    Log.e(TAG, "Uploader not found");
+                }
+            });
+
             // Log when UI refreshes with the updated video
             Log.d("LiveData update", "Refreshing UI for updated video data");
+        });
+
+        likeButton.setOnClickListener(v -> {
+            if (LoggedInUser.getUser().getValue() == null) {
+                MainPage.getInstance().showLoginSnackbar(view);
+                return;
+            }
+
+            boolean isLiked = likeButton.isSelected();
+            likeButton.setSelected(!isLiked); // Toggle selected state
+            unlikeButton.setSelected(false); // Deselect unlike button
+            viewModel.likeVideo();
+        });
+
+        unlikeButton.setOnClickListener(v -> {
+            if (LoggedInUser.getUser().getValue() == null) {
+                MainPage.getInstance().showLoginSnackbar(view);
+                return;
+            }
+
+            boolean isDisliked = unlikeButton.isSelected();
+            unlikeButton.setSelected(!isDisliked); // Toggle selected state
+            likeButton.setSelected(false); // Deselect like button
+            viewModel.dislikeVideo();
         });
 
         commentButton.setOnClickListener(v -> {
@@ -291,23 +314,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         txtVideoDescription.setText(video.getDescription());
 
         updateVideoDetails();
-
-        // Observe user profile data
-        userViewModel.getUser(video.getUserId()).observe(getViewLifecycleOwner(), uploader -> {
-            if (uploader != null) {
-                String userProfileUrl = ServerAPI.getInstance().constructUrl(uploader.getProfilePhoto());
-                Glide.with(VideoPlayerFragment.this)
-                        .load(userProfileUrl)
-                        .placeholder(R.drawable.default_profile_picture) // Optional: Add a placeholder
-                        .skipMemoryCache(true)
-                        .into(profilePicture);
-                userName.setText(uploader.getUserName());
-            } else {
-                profilePicture.setImageResource(R.drawable.default_profile_picture);
-                userName.setText(R.string.deleted_user);
-                Log.e(TAG, "Uploader not found");
-            }
-        });
 
         String formattedDate = viewModel.formatDate(video.getUploadDate());
         videoDate.setText(formattedDate);

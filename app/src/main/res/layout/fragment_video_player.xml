@@ -122,15 +122,35 @@
                                     android:src="@drawable/default_profile_picture"
                                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginStart="10dp"
+                                    android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/user_name"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="5dp"
+                                    android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:text="[Uploader]"
                                     android:textColor="@color/ofek_black" />
+                                <TextView
+                                    android:id="@+id/userSubs"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="8dp"
+                                    android:text="subs"
+                                    android:textColor="@color/gray_dark"
+                                    android:textSize="12sp" />
+                                </LinearLayout>
+
+                                <com.example.crispycrumbs.viewModel.SubscribeButton
+                                    android:id="@+id/subscribe_button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
                             </LinearLayout>
+
 
                             <LinearLayout
                                 android:id="@+id/video_stats"

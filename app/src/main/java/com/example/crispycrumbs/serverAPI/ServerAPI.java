@@ -124,14 +124,6 @@ public class ServerAPI {
     return getInstance().getAPI().getRecommendedVideos(videoId);
     }
 
-    public Call<ResponseBody> followUnfollowUser(JsonObject requestBody) {
-        return getInstance().getAPI().followUnfollowUser(requestBody);
 
-    }
-
-    public Call<JsonObject> isFollowing(JsonObject requestBody) {
-        return getInstance().getAPI().isFollowing(requestBody);
-
-    }
 }
 

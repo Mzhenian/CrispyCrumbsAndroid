@@ -15,6 +15,7 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.view.MainPage;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.concurrent.Executors;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -120,6 +122,16 @@ public class ServerAPI {
 
     public static Call<List<PreviewVideoCard>> getRecommendedVideos(String videoId) {
     return getInstance().getAPI().getRecommendedVideos(videoId);
+    }
+
+    public Call<ResponseBody> followUnfollowUser(JsonObject requestBody) {
+        return getInstance().getAPI().followUnfollowUser(requestBody);
+
+    }
+
+    public Call<JsonObject> isFollowing(JsonObject requestBody) {
+        return getInstance().getAPI().isFollowing(requestBody);
+
     }
 }
 

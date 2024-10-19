@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,6 +95,10 @@ public class CommentSection_Adapter extends RecyclerView.Adapter<CommentSection_
 
                         // Set click listener on the profile picture to open the profile fragment
                         holder.profilePicture.setOnClickListener(v -> {
+                            if ("[Deleted user]" == user.getDisplayedName()) {
+                                Toast.makeText(MainPage.getInstance(), "A deleted user have no profile to see.", Toast.LENGTH_LONG).show();
+//                                return;
+                            }
                             // Navigate to ProfileFragment with the user's id
                             MainPage.getInstance().getSupportFragmentManager()
                                     .beginTransaction()

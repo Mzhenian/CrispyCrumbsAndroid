@@ -109,8 +109,11 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         txtVideoDescription.setVisibility(View.GONE);
         tagsTextView.setVisibility(View.GONE);
         categoriesTextView.setVisibility(View.GONE);
+        tagsTextView.setVisibility(View.GONE);
+        categoriesTextView.setVisibility(View.GONE);
         commentSection.setVisibility(View.GONE);
         rvRecommendedVideos.setVisibility(View.VISIBLE);
+
 
         // Set click listener for show comments button
         btnShowComments.setOnClickListener(v -> {

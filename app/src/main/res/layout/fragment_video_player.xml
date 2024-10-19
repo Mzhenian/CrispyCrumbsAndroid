@@ -292,15 +292,20 @@
                 android:layout_margin="5dp">
 
                 <!-- Video Description, Tags, and Categories -->
+                <LinearLayout
+                    android:id="@+id/more_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:orientation="vertical">
                 <!-- Video Description -->
                 <TextView
                     android:id="@+id/txt_video_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="10dp"
                     android:text="No additional description"
                     android:visibility="gone"
-                    android:textSize="14sp"
+                    android:paddingBottom="15dp"
                     android:textColor="@color/black_div" />
 
                 <!-- Tags -->
@@ -308,11 +313,9 @@
                     android:id="@+id/tags_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="5dp"
+                    android:paddingBottom="10dp"
                     android:text="Tags: "
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textColor="@color/black_div"
                     android:visibility="gone" />
 
@@ -321,14 +324,12 @@
                     android:id="@+id/categories_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
                     android:paddingBottom="10dp"
                     android:text="Categories: "
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textColor="@color/black_div"
                     android:visibility="gone" />
-
+                </LinearLayout>
 
                 <!-- Comments Section -->
                 <androidx.recyclerview.widget.RecyclerView

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,6 +32,8 @@ import com.bumptech.glide.Glide;
 import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.adapter.CommentSection_Adapter;
 import com.example.crispycrumbs.adapter.VideoList_Adapter;
+import com.example.crispycrumbs.databinding.FragmentHomeBinding;
+import com.example.crispycrumbs.databinding.FragmentVideoPlayerBinding;
 import com.example.crispycrumbs.viewModel.SubscribeButton;
 import com.example.crispycrumbs.dataUnit.CommentItem;
 import com.example.crispycrumbs.dataUnit.PreviewVideoCard;
@@ -45,6 +48,7 @@ import java.util.ArrayList;
 
 public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener, SubscribeButton.OnSubscriptionChangeListener {
     private static final String TAG = "VideoPlayerFragment";
+    private FragmentVideoPlayerBinding binding;
     private static final String KEY_POSITION = "position";
     private VideoPlayerViewModel viewModel;
     private UserViewModel userViewModel;
@@ -72,9 +76,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_video_player, container, false);
+        binding = FragmentVideoPlayerBinding.inflate(getLayoutInflater());
+        view = binding.getRoot();
 
         viewModel = new ViewModelProvider(this).get(VideoPlayerViewModel.class);
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
@@ -292,6 +295,13 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 commentSection.setVisibility(View.GONE);
                 btnShowComments.setVisibility(View.GONE); // Hide the comments toggle button when showing description
                 btnVideoDescription.setText(getString(R.string.less));
+            }
+        });
+
+        binding.nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                hideMediaController();
             }
         });
 

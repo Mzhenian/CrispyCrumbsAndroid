@@ -18,12 +18,14 @@ import com.example.crispycrumbs.serverAPI.serverDataUnit.SuccessErrorResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UserResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoIdRequest;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.VideoListsResponse;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -137,5 +139,11 @@ public interface ServerAPInterface {
 
     @POST("users/isEmailAvailable")
     Call<CheckResponse> checkEmailAvailability(@Body CheckEmailRequest emailRequest);
+
+    @POST("/follow")
+    Call<ResponseBody> followUnfollowUser(@Body JsonObject requestBody);
+
+    @POST("/isFollowing")
+    Call<JsonObject> isFollowing(@Body JsonObject requestBody);
 
 }

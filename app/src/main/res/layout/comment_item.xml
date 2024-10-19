@@ -3,26 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    style="@style/CONTAINER">
+    android:layout_margin="10dp"
+    android:outlineProvider="none"
+    android:backgroundTint="@color/transparent"
+    android:outlineAmbientShadowColor="@color/transparent"
+    android:background="@color/transparent"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:background="@drawable/round_corners_gray"
+        android:outlineProvider="none"
+        android:outlineAmbientShadowColor="@color/transparent"
+        android:padding="5dp"
+        android:bottomLeftRadius="70dp"
+        android:topRightRadius="70dp"
+        android:bottomRightRadius="40dp"
+        android:topLeftRadius="40dp">
 
         <!-- Profile Picture -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profile_picture"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="58dp"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/default_profile_picture"
+            android:background="@drawable/circle_background"
             android:contentDescription="@string/profile_picture"
             android:scaleType="centerCrop"
-            android:background="@drawable/circle_background"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"/>
+            android:src="@drawable/default_profile_picture"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,52 +41,65 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/comment_user"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="User Name"
-                android:textColor="@color/ofek_black"
-                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/comment_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User Name"
+                    android:textColor="@color/ofek_black"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="10dp"/>
+
+                <TextView
+                    android:id="@+id/comment_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="10dp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/delete_button"
+                    style="@style/BUTTON"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Delete"
+                    android:textColor="@android:color/white"
+                    android:layout_marginEnd="10dp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/edit_button"
+                    style="@style/BUTTON"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:text="Edit"
+                    android:textColor="@android:color/white"
+                    android:layout_marginEnd="10dp"/>
+
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/comment_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="This is a sample comment."
-                android:textColor="@color/ofek_black" />
-
-            <TextView
-                android:id="@+id/comment_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/date"
-                android:textColor="@color/gray_dark"
-                android:textSize="12sp" />
+                android:textColor="@color/ofek_black"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
                 android:gravity="end"
-                android:layout_marginTop="8dp">
+                android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/edit_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Edit"
-                    style="@style/BUTTON"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="8dp"/>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/delete_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Delete"
-                    android:textColor="@android:color/white"
-                    style="@style/BUTTON"/>
             </LinearLayout>
 
         </LinearLayout>

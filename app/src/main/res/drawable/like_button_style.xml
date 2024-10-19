@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/crispy_orange"/> <!-- Background color -->
-    <corners
-        android:bottomLeftRadius="40dp"
-        android:topLeftRadius="40dp"
-        />
-    <stroke
-        android:width="2dp"
-        android:color="@color/black_div"/> <!-- Border width and color -->
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Liked state -->
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="@color/crispy_orange" />
+            <corners
+                android:topLeftRadius="40dp"
+                android:bottomLeftRadius="70dp" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/crispy_orange" />
+        </shape>
+    </item>
+
+    <!-- Default state (not liked) -->
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+            <corners
+                android:topLeftRadius="40dp"
+                android:bottomLeftRadius="70dp" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/crispy_orange" />
+        </shape>
+    </item>
+</selector>

@@ -24,10 +24,6 @@
             android:icon="@drawable/default_profile_picture"
             android:title="@string/edit_profile"/>
 
-        <item android:id="@+id/nav_my_videos"
-            android:icon="@drawable/baseline_camera_indoor_24"
-            android:title="@string/my_videos"/>
-
         <item android:id="@+id/nav_login"
             android:icon="@drawable/baseline_arrow_forward_24"
             android:title="@string/login"/>

@@ -202,8 +202,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
             //todo enable in next release
         } else if (itemId == R.id.nav_profile) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ProfileFragment()).addToBackStack(null).commit();
-        } else if (itemId == R.id.nav_my_videos) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PlayListFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_login) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).addToBackStack(null).commit();
         } else if (itemId == R.id.nav_logout) {
@@ -298,7 +296,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
 
                 // Set the correct visibility for menu items when logged in
                 menu.findItem(R.id.nav_profile).setVisible(true);
-                menu.findItem(R.id.nav_my_videos).setVisible(true);
                 menu.findItem(R.id.nav_logout).setVisible(true);
                 menu.findItem(R.id.nav_upload_video).setVisible(true);
                 menu.findItem(R.id.nav_edit_profile).setVisible(true);
@@ -329,7 +326,6 @@ public class MainPage extends AppCompatActivity implements NavigationView.OnNavi
                 // Set the correct visibility for menu items when logged out
                 menu.findItem(R.id.nav_profile).setVisible(false);
                 menu.findItem(R.id.nav_edit_profile).setVisible(false);
-                menu.findItem(R.id.nav_my_videos).setVisible(false);
                 menu.findItem(R.id.nav_logout).setVisible(false);
                 menu.findItem(R.id.nav_upload_video).setVisible(false);
                 menu.findItem(R.id.nav_login).setVisible(true);

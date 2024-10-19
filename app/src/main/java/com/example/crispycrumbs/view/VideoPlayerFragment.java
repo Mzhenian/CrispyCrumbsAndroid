@@ -3,6 +3,7 @@ package com.example.crispycrumbs.view;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
@@ -21,10 +22,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import android.widget.FrameLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import com.google.android.material.imageview.ShapeableImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,11 +39,11 @@ import com.example.crispycrumbs.localDB.LoggedInUser;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 import com.example.crispycrumbs.viewModel.VideoPlayerViewModel;
-
+import com.google.android.material.imageview.ShapeableImageView;
 
 import java.util.ArrayList;
 
-public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener {
+public class VideoPlayerFragment extends Fragment implements CommentSection_Adapter.CommentActionListener, SubscribeButton.OnSubscriptionChangeListener {
     private static final String TAG = "VideoPlayerFragment";
     private static final String KEY_POSITION = "position";
     private VideoPlayerViewModel viewModel;
@@ -58,8 +57,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private VideoView videoView;
     private ProgressBar progressBar;
     private ShapeableImageView profilePicture;
-    private TextView videoTitle, userName, videoDate, videoLikes, videoViews, txtVideoDescription, userSubs;
-    private Button  commentButton, shareButton;
+    private TextView videoTitle, userName, videoDate, videoLikes, videoViews, txtVideoDescription;
+    private Button commentButton, shareButton;
     private TextView btnVideoDescription, btnShowComments;
     private ImageView likeButton, unlikeButton;
     private RecyclerView commentSection, rvRecommendedVideos;
@@ -68,6 +67,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private VideoList_Adapter VL_Adapter;
     private VideoList_Adapter.OnItemClickListener listener;
     private SubscribeButton subscribeButton;
+    private TextView userSubs; // Subscriber count TextView
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         commentSection = view.findViewById(R.id.comment_section);
         rvRecommendedVideos = view.findViewById(R.id.rv_recommendedVideos);
         subscribeButton = view.findViewById(R.id.subscribe_button);
-        userSubs = view.findViewById(R.id.userSubs);
+        userSubs = view.findViewById(R.id.userSubs); // Ensure this ID exists in fragment_video_player.xml
 
         // Initially, show recommended videos, hide comments and description
         txtVideoDescription.setVisibility(View.GONE);
@@ -127,9 +127,6 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
             Toast.makeText(getContext(), "No video selected", Toast.LENGTH_SHORT).show();
             return view;
         }
-
-        // Initialize the subscribeButton
-        subscribeButton = view.findViewById(R.id.subscribe_button);
 
         profilePicture.setOnClickListener(v -> {
             loadingMessage();
@@ -175,21 +172,23 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                             .into(profilePicture);
                     userName.setText(uploader.getUserName());
 
-                    int subscriberCount = uploader.getFollowersCount() != 0 ? uploader.getFollowersCount() : 0;
-                    userSubs.setText(subscriberCount + " subscribers");
-
-                    // Handle subscribe button
+                    // Get the current logged-in user
                     UserItem currentUser = LoggedInUser.getUser().getValue();
-                    if (currentUser == null) {
-                        // User not logged in, hide subscribe button
+
+                    if (currentUser != null && currentUser.getUserId().equals(uploader.getUserId())) {
+                        // User is viewing their own profile
                         subscribeButton.setVisibility(View.GONE);
-                    } else if (currentUser.getUserId().equals(uploader.getUserId())) {
-                        // Viewing own video, hide subscribe button
-                        subscribeButton.setVisibility(View.GONE);
+                        // Set the subscriber count directly
+                        if (userSubs != null) {
+                            int subscriberCount = uploader.getFollowersCount();
+                            userSubs.setText(subscriberCount + " subscribers");
+                        }
                     } else {
-                        // Set the userIdToCheck on the subscribeButton
-                        subscribeButton.setUserIdToCheck(uploader.getUserId());
+                        // User is viewing someone else's profile
+                        subscribeButton.setUploaderUserId(uploader.getUserId());
+                        subscribeButton.setOnSubscriptionChangeListener(VideoPlayerFragment.this);
                         subscribeButton.setVisibility(View.VISIBLE);
+                        // The subscriber count will be updated via the callback
                     }
 
                 } else {
@@ -376,7 +375,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         Button shareWhatsapp = dialogView.findViewById(R.id.share_whatsapp);
 
         String CrispyCrumbsLink = "https://github.com/Mzhenian/CrispyCrumbsAndroid";
-        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(MainPage.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
 
         shareEmail.setOnClickListener(v -> {
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
@@ -542,6 +541,13 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     public void hideMediaController() {
         if (mediaController != null) {
             mediaController.hide();
+        }
+    }
+
+
+    public void onSubscriptionChanged(boolean isFollowing, int subscriberCount) {
+        if (userSubs != null) {
+            userSubs.setText(subscriberCount + " subscribers");
         }
     }
 }

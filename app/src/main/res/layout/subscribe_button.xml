@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/subscribe_button_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp">
+    android:orientation="vertical">
 
+    <!-- Subscribe Button Text -->
     <TextView
         android:id="@+id/subscribe_button_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:text="Subscribe"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
         android:background="@drawable/subscribe_filled"
-        android:gravity="center"
-        android:textSize="16sp" />
+        android:padding="8dp"
+        android:text="Subscribe"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <!-- Subscriber Count Text -->
+    <TextView
+        android:id="@+id/subscriber_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 subscribers"
+        android:textColor="@color/gray_dark"
+        android:textSize="12sp"
+        android:visibility="gone"/>
 </LinearLayout>

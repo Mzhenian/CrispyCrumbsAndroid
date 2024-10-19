@@ -288,6 +288,14 @@ public class UserItem implements Serializable {
     }
 
     public int getFollowersCount() {
-        return followerIds.size();
+        if (followerIds != null) {
+            return followerIds.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setFollowersCount(int currentCount) {
+        //yes its empry
     }
 }

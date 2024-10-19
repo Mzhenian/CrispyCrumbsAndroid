@@ -8,14 +8,12 @@
     android:padding="16dp"
     tools:context=".view.ProfileFragment"
     android:background="@color/ofek_white"
-
     style="@style/SCREEN">
 
     <!-- Profile Section -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <!-- Profile Picture -->
         <ImageView
@@ -24,37 +22,66 @@
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:src="@drawable/default_profile_picture"
-            android:contentDescription="profile_picture"
+            android:contentDescription="@string/profile_picture"
             android:scaleType="centerCrop"
             android:background="@drawable/circle_background"
             app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
-        <!-- User's Name -->
-        <TextView
-            android:id="@+id/user_name"
+        <!-- Username and Subscriber Count in Horizontal Layout -->
+        <LinearLayout
+            android:id="@+id/user_info_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_below="@id/profile_picture"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="John Doe"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            style="@style/TEXT" />
+            android:layout_marginTop="16dp">
+
+            <!-- User's Name -->
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                style="@style/TEXT" />
+
+            <!-- Subscriber Count -->
+            <TextView
+                android:id="@+id/user_subscriber_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" • 1000 subscribers"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                style="@style/TEXT" />
+        </LinearLayout>
 
         <!-- User Email -->
         <TextView
             android:id="@+id/userEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/user_name"
+            android:layout_below="@id/user_info_layout"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="a@b.con"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="12dp"
             style="@style/TEXT" />
+
+        <!-- Subscribe Button -->
+        <com.example.crispycrumbs.viewModel.SubscribeButton
+            android:id="@+id/subscribe_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userEmail"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp" />
     </RelativeLayout>
 
     <!-- Video Playlist Section -->

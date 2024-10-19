@@ -1,0 +1,1 @@
+The full project wiki is [in the server repository submition](https://github.com/Mzhenian/CrispyCrumbsServer/tree/EX4-complete/wiki)

@@ -98,6 +98,7 @@ public class ProfileFragment extends Fragment implements SubscribeButton.OnSubsc
                 // Set the user details
                 binding.userName.setText(userItem.getDisplayedName());
                 binding.userEmail.setText(userItem.getEmail());
+                binding.userCountry.setText(userItem.getCountry());
 
                 // Set subscriber count
                 binding.userSubscriberCount.setText(userItem.getFollowersCount() + " subscribers");

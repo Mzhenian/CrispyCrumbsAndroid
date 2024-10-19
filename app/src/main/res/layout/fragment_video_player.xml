@@ -220,6 +220,7 @@
                                     android:layout_height="wrap_content"
                                     android:gravity="center"
                                     android:orientation="horizontal"
+                                    android:layoutDirection="ltr"
                                     android:layout_marginEnd="16dp">
 
                                     <ImageButton

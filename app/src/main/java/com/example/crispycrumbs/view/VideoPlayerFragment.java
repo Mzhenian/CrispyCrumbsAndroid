@@ -68,6 +68,7 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
     private VideoList_Adapter.OnItemClickListener listener;
     private SubscribeButton subscribeButton;
     private TextView userSubs; // Subscriber count TextView
+    private TextView tagsTextView, categoriesTextView; // New TextViews for Tags and Categories
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,8 +101,14 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         subscribeButton = view.findViewById(R.id.subscribe_button);
         userSubs = view.findViewById(R.id.userSubs); // Ensure this ID exists in fragment_video_player.xml
 
+        // Initialize Tags and Categories TextViews
+        tagsTextView = view.findViewById(R.id.tags_text_view);
+        categoriesTextView = view.findViewById(R.id.categories_text_view);
+
         // Initially, show recommended videos, hide comments and description
         txtVideoDescription.setVisibility(View.GONE);
+        tagsTextView.setVisibility(View.GONE);
+        categoriesTextView.setVisibility(View.GONE);
         commentSection.setVisibility(View.GONE);
         rvRecommendedVideos.setVisibility(View.VISIBLE);
 
@@ -117,6 +124,8 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                 commentSection.setVisibility(View.VISIBLE);
                 rvRecommendedVideos.setVisibility(View.GONE);
                 txtVideoDescription.setVisibility(View.GONE);
+                tagsTextView.setVisibility(View.GONE);
+                categoriesTextView.setVisibility(View.GONE);
                 btnShowComments.setText("Hide Comments");
             }
         });
@@ -189,6 +198,16 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
                         subscribeButton.setOnSubscriptionChangeListener(VideoPlayerFragment.this);
                         subscribeButton.setVisibility(View.VISIBLE);
                         // The subscriber count will be updated via the callback
+
+                        // Show tags and categories if available
+                        if (tagsTextView != null && video.getTags() != null && !video.getTags().isEmpty()) {
+                            tagsTextView.setText("Tags: " + String.join(", ", video.getTags()));
+                            tagsTextView.setVisibility(View.VISIBLE);
+                        }
+                        if (categoriesTextView != null && video.getCategory() != null && !video.getCategory().isEmpty()) {
+                            categoriesTextView.setText("Categories: " + String.join(", ", video.getCategory()));
+                            categoriesTextView.setVisibility(View.VISIBLE);
+                        }
                     }
 
                 } else {
@@ -249,15 +268,23 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         // Handle description toggle
         btnVideoDescription.setOnClickListener(v -> {
             if (txtVideoDescription.getVisibility() == View.VISIBLE) {
-                // Hide description and show recommended videos
+                // Hide description, tags, categories and show recommended videos
                 txtVideoDescription.setVisibility(View.GONE);
+                tagsTextView.setVisibility(View.GONE);
+                categoriesTextView.setVisibility(View.GONE);
                 rvRecommendedVideos.setVisibility(View.VISIBLE);
                 commentSection.setVisibility(View.GONE);
                 btnShowComments.setVisibility(View.VISIBLE); // Show the comments toggle button
                 btnVideoDescription.setText(getString(R.string.more));
             } else {
-                // Show description and hide recommended videos and comments
+                // Show description, tags, categories and hide recommended videos and comments
                 txtVideoDescription.setVisibility(View.VISIBLE);
+                if (tagsTextView.getText().toString().trim().length() > 0) {
+                    tagsTextView.setVisibility(View.VISIBLE);
+                }
+                if (categoriesTextView.getText().toString().trim().length() > 0) {
+                    categoriesTextView.setVisibility(View.VISIBLE);
+                }
                 rvRecommendedVideos.setVisibility(View.GONE);
                 commentSection.setVisibility(View.GONE);
                 btnShowComments.setVisibility(View.GONE); // Hide the comments toggle button when showing description
@@ -318,6 +345,19 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         videoDate.setText(formattedDate);
 
         shareButton.setOnClickListener(v -> showShareMenu());
+
+        // Populate Tags and Categories
+        if (tagsTextView != null && video.getTags() != null && !video.getTags().isEmpty()) {
+            tagsTextView.setText("Tags: " + String.join(", ", video.getTags()));
+            // Initially hide, will be shown when "More" is clicked
+            tagsTextView.setVisibility(View.GONE);
+        }
+
+        if (categoriesTextView != null && video.getCategory() != null && !video.getCategory().isEmpty()) {
+            categoriesTextView.setText("Categories: " + String.join(", ", video.getCategory()));
+            // Initially hide, will be shown when "More" is clicked
+            categoriesTextView.setVisibility(View.GONE);
+        }
     }
 
     private void initializeCommentsSection(ArrayList<CommentItem> comments) {
@@ -544,7 +584,14 @@ public class VideoPlayerFragment extends Fragment implements CommentSection_Adap
         }
     }
 
-
+    /**
+     * Implementation of the SubscribeButton.OnSubscriptionChangeListener interface.
+     * Updates the subscriber count TextView based on subscription changes.
+     *
+     * @param isFollowing     Whether the current user is now following the uploader.
+     * @param subscriberCount The updated subscriber count.
+     */
+    @Override
     public void onSubscriptionChanged(boolean isFollowing, int subscriberCount) {
         if (userSubs != null) {
             userSubs.setText(subscriberCount + " subscribers");

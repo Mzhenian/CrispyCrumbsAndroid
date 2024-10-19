@@ -69,6 +69,7 @@
                 android:gravity="top"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="5dp"
+                android:maxLines="1"
                 style="@style/TEXT" />
 
             <LinearLayout

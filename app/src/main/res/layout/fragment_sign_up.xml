@@ -32,14 +32,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
                 android:showDividers="middle"
                 android:dividerPadding="30dp">
 
-                <!-- Your existing form fields go here -->
+                <TextView
+                    android:id="@+id/TitleUploadVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/diff_round_corners_orange"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="16dp"
+                    android:text="Signup"
+                    android:textColor="@color/absolute_ofek_white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="vertical">
 
+                <!-- Your existing form fields go here -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -272,7 +286,7 @@
                         android:textColor="@color/absolute_ofek_white" />
                 </LinearLayout>
             </LinearLayout>
-
+            </LinearLayout>
         </ScrollView>
 
         <!-- Adjusted the constraints for the button layout -->

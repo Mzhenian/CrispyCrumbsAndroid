@@ -23,17 +23,12 @@ import com.example.crispycrumbs.R;
 import com.example.crispycrumbs.dataUnit.UserItem;
 import com.example.crispycrumbs.databinding.FragmentEditProfileBinding;
 import com.example.crispycrumbs.serverAPI.ServerAPI;
-import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
-import com.example.crispycrumbs.serverAPI.serverDataUnit.SignUpResponse;
 import com.example.crispycrumbs.serverAPI.serverDataUnit.UsernameEmailCheckCallback;
+import com.example.crispycrumbs.serverAPI.serverInterface.UserUpdateCallback;
 import com.example.crispycrumbs.viewModel.ProfileViewModel;
 import com.example.crispycrumbs.viewModel.UserViewModel;
 
 import java.io.IOException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class EditProfileFragment extends Fragment {
     private static final String TAG = "EditProfileFragment";
@@ -133,6 +128,7 @@ public class EditProfileFragment extends Fragment {
                 }
             });
         }
+
         if (!newUserEmail.equals(currentUser.getEmail())) {
             // Username unchanged, check email availability
             userViewModel.checkEmailAvailability(newUserEmail, new UsernameEmailCheckCallback() {

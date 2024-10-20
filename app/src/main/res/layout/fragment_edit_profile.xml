@@ -27,13 +27,53 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:showDividers="middle"
-                android:dividerPadding="30dp">
+                android:showDividers="middle">
+
+                <TextView
+                    android:id="@+id/TitleUploadVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/diff_round_corners_orange"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="16dp"
+                    android:text="Edit Profile"
+                    android:textColor="@color/absolute_ofek_white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:orientation="vertical">
 
                 <!-- Profile Picture -->
+                <TextView
+                    android:id="@+id/errorDisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#D32F2F"
+                    android:visibility="gone"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Picture :"
+                    android:textAppearance="@style/TextAppearance.BoldText"
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/btn_change_profile_img"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/default_profile_picture"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
                 <!-- Full Name Edit Text -->
                 <TextView
@@ -41,7 +81,8 @@
                     android:layout_height="wrap_content"
                     android:text="Full Name :"
                     android:textAppearance="@style/TextAppearance.BoldText"
-                    android:textColor="@color/black_div"/>
+                    android:textColor="@color/black_div"
+                    android:layout_marginTop="10dp" />
 
                 <EditText
                     android:id="@+id/editFullName"
@@ -159,28 +200,6 @@
                     android:paddingVertical="@dimen/activity_vertical_margin"
                     android:textColorHint="@color/gray_light" />
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Profile Picture :"
-                    android:textAppearance="@style/TextAppearance.BoldText"
-                    android:textColor="@color/black_div"
-                    android:layout_marginTop="10dp" />
-                />
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/btn_change_profile_img"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/default_profile_picture"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
-
-
                 <!-- Action Buttons -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -197,7 +216,8 @@
                         android:layout_weight="1"
                         android:src="@drawable/update"
                         android:backgroundTint="#00FFFFFF"
-                        />
+                        android:contentDescription="Save Changes"
+                        android:padding="16dp" />
 
                     <!-- Delete User Button -->
                     <ImageButton
@@ -207,13 +227,14 @@
                         android:layout_weight="1"
                         android:src="@drawable/delete"
                         android:backgroundTint="#00FFFFFF"
-                         />
-
-
+                        android:contentDescription="Delete User"
+                        android:padding="16dp" />
                 </LinearLayout>
+            </LinearLayout>
             </LinearLayout>
         </ScrollView>
 
+        <!-- Optional: Add guidelines or barriers if needed -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"

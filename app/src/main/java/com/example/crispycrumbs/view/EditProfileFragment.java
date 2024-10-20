@@ -132,7 +132,8 @@ public class EditProfileFragment extends Fragment {
                     enableInput(true);
                 }
             });
-        } else if (!newUserEmail.equals(currentUser.getEmail())) {
+        }
+        if (!newUserEmail.equals(currentUser.getEmail())) {
             // Username unchanged, check email availability
             userViewModel.checkEmailAvailability(newUserEmail, new UsernameEmailCheckCallback() {
                 @Override

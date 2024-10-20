@@ -45,25 +45,35 @@ public class UserResponse {
     @SerializedName("likedVideoIds")
     private List<String> likedVideoIds;
 
-
+    // Convert UserResponse to UserItem
     public UserItem toUserItem() {
         UserItem userItem = new UserItem(
                 userName,
-                "temp",
+                "temp", // Password placeholder if required
                 fullName,
                 email,
                 phoneNumber,
-                new Date(), // You'll need to manage date if it's part of your UserItem
-                "country",
+                new Date(), // Adjust date handling as needed
+                country,
                 profilePhoto
         );
 
         userItem.setUserId(userId);
-        userItem.setVideosIds(new HashSet<>(videosIds));
-        userItem.setFollowerIds(new HashSet<>(followers));
-        userItem.setFollowingIds(new HashSet<>(following));
-        userItem.setLikedVideoIds(new HashSet<>(likedVideoIds));
-        userItem.setDislikedVideoIds(new HashSet<>(dislikedVideoIds));
+        if (videosIds != null) {
+            userItem.setVideosIds(new HashSet<>(videosIds));
+        }
+        if (followers != null) {
+            userItem.setFollowerIds(new HashSet<>(followers));
+        }
+        if (following != null) {
+            userItem.setFollowingIds(new HashSet<>(following));
+        }
+        if (likedVideoIds != null) {
+            userItem.setLikedVideoIds(new HashSet<>(likedVideoIds));
+        }
+        if (dislikedVideoIds != null) {
+            userItem.setDislikedVideoIds(new HashSet<>(dislikedVideoIds));
+        }
 
         return userItem;
     }
@@ -165,5 +175,7 @@ public class UserResponse {
     public void setLikedVideoIds(List<String> likedVideoIds) {
         this.likedVideoIds = likedVideoIds;
     }
+
+
 }
 

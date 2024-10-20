@@ -31,10 +31,13 @@
         <item name="android:background">@drawable/diff_round_corners_orange</item>
         <item name="android:padding">8dp</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:shadowColor">@color/transparent</item>
+        <item name="android:outlineProvider">none</item>
     </style>
 
     <style name="LIKE_BUTTON">
        <item name="android:background">@drawable/like_button_style</item>
+
     </style>
 
     <style name="DISLIKE_BUTTON">

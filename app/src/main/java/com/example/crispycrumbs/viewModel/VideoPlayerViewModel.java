@@ -25,6 +25,7 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     public static final String TAG = "VideoPlayerViewModel";
     private final VideoRepository videoRepository;
     private final MutableLiveData<PreviewVideoCard> video = new MutableLiveData<>();
+    private MutableLiveData<List<PreviewVideoCard>> recommendedVideos = new MutableLiveData<>();
 
     public VideoPlayerViewModel(Application application) {
         super(application);
@@ -94,4 +95,24 @@ public class VideoPlayerViewModel extends AndroidViewModel {
     public void deleteComment(LiveData videoLiveData, String commentId, String userId) {
         videoRepository.deleteComment((MutableLiveData<PreviewVideoCard>) videoLiveData, commentId, userId); // Pass commentId as String
     }
+
+    public LiveData<List<PreviewVideoCard>> getRecommendedVideos() {
+        return recommendedVideos;
+    }
+
+    public void loadRecommendedVideos() {
+        if (video.getValue() == null) {
+            Log.d(TAG, "loadRecommendedVideos: video is null");
+            return;
+        }
+        loadRecommendedVideos(video.getValue().getVideoId());
+    }
+
+    // recommended for who that watch this video
+    public void loadRecommendedVideos(String videoId) {
+        videoRepository.getRecommendedVideos(videoId).observeForever(videos -> {
+            recommendedVideos.setValue(videos);
+        });
+    }
+
 }

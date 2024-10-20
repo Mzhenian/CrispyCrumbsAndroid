@@ -1,3 +1,5 @@
+The full project wiki is [in the server repository submition](https://github.com/Mzhenian/CrispyCrumbsServer/tree/EX4-complete/wiki)
+
 # Crispy Crumbs - Android App
 
 Welcome to the **Crispy Crumbs** app, a dedicated video-sharing platform showcasing only the finest Crispy Crumbs content. This app is built using Android Studio to ensure a smooth, interactive, and enjoyable user experience.

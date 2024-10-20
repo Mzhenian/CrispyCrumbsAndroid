@@ -6,7 +6,7 @@
     android:id="@+id/preview_card_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="30dp"
+    android:layout_marginHorizontal="10dp"
     android:layout_marginVertical="5dp">
 
     <androidx.cardview.widget.CardView
@@ -48,11 +48,11 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profile_picture"
-            android:src="@drawable/default_profile_picture"
-            android:layout_width="29dp"
-            android:layout_height="29dp"
+            android:layout_width="41dp"
+            android:layout_height="41dp"
             android:background="@drawable/round_corners_gray"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular"/>
+            android:src="@drawable/default_profile_picture"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Circular" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -64,11 +64,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Video Title"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:gravity="top"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="5dp"
+                android:maxLines="1"
                 style="@style/TEXT" />
 
             <LinearLayout
@@ -77,35 +78,40 @@
                 android:layout_gravity="bottom"
                 android:layout_marginStart="10dp">
 
+                <!-- User Name -->
                 <TextView
                     android:id="@+id/user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
                     android:text="User Name"
-                    android:layout_marginEnd="10dp"
                     android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     style="@style/TEXT" />
 
+                <!-- Video Views -->
                 <TextView
                     android:id="@+id/video_views"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Views"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:text="900K views"
                     android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="9sp"
                     style="@style/TEXT" />
 
+                <!-- Video Date -->
                 <TextView
                     android:id="@+id/video_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:layout_marginEnd="10dp"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
+                    android:text="Sep 2023"
+                    android:layout_marginEnd="5dp"
+                    android:textColor="@color/gray_dark"
+                    android:textSize="9sp"
                     style="@style/TEXT" />
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

@@ -286,4 +286,16 @@ public class UserItem implements Serializable {
     public void setDislikedVideoIds(Set<String> dislikedVideoIds) {
         this.dislikedVideoIds = dislikedVideoIds;
     }
+
+    public int getFollowersCount() {
+        if (followerIds != null) {
+            return followerIds.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setFollowersCount(int currentCount) {
+        //yes its empry
+    }
 }

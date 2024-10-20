@@ -1,12 +1,10 @@
 package com.example.crispycrumbs.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +47,7 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.video_pre_item, parent, false);
         return new ViewHolder(view, listener);
@@ -103,9 +102,14 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView videoThumbnail, profilePicture;
-        TextView videoTitle, videoUser, videoViews, videoDate;
+        ImageView videoThumbnail,
+                profilePicture;
+        TextView videoTitle,
+                videoUser,
+                videoViews,
+                videoDate;
         private Observer<UserItem> userObserver;
+//        private UserDao userDao;
 
         public ViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -115,6 +119,8 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
             videoUser = itemView.findViewById(R.id.user_name);
             videoViews = itemView.findViewById(R.id.video_views);
             videoDate = itemView.findViewById(R.id.video_date);
+
+//            userDao = AppDB.getDatabase(MainPage.getInstance()).userDao();
 
             itemView.setOnClickListener(v -> listener.onItemClick((PreviewVideoCard) v.getTag()));
         }
@@ -166,19 +172,22 @@ public class VideoList_Adapter extends RecyclerView.Adapter<VideoList_Adapter.Vi
 
             // Create a new observer for the current video user
             userObserver = user -> {
-                if (user != null) {
-                    String userProfileUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
-                    Glide.with(itemView.getContext())
-                            .load(userProfileUrl)
-                            .placeholder(R.drawable.default_profile_picture)
-                            .skipMemoryCache(true)
-                            .into(profilePicture);
-                    videoUser.setText(user.getUserName());
-                } else {
-                    profilePicture.setImageResource(R.drawable.default_profile_picture);
-                    videoUser.setText("[deleted user]");
-                    Log.e(TAG, "User not found");
+                if (null == user || "[Deleted user]" == user.getUserName()) {
+//                        profilePicture.setImageResource(R.drawable.default_profile_picture);
+//                        videoUser.setText("[deleted user]");
+//                        Log.e(TAG, "User not found");
+                    return;
                 }
+                String userProfileUrl = ServerAPI.getInstance().constructUrl(user.getProfilePhoto());
+                videoUser.setText(user.getUserName());
+
+
+                Glide.with(itemView.getContext())
+                        .load(userProfileUrl)
+                        .placeholder(R.drawable.default_profile_picture)
+                        .skipMemoryCache(true)
+                        .error(R.drawable.default_profile_picture) // Set default picture on error
+                        .into(profilePicture);
             };
 
             // Observe the current user's data

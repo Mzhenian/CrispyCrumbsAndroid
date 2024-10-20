@@ -66,8 +66,4 @@ public class PlayList_Adapter extends VideoList_Adapter {
                         .commit();
             });
     }
-
-    public interface OnItemClickListener {
-        void onItemClick(PreviewVideoCard videoCard);
-    }
 }
